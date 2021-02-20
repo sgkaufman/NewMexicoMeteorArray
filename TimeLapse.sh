@@ -237,14 +237,14 @@ if [[ $num_captured_dirs -eq $num_archived_dirs ]]
 then
    if [[ $num_archived_dirs -eq 1 ]]
    then
-      printf "%d\t%d \n" >> "$OUTFILE" \
+      printf "%d\t%d" >> "$OUTFILE" \
         "$fits_count" "$detected"
    else
-      printf "%d\t%d\t Arch_Dir: %d\n" >> "$OUTFILE" \
+      printf "%d\t%d\t Arch_Dir: %d" >> "$OUTFILE" \
         "$fits_count" "$detected" "$num_archived_dirs"
    fi
 else
-  printf "%d\t%d\tCap_Dir: %d\tArch_Dir: %d\n" >> "$OUTFILE" \
+  printf "%d\t%d\tCap_Dir: %d\tArch_Dir: %d" >> "$OUTFILE" \
         "$fits_count" "$detected" "$num_captured_dirs" "$num_archived_dirs"
 fi
 
@@ -257,10 +257,11 @@ printf "total_captured (number of directories under CapturedFiles): %d\n" \
        "$total_captured"
 popd > /dev/null
 
-if [[ $total_captured -le 1 ]]
-then
-    printf "WARNING: only %d directory in CapturedFiles\n" \
-	   "$num_captured_dirs" >> "$OUTFILE"
+if [[ $total_captured -gt 1 ]]; then
+    printf "\n" >> "$OUTFILE"
+else
+    printf " Running out of space! Only Room for %d Capture Directory!\n" \
+           "$total_captured" >> "$OUTFILE"
 fi
 
 printf "fits file count and number of detections saved to: %s\n" "$OUTFILE"
