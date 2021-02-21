@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-This is Version 0.7 of file ExternalScript.py. Dated 02/20/2021. Intended for Python 2 on Jessie-based Raspberry Pi 3.
+This is Version 0.7 of file ExternalScript.py. Dated 02/20/2021. Intended for Python 3 on Buster-based Raspberry Pi4s.
 SGK 02/20/2021: Changed argument types to bool, not int, in __main__, for
                 --reboot, --CreateTimeLapse, and --CreateCaptureStack
 SGK 02/01/2021: Added support for creating a stack of 
