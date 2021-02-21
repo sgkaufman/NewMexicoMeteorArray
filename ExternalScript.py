@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
 """
-This is Version 0.6 of file ExternalScript.py. Dated 02/01/2021.
-SGK 02/01/2021: Added support for creating a stack of the CapturedFiles
-                FITS files (argument --CreateCaptureStack). When 0 (zero),
-                a capture stack is not created. When "1", it is.
-                Defaults to "1".
-SGK 06/14/2020: Added Bluehost server 69.195.111.36 (dedicated IP)
+This is Version 0.7 of file ExternalScript.py. Dated 02/20/2021. Intended for Python 2 on Jessie-based Raspberry Pi 3.
+SGK 02/20/2021: Changed argument types to bool, not int, in __main__, for
+                --reboot, --CreateTimeLapse, and --CreateCaptureStack
+SGK 02/01/2021: Added support for creating a stack of 
+                the CapturedFiles FITS files. 
+SGK 06/14/2020: Added Bluehost server 69.195.111.36 dedicated IP)
 SGK 05/15/2020: Added computation of RMS.CaptureDuration for the night's
                 start time and capture duration, needed for the FITS file
                 creation watchdog.
@@ -56,18 +56,46 @@ from RMS.Logger import initLogging
 import ftplib
 from ftplib import FTP_TLS
 
+def makeDateTime(time_str):
+    """ 
+    Create and return a datetime object from the time_str,
+    assumed to be in ISO format with blank separator between date and time.
+    I.e., "2020-05-20 02:33:45.123456". No time zone. 
+    Only needed for Python 2, which does not have 
+    datetime.datetime.fromisoformat(time_str) method.
+    We add half a second using timedeltas to round up.
+    """
+    half_sec = datetime.timedelta(milliseconds = 500)
+    parts = time_str.split(' ')
+    date = parts[0]
+    hour = parts[1]
+    date_parts = date.split('-')
+    hour_parts = hour.split(':')
+    sec_parts = (hour_parts[2]).split('.')
+    return datetime.datetime(year = int(date_parts[0]), \
+                             month = int(date_parts[1]), \
+                             day = int(date_parts[2]), \
+                             hour = int(hour_parts[0]), \
+                             minute = int(hour_parts[1]), \
+                             second = int(sec_parts[0]), \
+                             microsecond = int(sec_parts[1]) ) \
+        + half_sec
+
 def makeLogFile(log_file_dir, prefix, time_arg=None):
-    
-    # Create a log file to provide as stdout and stderr for
-    # the subprocess.calls of the shell scripts.
-    # Return the file pointer to the log file in OPEN state.
-    # time_arg, if given, is a date string of the form
-    # "2020-05-20 02:33:45.123456". Cannot include a timezone at the end.
+    """
+    Create a log file to provide as stdout and stderr for
+    the subprocess.calls of the shell scripts.
+    Return the file pointer to the log file in OPEN state.
+    time_arg, if given, is a date string of the form
+    "2020-05-20 02:33:45.123456". Cannot include a timezone at the end.
+    """
 
     if time_arg is None:
         time_to_use = datetime.datetime.utcnow()
     else:
-        time_to_use = datetime.datetime.fromisoformat(time_arg)
+        time_to_use = makeDateTime(time_arg)
+    # Replace makeTimeDate with datetime.datetime.fromisoformat()
+    # when Python 2 finally goes away
 
     log_filename = prefix + "_{0}_{1}_{2}".format \
         (time_to_use.year, \
@@ -116,10 +144,6 @@ def getFilesAndUpload(logger, nm_config, main_data_dir, log_file_fd):
     print("Adding %d jpg files to queue ..." % len(jpg_files), file=log_file_fd)   
     upload_manager.addFiles(jpg_files)
 
-    bmp_files = findFiles(main_data_dir, all_files, "*.bmp")
-    print("Adding %d bmp files to queue ..." % len(bmp_files), file=log_file_fd)   
-    upload_manager.addFiles(bmp_files)
-    
     #ftp_files = findFiles(main_data_dir, all_files, "FTP*")
     #print("Adding %d ftp files to queue ..." % ftp_files.__len__())
     #upload_manager.addFiles(ftp_files)
@@ -162,7 +186,7 @@ def getFilesAndUpload(logger, nm_config, main_data_dir, log_file_fd):
     upload_manager.stop()
 
 
-def uploadFiles(captured_night_dir, archived_night_dir, config, log_upload=True, reboot=True, CreateTimeLapse=True, CreateCaptureStack=True, which='A', preset='micro'):
+def uploadFiles(captured_night_dir, archived_night_dir, config, log_upload=True, reboot=True, CreateTimeLapse=True, CreateCaptureStack=True, preset='micro'):
     """ Function to upload selected files from the ArchivedData or CapturedData
         directory to the New_Mexico_Server.
         Files to transfer include:
@@ -176,10 +200,7 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, log_upload=True,
     """
 
     # Variable definitions
-    if which == 'C':
-        main_data_dir = captured_night_dir
-    else:
-        main_data_dir = archived_night_dir
+    main_data_dir = archived_night_dir
     extra_uploads_file = "/home/pi/source/RMS/Extra_Uploads.sh"
     remote_dir = '/Users/meteorstations/Public'
 
@@ -205,7 +226,7 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, log_upload=True,
                                            config.elevation)
     duration_int = round(duration)
     time_str = start_time.isoformat(' ')
-    print ("Time string is: %s" % time_str)
+    print ("Time string is: {0}".format(time_str))
     time_file = makeLogFile(log_dir_name, "CaptureTimes", time_str)
 
     with open(time_file, 'w') as time_fd:
@@ -233,7 +254,7 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, log_upload=True,
 
         # Prepare for calls to TimeLapse.sh,
         # second arg based on CreateTimeLapse,
-        # third arg based on CreateCaptureStack
+        # third arg based on CreateCaptureStack.
         TimeLapse_cmd_str = "/home/pi/source/RMS/TimeLapse.sh " + data_dir_name
         if  CreateTimeLapse:
             TimeLapse_cmd_str = TimeLapse_cmd_str + " Yes"
@@ -314,14 +335,15 @@ if __name__ == "__main__":
     
     nm_parser.add_argument('--directory', type=str, \
                            help="Subdirectory of CapturedFiles or ArchiveFiles to upload. For example, US0006_20190421_020833_566122")
-    nm_parser.add_argument('--reboot', type=int, choices=[0,1], default=1,\
-                           help="When 1, reboot at end of ExternalScript. 0 Prevents reboot. Default is 1.")
-    nm_parser.add_argument('--CreateTimeLapse', type=int, choices=[0, 1], default=1,\
-                           help="When 1, create the TimeLapse.mp4 file. 0 prevents creation. Default is 1")
-    nm_parser.add_argument('--CreateCaptureStack', type=int, choices=[0, 1], default=1,\
-                           help="When 1, create the stack of all Captures in a JPEG file. 0 prevents creation. Default is 1")
-    nm_parser.add_argument('--which', type=str, choices=['C','A'], default='A',\
-                           help="C for CapturedFiles, A for ArchivedFiles. A is default")
+    nm_parser.add_argument('--reboot', type=bool, choices=[True, False], \
+                           default=True,\
+                           help="When True, reboot at end of ExternalScript. False Prevents reboot. Default is True.")
+    nm_parser.add_argument('--CreateTimeLapse', type=bool, choices=[True,False],\
+                           default=True,\
+                           help="When True, create the TimeLapse.mp4 file. False prevents creation. Default is True")
+    nm_parser.add_argument('--CreateCaptureStack', type=bool, choices=[True,False],\
+                           default=True,\
+                           help="When True, create the stack of all Captures in a JPEG file. False prevents creation. Default is True")
     nm_parser.add_argument('--preset', type=str, default='micro', \
                            choices=['full', 'minimal', 'micro', 'imgs'], \
                            help="which fileset to upload")
@@ -335,7 +357,6 @@ if __name__ == "__main__":
     print ('Reboot arg: ', args.reboot)
     print ('CreateTimeLapse arg: ', args.CreateTimeLapse)
     print ('CreateCaptureStack arg: ', args.CreateCaptureStack)
-    print ('which arg: ', args.which)
     print ('preset arg: ', args.preset)
 
    
@@ -346,8 +367,11 @@ if __name__ == "__main__":
     captured_data_dir = os.path.join(config.data_dir, 'CapturedFiles', args.directory)
     archive_data_dir = os.path.join(config.data_dir, 'ArchivedFiles', args.directory)
     
-    uploadFiles(captured_data_dir, archive_data_dir, config, log_upload=True, \
-                reboot=args.reboot, CreateTimeLapse=args.CreateTimeLapse, \
+    uploadFiles(captured_data_dir, archive_data_dir, config, \
+                log_upload=True, \
+                reboot=args.reboot, \
+                CreateTimeLapse=args.CreateTimeLapse, \
+                CreateCaptureStack=args.CreateCaptureStack, \
                 preset='micro')
 
 
