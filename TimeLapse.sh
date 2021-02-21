@@ -120,7 +120,8 @@ else
 
 	cd /home/pi/source/RMS/
 	printf "Creating a stack of the capture directory: %s\n" "$1"
-	python -m Utils.StackFFs /home/pi/RMS_data/CapturedFiles/"$1" jpg -s -x
+	python -m Utils.StackFFs /home/pi/RMS_data/CapturedFiles/"$1" jpg -s -x \
+	       > /dev/null
 
 	cd -- $capture_dir/"$1"
 	c_stack=$(ls ./*stack*_meteors.jpg)
@@ -179,7 +180,7 @@ fi
 # Collect information for output to csv file.
 # First, the number of FITS files
 
-fits_count="$(find "/home/pi/RMS_data/CapturedFiles/$1"/*.fits -type f  -printf x | wc -c)"
+fits_count=$(find "/home/pi/RMS_data/CapturedFiles/$1"/*.fits -type f -printf x | wc -c)
 
 printf "\n" 
 printf 'Number of fits files in Capture directory: %d\n' "$fits_count"
@@ -202,59 +203,65 @@ if [[ ${My_Uploads} = 1 ]]; then
 fi
 
 # Count the number of directories under CapturedFiles and ArchivedFiles
-# The variable "date" extracts the date (in the form yyyymmdd)
+# The variable "id_string" extracts the station name and
+# the date (in the form yyyymmdd)
 # from the first positional parameter (the directory name).
-# It uses substring syntax (take the substring starting at position 7
-# and extending 8 characters).
-# The variable "pattern" uses this date in a pattern that begins with "d"
-# which is the first character in a directory listing given by "ls -l".
+# It uses substring syntax (take the substring starting at position 0
+# and extending 15 characters).
+# The variable "id_string" holds the station name and date in a pattern. 
 
-date=${1:7:8}
-printf "date: %s\n" "$date"
-pattern="^d.*${date}.*"
-printf 'pattern: %s\n' "$pattern"
+id_string=${1:0:15}
+printf "id_string: %s\n" "$id_string"
 
 # CapturedFiles
+pushd "$capture_dir" > /dev/null
 echo 'Directories under CapturedFiles:'
-ls -l /home/pi/RMS_data/CapturedFiles | grep "$pattern"
-
-captured_count=$(ls -l /home/pi/RMS_data/CapturedFiles | grep -c "$pattern")
-printf 'Directory count under CapturedFiles: %d\n' "$captured_count"
+ls -ld ./*"$id_string"*
+captured_dirs=(./*"$id_string"*)
+num_captured_dirs=${#captured_dirs[@]}
+printf 'Directory count under CapturedFiles: %d\n' "$num_captured_dirs"
+popd > /dev/null
 
 # ArchivedFiles
+pushd "$archive_dir" > /dev/null
 echo 'Directories under ArchivedFiles:'
-ls -l /home/pi/RMS_data/ArchivedFiles | grep "${pattern}"
-
-archived_count=$(ls -l /home/pi/RMS_data/ArchivedFiles | grep -c "$pattern")
-printf 'Directory count under ArchivedFiles: %d\n' "$archived_count"
+find . -maxdepth 1 -type d -name "*$id_string*"
+num_archived_dirs=$(find . -maxdepth 1 -type d -name "*$id_string*" | wc -l)
+printf 'Directory count under ArchivedFiles: %d\n' "$num_archived_dirs"
+popd > /dev/null
 
 # Write it out to the file in the csv directory
 
 printf "%s: " "$1" >> "$OUTFILE"
-if [[ $captured_count -eq $archived_count ]]
+if [[ $num_captured_dirs -eq $num_archived_dirs ]]
 then
-   if [[ $archived_count -eq 1 ]]
+   if [[ $num_archived_dirs -eq 1 ]]
    then
-      printf "%d\t%d \n" >> "$OUTFILE" \
+      printf "%d\t%d" >> "$OUTFILE" \
         "$fits_count" "$detected"
    else
-      printf "%d\t%d\t Arch_Dir: %d\n" >> "$OUTFILE" \
-        "$fits_count" "$detected" "$archived_count"
+      printf "%d\t%d\t Arch_Dir: %d" >> "$OUTFILE" \
+        "$fits_count" "$detected" "$num_archived_dirs"
    fi
 else
-  printf "%d\t%d\tCap_Dir: %d\tArch_Dir: %d\n" >> "$OUTFILE" \
-        "$fits_count" "$detected" "$captured_count" "$archived_count"
+  printf "%d\t%d\tCap_Dir: %d\tArch_Dir: %d" >> "$OUTFILE" \
+        "$fits_count" "$detected" "$num_captured_dirs" "$num_archived_dirs"
 fi
 
 # Now check for the TOTAL number of files in the CapturedFiles directory,
-# not just the number matching the date
+# not just the number matching the date.
+pushd "$capture_dir" > /dev/null
+captured=(./*"$station_name"*)
+total_captured=${#captured[@]}
+printf "total_captured (number of directories under CapturedFiles): %d\n" \
+       "$total_captured"
+popd > /dev/null
 
-total_captured=$(ls -l /home/pi/RMS_data/CapturedFiles | grep -c "$station_name")
-
-if [[ $total_captured -le 1 ]]
-then
-    printf "WARNING: only %d directory in CapturedFiles\n" \
-	   "$captured_count" >> "$OUTFILE"
+if [[ $total_captured -gt 1 ]]; then
+    printf "\n" >> "$OUTFILE"
+else
+    printf " Running out of space! Only Room for %d Capture Directory!\n" \
+           "$total_captured" >> "$OUTFILE"
 fi
 
 printf "fits file count and number of detections saved to: %s\n" "$OUTFILE"
