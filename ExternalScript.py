@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 
 """
-This is Version 0.7 of file ExternalScript.py. Dated 02/20/2021. 
+This is Version 0.8 of file ExternalScript.py. Dated 02/20/2021. 
 Intended for Python 3 on Buster-based Raspberry Pi4s.
-Byte count = 15359 
+Byte count = 16004
+SGK 02/24/2021: Corrected handling of boolean arguments, 
+                added print in uploadFiles to identify file version  
 SGK 02/20/2021: Changed argument types to bool, not int, in __main__, for
                 --reboot, --CreateTimeLapse, and --CreateCaptureStack
 SGK 02/01/2021: Added support for creating a stack of 
@@ -179,6 +181,8 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, log_upload=True,
     extra_uploads_file = "/home/pi/source/RMS/Extra_Uploads.sh"
     remote_dir = '/Users/meteorstations/Public'
 
+    print ("Version 0.8 of ExternalScript.py, 02-Feb-2021, bytes = 16004")
+    
     RMS_data_dir_name = os.path.abspath("/home/pi/RMS_data/")
     print ("RMS_data_dir_name = {0}".format(RMS_data_dir_name))
     data_dir_name = os.path.basename(main_data_dir)
@@ -303,26 +307,38 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, log_upload=True,
 
 ########################################################################
 
-if __name__ == "__main__":
+def str2bool(v):
+    if isinstance(v, bool):
+       return v
+    if v.lower() in ('yes', 'true', '1'):
+        return True
+    elif v.lower() in ('no', 'false', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
 
+if __name__ == "__main__":
     
-    nm_parser = argparse.ArgumentParser(description="""Upload files to New_Mexico_Server, and optionally move other files to storage devices, create a TimeLapse.mp4 file, and reboot the system after all processing.""")
+    nmp = argparse.ArgumentParser(description="""Upload files to New_Mexico_Server, and optionally move other files to storage devices, create a TimeLapse.mp4 file, and reboot the system after all processing.""")
     
-    nm_parser.add_argument('--directory', type=str, \
+    nmp.add_argument('--directory', type=str, \
                            help="Subdirectory of CapturedFiles or ArchiveFiles to upload. For example, US0006_20190421_020833_566122")
-    nm_parser.add_argument('--reboot', type=bool, choices=[True, False], \
-                           default=True,\
-                           help="When True, reboot at end of ExternalScript. False Prevents reboot. Default is True.")
-    nm_parser.add_argument('--CreateTimeLapse', type=bool, choices=[True,False],\
-                           default=True,\
-                           help="When True, create the TimeLapse.mp4 file. False prevents creation. Default is True")
-    nm_parser.add_argument('--CreateCaptureStack', type=bool, choices=[True,False],\
-                           default=True,\
-                           help="When True, create the stack of all Captures in a JPEG file. False prevents creation. Default is True")
-    nm_parser.add_argument('--preset', type=str, default='micro', \
-                           choices=['full', 'minimal', 'micro', 'imgs'], \
-                           help="which fileset to upload")
-    args = nm_parser.parse_args()
+    nmp.add_argument('--reboot', type=str2bool, \
+                     choices=[True, False, 'Yes', 'No', '0', '1'], \
+                     default=True, \
+                     help="When True, Yes, or 1, reboot at end of ExternalScript. False, No, or 0 prevents reboot. Default is True.")
+    nmp.add_argument('--CreateTimeLapse', type=str2bool, \
+                     choices=[True, False, 'Yes', 'No', '0', '1'], \
+                     default=True, \
+                     help="When True, Yes, or 1, create the TimeLapse.mp4 file. False, No, or 0 prevents creation. Default is True")
+    nmp.add_argument('--CreateCaptureStack', type=str2bool, \
+                     choices=[True, False, 'Yes', 'No', '0', '1'], \
+                     default=True, \
+                     help="When True, Yes, or 1, create the stack of all Captures in a JPEG file. False, No, or 0 prevents creation. Default is True")
+    nmp.add_argument('--preset', type=str, default='micro', \
+                     choices=['full', 'minimal', 'micro', 'imgs'], \
+                     help="which fileset to upload (not currently implemented)")
+    args = nmp.parse_args()
 
     if args.directory == None:
         print ("Directory argument not present! Exiting ...")
@@ -333,7 +349,6 @@ if __name__ == "__main__":
     print ('CreateTimeLapse arg: ', args.CreateTimeLapse)
     print ('CreateCaptureStack arg: ', args.CreateCaptureStack)
     print ('preset arg: ', args.preset)
-
    
     config = RMS.ConfigReader.loadConfigFromDirectory(None, "/home/pi/source/RMS/.config")
 
