@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-This is Version 0.8 of file ExternalScript.py. Dated 02/20/2021. 
+This is Version 0.8 of file ExternalScript.py. Dated 02/24/2021. 
 Intended for Python 3 on Buster-based Raspberry Pi4s.
 Byte count = 16004
 SGK 02/24/2021: Corrected handling of boolean arguments, 
@@ -181,7 +181,7 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, log_upload=True,
     extra_uploads_file = "/home/pi/source/RMS/Extra_Uploads.sh"
     remote_dir = '/Users/meteorstations/Public'
 
-    print ("Version 0.8 of ExternalScript.py, 02-Feb-2021, bytes = 16004")
+    print ("Version 0.8 of ExternalScript.py, 24-Feb-2021, bytes = 16004")
     
     RMS_data_dir_name = os.path.abspath("/home/pi/RMS_data/")
     print ("RMS_data_dir_name = {0}".format(RMS_data_dir_name))
