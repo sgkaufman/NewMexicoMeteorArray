@@ -9,7 +9,7 @@
 # Argument3 ($3): False, 0 or No will skip creating stack of CapturedFiles
 # Default script action is to create TimeLapse.mp4 and Capture stack
 
-printf 'TimeLapse.sh, revised 05-Feb-2021, byte count = 8986, '
+printf 'TimeLapse.sh, revised 24-Feb-2021, byte count = 8986, '
 printf 'was called with\nArg 1 = %s, arg 2 = %s, arg 3 = %s\n\n' "$1" "$2" "$3"
 printf 'TimeLapse.sh copies radiants.txt, and .csv files to RMS_data/csv/,\n'
 printf 'then creates a TimeLapse.mp4 file, and stack of all captured images,\n'
@@ -25,7 +25,7 @@ printf 'values for TimeLapse and CapStack in this script file.\n\n'
 #  0 for no, 1 for yes
 TimeLapse=1
 CapStack=1
-My_Uploads=1
+My_Uploads=0
 
 # Let's check that second argument.
 if [[ "$2" = "False" || "$2" = "0" || "$2" = "No" ]] ; then
