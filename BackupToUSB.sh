@@ -8,6 +8,8 @@
 # assumes that the destination has directories bz2, csv, CapStack, and TimeLapse
 # Argument1: ArchivedFiles directory name
 
+printf "BackupToUSB.sh 24-Feb, 2021, byte count ~1761 : backs up data to thumb drive\n"
+
 archive_dir="/home/pi/RMS_data/ArchivedFiles"
 data_dir="/home/pi/RMS_data"
 

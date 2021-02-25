@@ -26,7 +26,7 @@
 #			./FixIt.sh <directory name> 0 0 1
 
 cd /home/pi/source/RMS
-echo FixIt.sh, 22-Feb, 2021: Combining reprocess and external script calls...
+echo FixIt.sh, 24-Feb, 2021, byte count = 2414 : Combining reprocess and external script calls...
 case $# in
     "4")
          echo "Reprocessing data in ArchivedFilesReprocessed $1, with reboot=$2, and create mp4=$3"
