@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 
 """
-This is Version 0.7 of file ExternalScript.py. Dated 02/20/2021. 
+This is Version 0.8 of file ExternalScript_Python2.py. Dated 02/24/2021. 
 Intended for Python 2 on Jessie-based Raspberry Pi 3.
-Byte count = 16536
+Byte count = 16795
+SGK 02/24/2021: Corrected handling of boolean arguments, 
+                added print in uploadFiles to identify file version
 SGK 02/20/2021: Changed argument types to bool, not int, in __main__, for
                 --reboot, --CreateTimeLapse, and --CreateCaptureStack
 SGK 02/01/2021: Added support for creating a stack of 
@@ -15,19 +17,11 @@ SGK 05/15/2020: Added computation of RMS.CaptureDuration for the night's
 SGK 03/22/2020: Added creation of a log file for the shell scripts
 SGK 12/17/2019: 1. Added arguments "reboot" and "CreateTimeLapse"
                 to uploadFiles and to the "__main__" call of ExternalScript.py.
-                Both default to True. If reboot is True, RMS reboots at end of
-                ExternalScript processing. Otherwise it does not.
-                If CreateTimeLapse is True, the Timelapse.mp4 is created.
-                Otherwise it is not.
                 2. Normalized the syntax for determining length of lists in
                 the function getFilesAndUpload.
                 3. Added test for existence for file "Extra_Uploads.sh".
                 If it exists, it gets executed.
-
-This is Version 0.2 of file ExternalScript.py. Dated 12/08/2019.
 PNE 12/08/2019: Added section at line 180 with call to BackupToUSB.sh
-
-This is Version 0.1 of file ExternalScript.py. Dated 09/12/2019.
 SGK 09/12/2019: Put all file finding and uploading into function
                  getFilesAndUpload(), and added fits_count.txt to upload.
 SGK 09/09/2019: Call "sudo -r now" at the end of the script.
@@ -36,7 +30,7 @@ SGK 09/09/2019: Call "sudo -r now" at the end of the script.
 SGK 09/07/2019: Made creation of the .reboot_lock file the first thing done
                 when uploadFiles is called.
 This script 
-1: Moves and/or copies files on the RMS stations, and 
+1: Moves, creates, and copies files on the RMS stations, and 
 2: Uploads files to the New Mexico Meteor Array Server.
 """
 from __future__ import print_function
@@ -206,6 +200,8 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, log_upload=True,
     extra_uploads_file = "/home/pi/source/RMS/Extra_Uploads.sh"
     remote_dir = '/Users/meteorstations/Public'
 
+    print ("Version 0.8 of ExternalScript_Python2.py, 24-Feb-2021, bytes = 16795")
+
     RMS_data_dir_name = os.path.abspath("/home/pi/RMS_data/")
     print ("RMS_data_dir_name = {0}".format(RMS_data_dir_name))
     data_dir_name = os.path.basename(main_data_dir)
@@ -330,38 +326,49 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, log_upload=True,
 
 ########################################################################
 
+def str2bool(v):
+    if isinstance(v, bool):
+       return v
+    if v.lower() in ('yes', 'true', '1'):
+        return True
+    elif v.lower() in ('no', 'false', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
+
 if __name__ == "__main__":
 
+    nmp = argparse.ArgumentParser(description="""Upload files to New_Mexico_Server, and optionally move other files to storage devices, create a TimeLapse.mp4 file, and reboot the system after all processing.""")
     
-    nm_parser = argparse.ArgumentParser(description="""Upload files to New_Mexico_Server, and optionally move other files to storage devices, create a TimeLapse.mp4 file, and reboot the system after all processing.""")
-    
-    nm_parser.add_argument('--directory', type=str, \
+    nmp.add_argument('--directory', type=str, \
                            help="Subdirectory of CapturedFiles or ArchiveFiles to upload. For example, US0006_20190421_020833_566122")
-    nm_parser.add_argument('--reboot', type=bool, choices=[True, False], \
-                           default=True,\
-                           help="When True, reboot at end of ExternalScript. False Prevents reboot. Default is True.")
-    nm_parser.add_argument('--CreateTimeLapse', type=bool, choices=[True,False],\
-                           default=True,\
-                           help="When True, create the TimeLapse.mp4 file. False prevents creation. Default is True")
-    nm_parser.add_argument('--CreateCaptureStack', type=bool, choices=[True,False],\
-                           default=True,\
-                           help="When True, create the stack of all Captures in a JPEG file. False prevents creation. Default is True")
-    nm_parser.add_argument('--preset', type=str, default='micro', \
-                           choices=['full', 'minimal', 'micro', 'imgs'], \
-                           help="which fileset to upload")
-    args = nm_parser.parse_args()
+    nmp.add_argument('--reboot', type=str2bool, \
+                     choices=[True, False, 'Yes', 'No', '0', '1'], \
+                     default=True, \
+                     help="When True, Yes, or 1, reboot at end of ExternalScript. False, No, or 0 prevents reboot. Default is True.")
+    nmp.add_argument('--CreateTimeLapse', type=str2bool, \
+                     choices=[True, False, 'Yes', 'No', '0', '1'], \
+                     default=True, \
+                     help="When True, Yes, or 1, create the TimeLapse.mp4 file. False, No, or 0 prevents creation. Default is True")
+    nmp.add_argument('--CreateCaptureStack', type=str2bool, \
+                     choices=[True, False, 'Yes', 'No', '0', '1'], \
+                     default=True, \
+                     help="When True, Yes, or 1, create the stack of all Captures in a JPEG file. False, No, or 0 prevents creation. Default is True")
+    nmp.add_argument('--preset', type=str, default='micro', \
+                     choices=['full', 'minimal', 'micro', 'imgs'], \
+                     help="which fileset to upload (not currently implemented)")
+    args = nmp.parse_args()
 
     if args.directory == None:
         print ("Directory argument not present! Exiting ...")
         sys.exit()
- 
+
     print ('directory arg: ', args.directory)
     print ('Reboot arg: ', args.reboot)
     print ('CreateTimeLapse arg: ', args.CreateTimeLapse)
     print ('CreateCaptureStack arg: ', args.CreateCaptureStack)
     print ('preset arg: ', args.preset)
 
-   
     config = RMS.ConfigReader.loadConfigFromDirectory(None, "/home/pi/source/RMS/.config")
 
     print("config.data_dir = ", config.data_dir)
