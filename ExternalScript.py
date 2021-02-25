@@ -3,7 +3,7 @@
 """
 This is Version 0.8 of file ExternalScript.py. Dated 02/24/2021. 
 Intended for Python 3 on Buster-based Raspberry Pi4s.
-Byte count = 15613
+Byte count = 15245
 SGK 02/24/2021: Corrected handling of boolean arguments, 
                 added print in uploadFiles to identify file version
 SGK 02/20/2021: Changed argument types to bool, not int, in __main__, for
@@ -173,7 +173,7 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, log_upload=True,
     extra_uploads_file = "/home/pi/source/RMS/Extra_Uploads.sh"
     remote_dir = '/Users/meteorstations/Public'
 
-    print ("Version 0.8 of ExternalScript_Python2.py, 24-Feb-2021, bytes = 15613")
+    print ("Version 0.8 of ExternalScript_Python2.py, 24-Feb-2021, bytes = 15245")
     
     RMS_data_dir_name = os.path.abspath("/home/pi/RMS_data/")
     print ("RMS_data_dir_name = {0}".format(RMS_data_dir_name))
@@ -356,6 +356,3 @@ if __name__ == "__main__":
                 CreateCaptureStack=args.CreateCaptureStack, \
                 preset='micro')
 
-
-
-    
