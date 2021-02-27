@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
 """
-This is Version 0.8 of file ExternalScript_Python2.py. Dated 02/24/2021. 
+This is Version 0.8 of file ExternalScript_Python2.py. Dated 02/26/2021. 
 Intended for Python 2 on Jessie-based Raspberry Pi 3.
-Byte count = 16795
+Byte count = 16813
 SGK 02/24/2021: Corrected handling of boolean arguments, 
                 added print in uploadFiles to identify file version
 SGK 02/20/2021: Changed argument types to bool, not int, in __main__, for
@@ -200,8 +200,6 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, log_upload=True,
     extra_uploads_file = "/home/pi/source/RMS/Extra_Uploads.sh"
     remote_dir = '/Users/meteorstations/Public'
 
-    print ("Version 0.8 of ExternalScript_Python2.py, 24-Feb-2021, bytes = 16795")
-
     RMS_data_dir_name = os.path.abspath("/home/pi/RMS_data/")
     print ("RMS_data_dir_name = {0}".format(RMS_data_dir_name))
     data_dir_name = os.path.basename(main_data_dir)
@@ -238,6 +236,7 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, log_upload=True,
     log_file_name = makeLogFile(log_dir_name, "ShellScriptLog")
     with open(log_file_name, 'w+') as log_file:
         # Print out the arguments and variables of interest
+        print ("Version 0.8 of ExternalScript_Python2.py, 26-Feb-2021, bytes = "16813", file=log_file)
         print("remote_dir set to %s" % remote_dir, file=log_file)
         print("Name of program running = %s" % (__name__), file=log_file)
         print("reboot arg = %s" % reboot, file=log_file)
