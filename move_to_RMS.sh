@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Version 0.2, 25-Feb-2021. Byte count = 1356
+# Version 0.2, 01-Mar-2021. Byte count = 1411
 # This script copies files in /home/pi/NMMA/NewMexicoMeteorArray
 # into /home/pi/source/RMS and its subdirectories, as determined
 # by the Raspbian OS version specified in file /etc/os-release.
@@ -21,9 +21,9 @@ else
     cd "/home/pi/source/NMMA/NewMexicoMeteorArray"
 fi
 
-
-var=$( grep -o 'buster' /etc/os-release )
+var=$( grep -Eo 'buster|jessie' /etc/os-release )
 if [[ -n "$var" ]]; then
+    printf "grepped the following: %s\n" "$var"
 
     case ${var:0:6} in
 	buster )
