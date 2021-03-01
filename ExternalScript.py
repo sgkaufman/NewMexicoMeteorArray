@@ -3,7 +3,7 @@
 """
 This is Version 0.8 of file ExternalScript.py. Dated 02/26/2021. 
 Intended for Python 3 on Buster-based Raspberry Pi4s.
-Byte count = 15618
+Byte count = 15666
 SGK 02/24/2021: Corrected handling of boolean arguments, 
                 added print in uploadFiles to identify file version
 SGK 02/20/2021: Changed argument types to bool, not int, in __main__, for
@@ -209,7 +209,7 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, log_upload=True,
     log_file_name = makeLogFile(log_dir_name, "ShellScriptLog")
     with open(log_file_name, 'w+') as log_file:
         # Print out the arguments and variables of interest
-        print ("Version 0.8 of ExternalScript.py, 26-Feb-2021, bytes = 15618", file=log_file)
+        print ("Version 0.8 of ExternalScript.py, 26-Feb-2021, bytes = 15666", file=log_file)
         print("remote_dir set to %s" % remote_dir, file=log_file)
         print("Name of program running = %s" % (__name__), file=log_file)
         print("reboot arg = %s" % reboot, file=log_file)
