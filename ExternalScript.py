@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
 """
-This is Version 0.8 of file ExternalScript_Python2.py. Dated 02/26/2021. 
-Intended for Python 2 on Jessie-based Raspberry Pi 3.
-Byte count = 16813
+This is Version 0.8 of file ExternalScript.py. Dated 02/26/2021. 
+Intended for Python 3 on Buster-based Raspberry Pi4s.
+Byte count = 15618
 SGK 02/24/2021: Corrected handling of boolean arguments, 
                 added print in uploadFiles to identify file version
 SGK 02/20/2021: Changed argument types to bool, not int, in __main__, for
@@ -52,31 +52,6 @@ from RMS.Logger import initLogging
 import ftplib
 from ftplib import FTP_TLS
 
-def makeDateTime(time_str):
-    """ 
-    Create and return a datetime object from the time_str,
-    assumed to be in ISO format with blank separator between date and time.
-    I.e., "2020-05-20 02:33:45.123456". No time zone. 
-    Only needed for Python 2, which does not have 
-    datetime.datetime.fromisoformat(time_str) method.
-    We add half a second using timedeltas to round up.
-    """
-    half_sec = datetime.timedelta(milliseconds = 500)
-    parts = time_str.split(' ')
-    date = parts[0]
-    hour = parts[1]
-    date_parts = date.split('-')
-    hour_parts = hour.split(':')
-    sec_parts = (hour_parts[2]).split('.')
-    return datetime.datetime(year = int(date_parts[0]), \
-                             month = int(date_parts[1]), \
-                             day = int(date_parts[2]), \
-                             hour = int(hour_parts[0]), \
-                             minute = int(hour_parts[1]), \
-                             second = int(sec_parts[0]), \
-                             microsecond = int(sec_parts[1]) ) \
-        + half_sec
-
 def makeLogFile(log_file_dir, prefix, time_arg=None):
     """
     Create a log file to provide as stdout and stderr for
@@ -89,9 +64,7 @@ def makeLogFile(log_file_dir, prefix, time_arg=None):
     if time_arg is None:
         time_to_use = datetime.datetime.utcnow()
     else:
-        time_to_use = makeDateTime(time_arg)
-    # Replace makeTimeDate with datetime.datetime.fromisoformat()
-    # when Python 2 finally goes away
+        time_to_use = datetime.datetime.fromisoformat(time_arg)
 
     log_filename = prefix + "_{0}_{1}_{2}".format \
         (time_to_use.year, \
@@ -236,7 +209,7 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, log_upload=True,
     log_file_name = makeLogFile(log_dir_name, "ShellScriptLog")
     with open(log_file_name, 'w+') as log_file:
         # Print out the arguments and variables of interest
-        print ("Version 0.8 of ExternalScript_Python2.py, 26-Feb-2021, bytes = "16813", file=log_file)
+        print ("Version 0.8 of ExternalScript.py, 26-Feb-2021, bytes = 15618", file=log_file)
         print("remote_dir set to %s" % remote_dir, file=log_file)
         print("Name of program running = %s" % (__name__), file=log_file)
         print("reboot arg = %s" % reboot, file=log_file)

@@ -24,6 +24,7 @@ fi
 var=$( grep -Eo 'buster|jessie' /etc/os-release )
 if [[ -n "$var" ]]; then
     printf "grepped the following: %s\n" "$var"
+
     case ${var:0:6} in
 	buster )
 	    printf "Copying TimeLapse.sh to %s\n" "$RMS_dir"
