@@ -287,6 +287,8 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, log_upload=True,
     if __name__ == "__main__" and log_upload:
         initLogging(config, "NM_UPLOAD_")
 
+    log.info("ExternalScript has finished!")
+
     if reboot:
         log.info('Rebooting now!')
         try:
