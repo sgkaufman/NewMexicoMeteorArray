@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Version 0.2, 01-Mar-2021. Byte count = 1411
+# Version 0.2, 01-Mar-2021. Byte count = 1693
 # This script copies files in /home/pi/NMMA/NewMexicoMeteorArray
 # into /home/pi/source/RMS and its subdirectories, as determined
 # by the Raspbian OS version specified in file /etc/os-release.
@@ -31,6 +31,10 @@ if [[ -n "$var" ]]; then
 	    cp ./TimeLapse.sh /home/pi/source/RMS/TimeLapse.sh
 	    printf "Copying ExternalScript.py to %s/RMS/ExternalScript.py\n" "$RMS_dir"
 	    cp ./ExternalScript.py "$RMS_dir"/RMS/ExternalScript.py
+	    printf "Copying RecordWatchdog.sh to %s/Scripts/RecordWatchdog.sh"
+	    cp ./RecordWatchdog.sh "$RMS_dir"/Scripts/RecordWatchdog.sh
+	    printf "Copying StartCaptureWatchdog.sh to %s/StartCaptureWatchdog.sh"
+	    cp ./StartCaptureWatchdog.sh "$RMS_dir"/StartCaptureWatchdog.sh
 	    ;;
 	jessie )
 	    printf "Copying TimeLapse.sh to %s\n" "$RMS_dir"

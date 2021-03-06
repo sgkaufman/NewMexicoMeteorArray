@@ -10,7 +10,7 @@ FixIt.sh		(2,414)
 NM_Server.sh		(684)
 TimeLapse.sh		(8,986)
 
-move_to_RMS.sh		(1,411)
+move_to_RMS.sh		(1,693)
 RecordWatchdog.sh	(8,126)
 StartRecordWatchdog.sh	(634)	
 
