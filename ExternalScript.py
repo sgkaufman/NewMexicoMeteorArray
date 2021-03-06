@@ -3,7 +3,7 @@
 """
 This is Version 0.8 of file ExternalScript.py. Dated 02/26/2021. 
 Intended for Python 3 on Buster-based Raspberry Pi4s.
-Byte count = 15666
+Byte count = 13581
 This script 
 1: Moves, creates, and copies files on the RMS stations, and 
 2: Uploads files to the New Mexico Meteor Array Server.

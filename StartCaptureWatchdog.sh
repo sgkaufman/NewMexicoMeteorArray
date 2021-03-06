@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Starts the RecordWatchdog.sh monitoring program
+# (to restart RMS if capture stops).
+# Byte count: 634
+
+# Variable definitions
 log_dir="/home/pi/RMS_data/logs"
 
 # Find the latest CaptureTimes file in the log directory
