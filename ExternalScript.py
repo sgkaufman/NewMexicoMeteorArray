@@ -4,31 +4,6 @@
 This is Version 0.8 of file ExternalScript.py. Dated 02/26/2021. 
 Intended for Python 3 on Buster-based Raspberry Pi4s.
 Byte count = 15666
-SGK 02/24/2021: Corrected handling of boolean arguments, 
-                added print in uploadFiles to identify file version
-SGK 02/20/2021: Changed argument types to bool, not int, in __main__, for
-                --reboot, --CreateTimeLapse, and --CreateCaptureStack
-SGK 02/01/2021: Added support for creating a stack of 
-                the CapturedFiles FITS files. 
-SGK 06/14/2020: Added Bluehost server 69.195.111.36 dedicated IP)
-SGK 05/15/2020: Added computation of RMS.CaptureDuration for the night's
-                start time and capture duration, needed for the FITS file
-                creation watchdog.
-SGK 03/22/2020: Added creation of a log file for the shell scripts
-SGK 12/17/2019: 1. Added arguments "reboot" and "CreateTimeLapse"
-                to uploadFiles and to the "__main__" call of ExternalScript.py.
-                2. Normalized the syntax for determining length of lists in
-                the function getFilesAndUpload.
-                3. Added test for existence for file "Extra_Uploads.sh".
-                If it exists, it gets executed.
-PNE 12/08/2019: Added section at line 180 with call to BackupToUSB.sh
-SGK 09/12/2019: Put all file finding and uploading into function
-                 getFilesAndUpload(), and added fits_count.txt to upload.
-SGK 09/09/2019: Call "sudo -r now" at the end of the script.
-                Eliminate creation and removal of .reboot_lock file.
-                Assumes that "reboot_after_processing" in .config is false.
-SGK 09/07/2019: Made creation of the .reboot_lock file the first thing done
-                when uploadFiles is called.
 This script 
 1: Moves, creates, and copies files on the RMS stations, and 
 2: Uploads files to the New Mexico Meteor Array Server.
@@ -52,24 +27,22 @@ from RMS.Logger import initLogging
 import ftplib
 from ftplib import FTP_TLS
 
-def makeLogFile(log_file_dir, prefix, time_arg=None):
+def makeLogFile(log_file_dir, prefix, date_only):
     """
     Create a log file to provide as stdout and stderr for
     the subprocess.calls of the shell scripts.
     Return the file pointer to the log file in OPEN state.
-    time_arg, if given, is a date string of the form
-    "2020-05-20 02:33:45.123456". Cannot include a timezone at the end.
+    date_only means to only use the date in the log file name.
     """
 
-    if time_arg is None:
-        time_to_use = datetime.datetime.utcnow()
+    if date_only:
+        format_str = '%Y_%m_%d'
     else:
-        time_to_use = datetime.datetime.fromisoformat(time_arg)
+        format_str = '%Y_%m_%d_%H%M%S.%f'
+        
+    log_filename = prefix + "_" + \
+        datetime.datetime.utcnow().strftime(format_str) + ".log"
 
-    log_filename = prefix + "_{0}_{1}_{2}".format \
-        (time_to_use.year, \
-         time_to_use.month, \
-         time_to_use.day)
     full_filename = log_file_dir + log_filename
     print("Creating log file name %s\n" % full_filename)
     return full_filename
@@ -129,10 +102,6 @@ def getFilesAndUpload(logger, nm_config, main_data_dir, log_file_fd):
     print("Adding %d txt files to queue ..." % len(txt_files), file=log_file_fd)
     upload_manager.addFiles(txt_files)
     
-    #platepar_files = findFiles(main_data_dir, all_files, "platepar*.cal")
-    #print("Adding %d platepar files to queue ..." % len(platepar_files), file=log_file_fd)
-    #upload_manager.addFiles(platepar_files)
-
     config_files = findFiles(main_data_dir, all_files, "/home/pi/source/RMS/.config")
     print("Adding %d config files to queue ..." % len(config_files), file=log_file_fd)    
     upload_manager.addFiles(config_files)
@@ -196,7 +165,7 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, log_upload=True,
     duration_int = round(duration)
     time_str = start_time.isoformat(' ')
     print ("Time string is: {0}".format(time_str))
-    time_file = makeLogFile(log_dir_name, "CaptureTimes", time_str)
+    time_file = makeLogFile(log_dir_name, "CaptureTimes", True)
 
     with open(time_file, 'w') as time_fd:
         print(time_str, file=time_fd)
@@ -206,7 +175,7 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, log_upload=True,
     # calls. The "w+" mode ensures that the files is created if necessary.
     # The file remains open for writing until its "closed" method is called.
 
-    log_file_name = makeLogFile(log_dir_name, "ShellScriptLog")
+    log_file_name = makeLogFile(log_dir_name, "ShellScriptLog", False)
     with open(log_file_name, 'w+') as log_file:
         # Print out the arguments and variables of interest
         print ("Version 0.8 of ExternalScript.py, 26-Feb-2021, bytes = 15666", file=log_file)
@@ -283,9 +252,6 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, log_upload=True,
 
     # Reboot the Pi if requested. Code stolen from StartCapture.py.
     # (script needs sudo priviledges, works only on Linux)
-
-    if __name__ == "__main__" and log_upload:
-        initLogging(config, "NM_UPLOAD_")
 
     log.info("ExternalScript has finished!")
 
