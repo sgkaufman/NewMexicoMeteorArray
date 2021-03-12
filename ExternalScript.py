@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-This is Version 0.8 of file ExternalScript.py. Dated 03/06/2021. 
+This is Version 0.8 of file ExternalScript.py. Dated 02/26/2021. 
 Intended for Python 3 on Buster-based Raspberry Pi4s.
 Byte count = 13581
 This script 
@@ -27,24 +27,25 @@ from RMS.Logger import initLogging
 import ftplib
 from ftplib import FTP_TLS
 
-def makeLogFile(log_file_dir, prefix, date_only):
+def makeLogFile(log_file_dir="", prefix="", date_only=False):
     """
     Create a log file to provide as stdout and stderr for
     the subprocess.calls of the shell scripts.
     Return the file pointer to the log file in OPEN state.
     date_only means to only use the date in the log file name.
     """
-
+    
     if date_only:
         format_str = '%Y_%m_%d'
     else:
         format_str = '%Y_%m_%d_%H%M%S.%f'
-        
+
     log_filename = prefix + "_" + \
         datetime.datetime.utcnow().strftime(format_str) + ".log"
 
     full_filename = log_file_dir + log_filename
     print("Creating log file name %s\n" % full_filename)
+
     return full_filename
 
 ########################################################################
@@ -124,7 +125,10 @@ def getFilesAndUpload(logger, nm_config, main_data_dir, log_file_fd):
     upload_manager.stop()
 
 
-def uploadFiles(captured_night_dir, archived_night_dir, config, log_upload=True, reboot=True, CreateTimeLapse=True, CreateCaptureStack=True, preset='micro'):
+def uploadFiles(captured_night_dir, archived_night_dir, config, \
+                log_upload=True, log_script=False, reboot=True, \
+                CreateTimeLapse=True, CreateCaptureStack=True, \
+                preset='micro'):
     """ Function to upload selected files from the ArchivedData or CapturedData
         directory to the New_Mexico_Server.
         Files to transfer include:
@@ -175,10 +179,14 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, log_upload=True,
     # calls. The "w+" mode ensures that the files is created if necessary.
     # The file remains open for writing until its "closed" method is called.
 
-    log_file_name = makeLogFile(log_dir_name, "ShellScriptLog", False)
+    if log_script:
+        log_file_name = makeLogFile(log_dir_name, "ShellScriptLog", False)
+    else:
+        log_file_name ="/dev/null"
+        
     with open(log_file_name, 'w+') as log_file:
         # Print out the arguments and variables of interest
-        print ("Version 0.8 of ExternalScript.py, 06-Mar-2021, bytes = 13581", file=log_file)
+        print ("Version 0.8 of ExternalScript.py, 26-Feb-2021, bytes = 15666", file=log_file)
         print("remote_dir set to %s" % remote_dir, file=log_file)
         print("Name of program running = %s" % (__name__), file=log_file)
         print("reboot arg = %s" % reboot, file=log_file)
@@ -282,6 +290,11 @@ if __name__ == "__main__":
     
     nmp.add_argument('--directory', type=str, \
                            help="Subdirectory of CapturedFiles or ArchiveFiles to upload. For example, US0006_20190421_020833_566122")
+    nmp.add_argument('--log_script', type=str2bool, \
+                     choices=[True, False, 'Yes', 'No', '0', '1'], \
+                     default=False, \
+                     help="When True, create a log file for the calls to TimeLapse.sh and BackuupToUSB.sh, and any others. When False, no log file is created."
+                     )
     nmp.add_argument('--reboot', type=str2bool, \
                      choices=[True, False, 'Yes', 'No', '0', '1'], \
                      default=True, \
@@ -317,12 +330,18 @@ if __name__ == "__main__":
     archive_data_dir = os.path.join(config.data_dir, 'ArchivedFiles', args.directory)
     
     uploadFiles(captured_data_dir, archive_data_dir, config, \
-                log_upload=True, \
+                log_upload=True,
+                log_script=args.log_script, \
                 reboot=args.reboot, \
                 CreateTimeLapse=args.CreateTimeLapse, \
                 CreateCaptureStack=args.CreateCaptureStack, \
                 preset='micro')
 
-
+"""
+def uploadFiles(captured_night_dir, archived_night_dir, config, \
+                log_upload=True, log_script=False, reboot=True, \
+                CreateTimeLapse=True, CreateCaptureStack=True, \
+                preset='micro'):
+"""
 
     
