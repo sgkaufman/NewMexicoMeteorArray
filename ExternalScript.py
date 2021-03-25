@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
 """
-This is Version 0.8 of file ExternalScript.py. Dated 03/12/2021. 
+This is Version 0.8 of file ExternalScript.py. Dated 03/25/2021. 
 Intended for Python 3 on Buster-based Raspberry Pi4s.
-Byte count = 14383
+Byte count = 14564
 This script 
 1: Moves, creates, and copies files on the RMS stations, and 
 2: Uploads files to the New Mexico Meteor Array Server.
@@ -166,14 +166,16 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
     start_time, duration = captureDuration(config.latitude, \
                                            config.longitude, \
                                            config.elevation)
-    duration_int = round(duration)
-    time_str = start_time.isoformat(' ')
-    print ("Time string is: {0}".format(time_str))
-    time_file = makeLogFile(log_dir_name, "CaptureTimes", True)
-
-    with open(time_file, 'w') as time_fd:
-        print(time_str, file=time_fd)
-        print(duration_int, file=time_fd)
+    # Ensure that we have a datetime object.
+    # captureDuration returns True if capture has begun.
+    if isinstance(start_time, datetime.datetime):
+        time_str = start_time.isoformat(' ')
+        print ("Time string is: {0}".format(time_str))
+        time_file = makeLogFile(log_dir_name, "CaptureTimes", True)
+        duration_int = round(duration)
+        with open(time_file, 'w') as time_fd:
+            print(time_str, file=time_fd)
+            print(duration_int, file=time_fd)
 
     # Make and save the file descriptor for shell script and print function
     # calls. The "w+" mode ensures that the files is created if necessary.
