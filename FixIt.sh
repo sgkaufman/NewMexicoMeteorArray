@@ -1,51 +1,63 @@
 #!/bin/bash
-# FixIt.sh	see echo line below for date of last update
+# FixIt.sh	see printf line below for date of last update
 # Combine reprocessing & external script calls
-# typical call is:	./FixIt.sh US0008_20191002_011553_128819
+#  a typical call is:	./FixIt.sh US0008_20191002_011553_128819
 #
-# .FixIt.sh can take three arguments, all of which are 1 for Yes and 0 for No
-# .FixIt.sh <directory name> arg2 arg3 arg4 
+# .FixIt.sh can take five arguments, four of which are 1/0 for Yes/No, or True/False
+# .FixIt.sh <directory name> arg2 arg3 arg4 arg5 
+#
 #   arg1 <directory name>
-#   arg2 reboot, where 0 overrides normal reboot
-#   arg3 timelapse, where 0 overrrides normal timelapse mp4 file creation
-#   arg4 reprocess data in ArchiveFilesReprocessed, where creation
-#	of timelapse mp4 using captured files directory is optional
+#   arg2 reboot, where 0/False overrides normal reboot
+#   arg3 TimeLapse, where 0/False overrrides normal TimeLapse mp4 file creation
+#   arg4 CapStack, where 0/False overrrides normal CapStack file creation
+#   arg5 reprocess data in ArchiveFilesReprocessed, where creation
+#	of TimeLapse mp4 using captured files directory and capstck are optional
 #
 # so for a normal run:	./FixIt.sh <directory name>
 #  no reboot: 		./FixIt.sh <directory name> 0
-#	since creation of timelapse is the default behavior, a mp4 will
-#	be created, resulting in the same behavior as the next example:
+#	since creation of TimeLapse and capt stack are often default behavior,
+#	mp4 and CapStack.jpg will be created, resulting in the same behavior 
+#	as the next example:
 #  no reboot, mp4	./FixIt.sh <directory name> 0 1
+#   or
+#  no reboot, mp4, CapStack	./FixIt.sh <directory name> 0 1 1
 #  reboot, no mp4: 	./FixIt.sh <directory name> 1 0
 #  no reboot, no mp4: 	./FixIt.sh <directory name> 0 0
+#  reboot, mp4, CapStack: 	./FixIt.sh <directory name> 1 1 1
 #  run on ArchivedFilesReprocessed:	./FixIt.sh <directory name> 0/1 0/1 1
 #					arg 2: 0 or 1
 #					arg 3: 0 or 1
-#					arg 4: 1 or other, only testing to see if arg4 exists
-# A typical run on ArchiveFilesReprocessed data, no reboot, and no mp4 wouild be:
-#			./FixIt.sh <directory name> 0 0 1
+#					arg 3: 0 or 1
+#					arg 5: 1 or other, only testing to see if arg4 exists
+# A run on ArchiveFilesReprocessed data, no reboot, no mp4, no CapStack wouild be:
+#			./FixIt.sh <directory name> 0 0 0 1
 
 cd /home/pi/source/RMS
-echo FixIt.sh, 24-Feb, 2021, byte count = 2414 : Combining reprocess and external script calls...
+printf "\nFixIt.sh, 27-Mar, 2021, byte count = 3162 : Combining reprocess and external script calls...\n"
 case $# in
-    "4")
-         echo "Reprocessing data in ArchivedFilesReprocessed $1, with reboot=$2, and create mp4=$3"
+    "5")
+         printf "Reprocessing data in ArchivedFilesReprocessed $1, with reboot=$2, create mp4=$3, and create CapStack=$4\n"
          python -m RMS.Reprocess ~/RMS_data/ArchivedFilesReprocessed/"$1"
-         python -m RMS.ExternalScript --directory "$1" --reboot "$2" --CreateTimeLapse "$3"
+         python -m RMS.ExternalScript --directory "$1" --log_script 0 --reboot "$2" --CreateTimeLapse "$3" --CreateCaptureStack "$4"
+         ;;
+    "4")
+         printf "Reprocessing data in CapturedFiles $1, with reboot=$2, create mp4=$3, and create CapStack=$4\n"
+         python -m RMS.Reprocess ~/RMS_data/ArchivedFilesReprocessed/"$1"
+         python -m RMS.ExternalScript --directory "$1" --log_script 0 --reboot "$2" --CreateTimeLapse "$3"--CreateCaptureStack "$4"
          ;;
     "3")
-         echo "Reprocessing data in CapturedFiles $1, with reboot=$2, and create mp4=$3"
+         printf "Reprocessing data in CapturedFiles $1, with reboot=$2, and create mp4=$3\n"
          python -m RMS.Reprocess ~/RMS_data/CapturedFiles/"$1"
-         python -m RMS.ExternalScript --directory "$1" --reboot "$2" --CreateTimeLapse "$3"
+         python -m RMS.ExternalScript --directory "$1" --log_script 0 --reboot "$2" --CreateTimeLapse "$3"
          ;;
     "2")
-         echo "Reprocessing data in CapturedFiles $1, with reboot=$2, after mp4 created"
+         printf "Reprocessing data in CapturedFiles $1, with reboot=$2\n"
          python -m RMS.Reprocess ~/RMS_data/CapturedFiles/"$1"
-         python -m RMS.ExternalScript --directory "$1" --reboot "$2"
+         python -m RMS.ExternalScript --directory "$1" --log_script 0 --reboot "$2"
          ;;
     *)
-         echo "Reprocessing data in CapturedFiles $1,  with mp4 created, then reboot"
+         printf "Reprocessing data in CapturedFiles $1,  with default reboot\n"
          python -m RMS.Reprocess ~/RMS_data/CapturedFiles/"$1"
-         python -m RMS.ExternalScript --directory "$1"
+         python -m RMS.ExternalScript --directory "$1" --log_script 0
          ;;
-esac 
+esac
