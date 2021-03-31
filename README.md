@@ -1,4 +1,4 @@
-# NewMexicoMeteorArray 29-Mar-2021
+# NewMexicoMeteorArray 31-Mar-2021
 Files for the New Mexico Meteor Array sub-network of the Global Meteor Network
 
 Filename		(Bytes)
@@ -15,6 +15,6 @@ move_to_RMS.sh		(1,693)
 RecordWatchdog.sh	(8,126)
 StartCaptureWatchdog.sh	(634)
 
-Turn_Features_On_Off.txt(3714)
+Turn_Features_On_Off.txt(4381)
 
 FlushQueue.py		(7186)

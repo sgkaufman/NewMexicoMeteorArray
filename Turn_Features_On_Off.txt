@@ -1,4 +1,7 @@
-How to turn ES and TL features on and off, 
+How to turn ES and TL features on and off
+31-Mar, 2021 	added directions to turn shell script logging on
+		added instructions on how to enable Extra_Uploads.sh
+ 
 27-Mar, 2021 change line number for turning off uploads to NM_server ES 245  -> 247
 		matching ES 25-Mar, 2021 (14564)
 
@@ -17,7 +20,9 @@ captured stack
 
 my uploads
 	do this by changing the value in TL line at 28
-	My_Uploads=0
+	My_Uploads=0 to 1
+	This will cause RMS_data/My_Uploads to be populated
+	also see note below about Extra_Uploads.sh
 
 uploads to NM server
 	For both manual and RMS methods
@@ -29,7 +34,21 @@ reboot at end of ES
 	log_upload=True, log_script=False, reboot=False, \
 	 This will change byte count to 14,384
 
+shell script in ES
+	To enable the shell script logging in ES, on line 129, 
+	change log_script=False to True
+
+enable extra uploads
+	To enable extra uploads to user specified site, place a copy of
+	the correct upload instructions in a file called "Extra_Uploads.sh"
+	located in source/RMS
+	also see note above about My_Uploads=1 in TL
+
+
 Future changes:
+New: consider dropping upload to NM_Server for *.cal, .config, platepar 
+	and CALSTARS.txt
+
 Consider later mods to TimeLapse.sh to allow copying tar.bz2 to user specified 
 site via Extra_Uploads, if so, note that Cap_Stack.jpg, TimeLapse.mp4 and 
 fits_counts are not in the tar.bz2
