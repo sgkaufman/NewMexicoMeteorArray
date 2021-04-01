@@ -1,8 +1,9 @@
-# NewMexicoMeteorArray 31-Mar-2021
+# NewMexicoMeteorArray 01-Apr-2021
 Files for the New Mexico Meteor Array sub-network of the Global Meteor Network
 
 Filename		(Bytes)
 ExternalScript.py	(14,564)
+ExternalScript_09.py	(13,759)
 
 Backup.sh		(1,009)
 BackupToUSB.sh		(1,761)
