@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-FlushQueue.py (7186 bytes) 28-Mar, 2021
+FlushNMqueue.py (7196 bytes) 28-Mar, 2021
 This script flushes the queue for files uploaded to New Mexico Meteor Array Server.
 
 It is a hacked copy of 
@@ -129,7 +129,7 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
 
     with open(log_file_name, 'w+') as log_file:
         # Print out the arguments and variables of interest
-        print ("Version 0.1 of FlushQueue.py, 28-Mar-2021, bytes = 7186", file=log_file)
+        print ("Version 0.1 of FlushNMqueue.py, 02-Apr-2021, bytes = 7196", file=log_file)
         print("remote_dir set to %s" % remote_dir, file=log_file)
         print("Name of program running = %s" % (__name__), file=log_file)
         print("log_dir_name = %s" % log_dir_name, file=log_file)
@@ -138,12 +138,12 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
 
 
         # logging needed when run as part of RMS, or when the argument is set
-        # NOTE: When run as part of RMS, the program name is "FlushQueue".
+        # NOTE: When run as part of RMS, the program name is "FlushNMqueue".
         # Otherwise the program name is "__main__"
         if __name__ == "__main__" and log_upload:
             initLogging(config, "NM_UPLOAD_")
             # Get the logger handle. 
-            log = logging.getLogger("logger.FlushQueue")
+            log = logging.getLogger("logger.FlushNMqueue")
         else:
             log = logging.getLogger("logger")
 
@@ -151,7 +151,7 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
         # Upload files to the NM Server
         getFilesAndUpload(log, nm_config, main_data_dir, log_file)
 
-    log.info("FlushQueue has finished!")
+    log.info("FlushNMqueue has finished!")
 
 ####################################
 
