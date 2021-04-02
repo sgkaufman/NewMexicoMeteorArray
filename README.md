@@ -1,4 +1,4 @@
-# NewMexicoMeteorArray 01-Apr-2021
+# NewMexicoMeteorArray 02-Apr-2021
 Files for the New Mexico Meteor Array sub-network of the Global Meteor Network
 
 Filename		(Bytes)
