@@ -18,6 +18,5 @@ StartCaptureWatchdog.sh	(634)
 
 Turn_Features_On_Off.txt(4381)
 
-02-Apr, 2021, removed NM_Server.sh, added replacement FlushNMqueue.py,
+02-Apr, 2021, removed NM_Server.sh (905), added replacement FlushNMqueue.py,
 which is a renamed version of FlushQueue.py (7186)
-NM_Server.sh		(905)
