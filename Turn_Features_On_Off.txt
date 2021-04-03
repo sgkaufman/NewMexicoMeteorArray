@@ -1,4 +1,4 @@
-How to turn ES and TL features on and off
+How to turn ExternalScript.py and TimeLapse.sh features on and off
 03-Apr, 2021 	added directions to turn shell script logging on
 		added instructions on how to enable Extra_Uploads.sh
 
@@ -10,19 +10,29 @@ How to turn ES and TL features on and off
 
 13-Mar, 2021 last major revision
 
+IMPORTANT!: When making any changes to TimeLapse.sh, there can be NO SPACES
+between any symbols on the line! Use the examples as thry are written.
+
 time lapse
-	do this by changing the value in TL line at 26
+        Turn off by changing the value in TimeLapse.sh at line 26:
 	TimeLapse=0
+	Turn on by changing the value in TimeLapse.sh at line 26:
+	TimeLapse=1
 
 captured stack
-	do this by changing the value in TL line at 27
+	Turn off by setting the value in TimeLapse.sh at line 27:
 	Cap_Stack=0
+	Turn on by setting the value in TimeLapse.sh at line 27:
+	CapStack=1
 
 my uploads
-	do this by changing the value in TL line at 28
-	My_Uploads=0 to 1
-	This will cause RMS_data/My_Uploads to be populated
-	also see note below about Extra_Uploads.sh
+	Turn on by changing the value in TimeLapse.sh line at 28
+	My_Uploads=1
+	This will cause RMS_data/My_Uploads to be populated,
+	and Extra_Uploads.sh will be executed.
+	See note below about Extra_Uploads.sh.
+	Turn off by changing the value in TimeLapse.sh at line 28:
+	My_Uploads=0
 
 uploads to NM server
 	For both manual and RMS methods
@@ -50,8 +60,7 @@ enable extra uploads
 	also see note above about My_Uploads=1 in TL
 _______________
 
-Future changes:
-ES v0.9: drops upload to NM_Server for *.cal, .config, platepar
+Future changes:ES v0.9: drops upload to NM_Server for *.cal, .config, platepar
 	and CALSTARS.txt
 
 Consider later mods to TimeLapse.sh to allow copying tar.bz2 to user specified
@@ -77,7 +86,7 @@ Consider altering sending to NM_Server to sending to XX_Server
 - later ?, change all vars by removing nm_  
 _______________
 
-Mods_for_0S.txt
+Mods_for_0S.txt (Bob Massey's)
 
 I did a bit of sleuthing on several files and here are my preliminary findings:
 
