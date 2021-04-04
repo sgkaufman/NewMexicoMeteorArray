@@ -11,7 +11,8 @@ How to turn ExternalScript.py and TimeLapse.sh features on and off
 13-Mar, 2021 last major revision
 
 IMPORTANT!: When making any changes to TimeLapse.sh, there can be NO SPACES
-between any symbols on the line! Use the examples as thry are written.
+between any symbols on the line! Use the examples as they are written, so
+var=value as in TimeLapse=1
 
 time lapse
         Turn off by changing the value in TimeLapse.sh at line 26:
