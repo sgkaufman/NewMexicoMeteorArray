@@ -1,10 +1,10 @@
-# NewMexicoMeteorArray 04-Apr-2021
+# NewMexicoMeteorArray 06-Apr-2021
 Files for the New Mexico Meteor Array sub-network of the Global Meteor Network
 
 Filename		(Bytes)
-ExternalScript.py	(14,564)
+ExternalScript.py	(13,759)
 ExternalScript_09.py	(13,759)
-FlushNMqueue.py		(7196)
+FlushNMqueue.py		(4720)
 
 Backup.sh		(1,009)
 BackupToUSB.sh		(1,761)
@@ -17,6 +17,4 @@ RecordWatchdog.sh	(8,126)
 StartCaptureWatchdog.sh	(634)
 
 Turn_Features_On_Off.txt(4873)
-
-02-Apr, 2021, removed NM_Server.sh (905), added replacement FlushNMqueue.py,
-which is a renamed version of FlushQueue.py (7186)
+_____
