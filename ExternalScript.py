@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
 """
-This is Version 0.8 of file ExternalScript.py. Dated 03/25/2021. 
-Intended for Python 3 on Buster-based Raspberry Pi4s.
-Byte count = 14564
+This is Version 0.9 of file ExternalScript.py. Dated 04/01/2021. 
+ v0.9 reduces the number of files uploaded to NM Server
+Byte count = 13759
 This script 
 1: Moves, creates, and copies files on the RMS stations, and 
 2: Uploads files to the New Mexico Meteor Array Server.
@@ -34,7 +34,7 @@ def makeLogFile(log_file_dir="", prefix="", date_only=False):
     Return the file pointer to the log file in OPEN state.
     date_only means to only use the date in the log file name.
     """
-    
+
     if date_only:
         format_str = '%Y_%m_%d'
     else:
@@ -82,30 +82,22 @@ def getFilesAndUpload(logger, nm_config, main_data_dir, log_file_fd):
     png_files = findFiles(main_data_dir, all_files, "*.png")
     print("Adding %d png files to queue ..." % len(png_files), file=log_file_fd)
     upload_manager.addFiles(png_files)
-    
+
     jpg_files = findFiles(main_data_dir, all_files, "*.jpg")
     print("Adding %d jpg files to queue ..." % len(jpg_files), file=log_file_fd)   
     upload_manager.addFiles(jpg_files)
 
-    #ftp_files = findFiles(main_data_dir, all_files, "FTP*")
-    #print("Adding %d ftp files to queue ..." % ftp_files.__len__())
-    #upload_manager.addFiles(ftp_files)
-    
+    ftp_files = findFiles(main_data_dir, all_files, "FTP*")
+    print("Adding %d ftp files to queue ..." % ftp_files.__len__())
+    upload_manager.addFiles(ftp_files)
+
+    txt_files = findFiles(main_data_dir, all_files, "*_radiants.txt")
+    print("Adding %d txt files to queue ..." % len(txt_files), file=log_file_fd)
+    upload_manager.addFiles(txt_files)
+
     csv_files = findFiles(main_data_dir, all_files, "*.csv")
     print("Adding %d csv files to queue ..." % len(csv_files), file=log_file_fd)
     upload_manager.addFiles(csv_files)
-    
-    cal_files = findFiles(main_data_dir, all_files, "*.cal")
-    print("Adding %d cal files to queue ..." % len(cal_files), file=log_file_fd)
-    upload_manager.addFiles(cal_files)
-    
-    txt_files = findFiles(main_data_dir, all_files, "*.txt")
-    print("Adding %d txt files to queue ..." % len(txt_files), file=log_file_fd)
-    upload_manager.addFiles(txt_files)
-    
-    config_files = findFiles(main_data_dir, all_files, "/home/pi/source/RMS/.config")
-    print("Adding %d config files to queue ..." % len(config_files), file=log_file_fd)    
-    upload_manager.addFiles(config_files)
 
     csv_dir = os.path.join(nm_config.data_dir, 'csv/')
     print("csv_dir set to %s" % csv_dir, file=log_file_fd)
@@ -115,11 +107,9 @@ def getFilesAndUpload(logger, nm_config, main_data_dir, log_file_fd):
     print("Adding %d fits_count.txt files to queue ..." % len(fits_count_file), \
           file=log_file_fd)
     upload_manager.addFiles(fits_count_file)
-    
-    # Get the .config file if the calibration file does not exist?
 
     # Begin the upload!
-    
+
     upload_manager.uploadData()
 
     upload_manager.stop()
@@ -132,13 +122,12 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
     """ Function to upload selected files from the ArchivedData or CapturedData
         directory to the New_Mexico_Server.
         Files to transfer include:
+        *.png
         *.jpg
         FTP*.txt
-        *.png
+        *_radiants.txt
         *.csv
-        *.cal
-        platepar*.cal
-        .config (in case no platepar_cmn2010.cal)
+        *_fits_count.txt
     """
 
     # Variable definitions
@@ -222,7 +211,7 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
                                  shell=True)
         print("TimeLapse call returned with status ", \
               status, file=log_file)
-    
+
         # backup data to thumb drive, PNE 12/08/2019
         status = subprocess.call("/home/pi/source/RMS/BackupToUSB.sh " \
                                  + data_dir_name, \
@@ -330,7 +319,7 @@ if __name__ == "__main__":
 
     captured_data_dir = os.path.join(config.data_dir, 'CapturedFiles', args.directory)
     archive_data_dir = os.path.join(config.data_dir, 'ArchivedFiles', args.directory)
-    
+
     uploadFiles(captured_data_dir, archive_data_dir, config, \
                 log_upload=True,
                 log_script=args.log_script, \
@@ -338,12 +327,3 @@ if __name__ == "__main__":
                 CreateTimeLapse=args.CreateTimeLapse, \
                 CreateCaptureStack=args.CreateCaptureStack, \
                 preset='micro')
-
-"""
-def uploadFiles(captured_night_dir, archived_night_dir, config, \
-                log_upload=True, log_script=False, reboot=True, \
-                CreateTimeLapse=True, CreateCaptureStack=True, \
-                preset='micro'):
-"""
-
-    
