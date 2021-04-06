@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-FlushNMqueue.py (7196 bytes) 28-Mar, 2021
+FlushNMqueue.py (4720 bytes) 06-Apr, 2021
 This script flushes the queue for files uploaded to New Mexico Meteor Array Server.
 
 It is a hacked copy of 
@@ -50,22 +50,8 @@ def makeLogFile(log_file_dir="", prefix="", date_only=False):
     return full_filename
 
 ####################################
-    
-def findFiles(dataDir, allFiles, pattern):
-    """
-    Searches allFiles for those matching the pattern.
-    allFiles is the list of files under dataDir,
-    and dataDir is added to the names of the files matching pattern.
-    Hence the list returned has all absolute path names.
-    """
-    found_files = []
-    pattern_files = fnmatch.filter(allFiles, pattern)
-    for pattern_file in pattern_files:
-        full_file = os.path.join(dataDir, pattern_file)
-        found_files.append(full_file)
-    return found_files
 
-def getFilesAndUpload(logger, nm_config, main_data_dir, log_file_fd):
+def getFilesAndUpload(logger, nm_config, log_file_fd):
 
     # The argument "log_file_fd" is assumed to be passed in
     # open state, and need not be closed during the call.
@@ -76,47 +62,21 @@ def getFilesAndUpload(logger, nm_config, main_data_dir, log_file_fd):
     upload_manager = UploadManager(nm_config)
     upload_manager.start()
 
-    # Get the files from the main_data_dir for NM upload
-    all_files = os.listdir(main_data_dir)
-
-    csv_files = findFiles(main_data_dir, all_files, "*.csv")
-    print("Adding %d csv files to queue ..." % len(csv_files), file=log_file_fd)
-    upload_manager.addFiles(csv_files)
-
-    csv_dir = os.path.join(nm_config.data_dir, 'csv/')
-    print("csv_dir set to %s" % csv_dir, file=log_file_fd)
-
-    fits_count_file = findFiles(csv_dir, os.listdir(csv_dir), \
-                               "*fits_counts.txt")
-    print("Adding %d fits_count.txt files to queue ..." % len(fits_count_file), \
-          file=log_file_fd)
-    upload_manager.addFiles(fits_count_file)
-
     # Begin the upload!
     upload_manager.uploadData()
 
     upload_manager.stop()
 
 
-def uploadFiles(captured_night_dir, archived_night_dir, config, \
-                log_upload=True, log_script=False):
+def uploadFiles( config, log_upload=True, log_script=False):
     """ Function to upload selected files from the ArchivedData or CapturedData
         directory to the New_Mexico_Server.
-        Files to transfer include:
-        *.csv
     """
 
     # Variable definitions
-    main_data_dir = archived_night_dir
-    extra_uploads_file = "/home/pi/source/RMS/Extra_Uploads.sh"
     remote_dir = '/Users/meteorstations/Public'
-
     RMS_data_dir_name = os.path.abspath("/home/pi/RMS_data/")
-    print ("RMS_data_dir_name = {0}".format(RMS_data_dir_name))
-    data_dir_name = os.path.basename(main_data_dir)
-    print ("data_dir_name = {0}".format(data_dir_name))
     log_dir_name = os.path.join(RMS_data_dir_name, 'logs/')
-    print ("log_dir_name = {0}".format(log_dir_name))
 
     # Create the config object for New Mexico Meteor Array purposes
     nm_config = copy.copy(config)
@@ -129,12 +89,10 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
 
     with open(log_file_name, 'w+') as log_file:
         # Print out the arguments and variables of interest
-        print ("Version 0.1 of FlushNMqueue.py, 02-Apr-2021, bytes = 7196", file=log_file)
+        print ("Version 0.2 of FlushNMqueue.py, 06-Apr-2021, bytes = 4720", file=log_file)
         print("remote_dir set to %s" % remote_dir, file=log_file)
         print("Name of program running = %s" % (__name__), file=log_file)
         print("log_dir_name = %s" % log_dir_name, file=log_file)
-        print("ArchivedFiles directory = %s" % archived_night_dir, \
-              file=log_file)
 
 
         # logging needed when run as part of RMS, or when the argument is set
@@ -149,7 +107,7 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
 
 
         # Upload files to the NM Server
-        getFilesAndUpload(log, nm_config, main_data_dir, log_file)
+        getFilesAndUpload(log, nm_config, log_file)
 
     log.info("FlushNMqueue has finished!")
 
@@ -167,10 +125,8 @@ def str2bool(v):
 
 if __name__ == "__main__":
 
-    nmp = argparse.ArgumentParser(description="""Upload files to New_Mexico_Server, and optionally move other files to storage devices, create a TimeLapse.mp4 file, and reboot the system after all processing.""")
+    nmp = argparse.ArgumentParser(description="""Flush the NM_Server upload queue""")
     
-    nmp.add_argument('--directory', type=str, \
-                           help="Subdirectory of CapturedFiles or ArchiveFiles to upload. For example, US0006_20190421_020833_566122")
     nmp.add_argument('--log_script', type=str2bool, \
                      choices=[True, False, 'Yes', 'No', '0', '1'], \
                      default=False, \
@@ -178,21 +134,10 @@ if __name__ == "__main__":
                      )
     args = nmp.parse_args()
 
-    if args.directory == None:
-        print ("Directory argument not present! Exiting ...")
-        sys.exit()
-
-    print ('directory arg: ', args.directory)
-
     config = RMS.ConfigReader.loadConfigFromDirectory(None, "/home/pi/source/RMS/.config")
 
-    print("config.data_dir = ", config.data_dir)
+    print("Running FlushNMqueue.py, 06-Apr, 2021, byte count = 4720, flushing the NM upload queue...")
 
-    captured_data_dir = os.path.join(config.data_dir, 'CapturedFiles', args.directory)
-    archive_data_dir = os.path.join(config.data_dir, 'ArchivedFiles', args.directory)
-    
-    uploadFiles(captured_data_dir, archive_data_dir, config, \
-                log_upload=True,
-                log_script=args.log_script)
+    uploadFiles(config, log_upload=True, log_script=args.log_script)
 
 ####################################
