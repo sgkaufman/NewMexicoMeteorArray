@@ -9,8 +9,6 @@ It contains code fragments from ExternalScript.py v0.8, Dated 03/25/2021 (14564 
 
 from __future__ import print_function
 
-import os
-import sys
 import copy
 import logging
 
