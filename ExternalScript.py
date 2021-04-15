@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-This is Version 0.9 of file ExternalScript.py. Dated 04/01/2021. 
+This is Version 0.9 of file ExternalScript.py. Dated 04/05/2021. 
  v0.9 reduces the number of files uploaded to NM Server
 Byte count = 13759
 This script 
