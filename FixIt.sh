@@ -33,7 +33,18 @@
 #			./FixIt.sh <directory name> 0 0 0 1
 
 cd /home/pi/source/RMS
-printf "\nFixIt.sh, 27-Mar, 2021, byte count = 3162 : Combining reprocess and external script calls...\n"
+printf "\nFixIt.sh, 15-Apr, 2021, byte count = 3465 : Combining reprocess and external script calls...\n"
+
+if [ $# -eq 0 ] ; then 
+   printf "No first argument given, exiting now\n"
+   exit 1
+   fi
+
+if [ ! -d /home/pi/RMS_data/CapturedFiles/"$1" ] && [ ! -d /home/pi/RMS_data/ArchivedFilesReprocessed/"$1" ] ; then
+   printf "First argument: %s  must be a valid directory to reprocess\n", $1
+   exit 1
+   fi
+
 case $# in
     "5")
          printf "Reprocessing data in ArchivedFilesReprocessed $1, with reboot=$2, create mp4=$3, and create CapStack=$4\n"
