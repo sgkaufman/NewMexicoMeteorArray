@@ -8,7 +8,7 @@ FlushNMqueue.py		(1505)
 Backup.sh		(1,009)
 BackupToUSB.sh		(1,761)
 CamSet.sh		(1,239)
-FixIt.sh		(3,465)
+FixIt.sh		(3,539)
 TimeLapse.sh		(8,986)
 
 move_to_RMS.sh		(1,693)
