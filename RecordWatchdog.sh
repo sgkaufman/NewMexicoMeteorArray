@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Byte count: 8126
+# Last Revision: 02-May-2021; Byte count: 8284
 # 07/09/2020: Added "-r" option to Scripts/RMS_StartCapture.sh,
 # and call to logger, like the kern.log watchdog.
 # RMS_RecordWatchdog.sh, version 0.1, Steve Kaufman
@@ -44,7 +44,7 @@
 declare capture_dir=$HOME/RMS_data/CapturedFiles
 declare log_dir=$HOME/RMS_data/logs
 declare latitude longitude elevation
-declare capture_file start_date
+declare capture_file start_date capture_float
 declare -i start_time capture_len capture_end
 declare -i capture_end
 declare -i file_time now delta
@@ -117,10 +117,11 @@ echo "Latitude: " $latitude
 echo "Longitude: " $longitude
 echo "Elevation: " $elevation
 
-python -m RMS.WriteCapture \
-       --latitude $latitude \
-       --longitude $longitude \
-       --elevation $elevation
+# Relying on ExternalScript.py to write out the CaptureTimes file
+#python -m RMS.WriteCapture \
+#       --latitude $latitude \
+#       --longitude $longitude \
+#       --elevation $elevation
 
 capture_file=$(ls -t $log_dir/'CaptureTimes'* | sed -n 1p)
 env printf "Using %s for start time and capture duration\n" $capture_file
@@ -128,8 +129,9 @@ env printf "Using %s for start time and capture duration\n" $capture_file
 # Read the start time and capture duration from the file
 {
     read -r start_date
-    read capture_len
+    capture_len=$(grep -Eo ^[0-9]+ -)
 } < $capture_file
+
 
 start_time=$(date --date="$start_date" +%s)
 echo 'Start time, UTC: ' $start_date
@@ -240,9 +242,11 @@ date
 
 sleep 1000
 
-python -m RMS.WriteCapture \
-       --latitude $latitude \
-       --longitude $longitude \
-       --elevation $elevation
+cd /home/pi/source/RMS
+
+#python -m RMS.WriteCapture \
+#       --latitude $latitude \
+#       --longitude $longitude \
+#       --elevation $elevation
 
 exit 0
