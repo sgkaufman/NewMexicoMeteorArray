@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-FlushNMqueue.py (1528 bytes) 07-Apr, 2021
+FlushNMqueue.py (1505 bytes) 15-Apr-2021.
 This script flushes the queue for files uploaded to New Mexico Meteor Array Server.
 
 It contains code fragments from ExternalScript.py v0.8, Dated 03/25/2021 (14564 bytes)
