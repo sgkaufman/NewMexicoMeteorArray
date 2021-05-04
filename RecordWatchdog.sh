@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Last Revision: 02-May-2021; Byte count: 8284
+# Last Revision: 02-May-2021; Byte count: 8211
 # 07/09/2020: Added "-r" option to Scripts/RMS_StartCapture.sh,
 # and call to logger, like the kern.log watchdog.
 # RMS_RecordWatchdog.sh, version 0.1, Steve Kaufman
@@ -117,11 +117,11 @@ echo "Latitude: " $latitude
 echo "Longitude: " $longitude
 echo "Elevation: " $elevation
 
-# Relying on ExternalScript.py to write out the CaptureTimes file
-#python -m RMS.WriteCapture \
-#       --latitude $latitude \
-#       --longitude $longitude \
-#       --elevation $elevation
+
+python -m RMS.WriteCapture \
+       --latitude $latitude \
+       --longitude $longitude \
+       --elevation $elevation
 
 capture_file=$(ls -t $log_dir/'CaptureTimes'* | sed -n 1p)
 env printf "Using %s for start time and capture duration\n" $capture_file
@@ -244,9 +244,9 @@ sleep 1000
 
 cd /home/pi/source/RMS
 
-#python -m RMS.WriteCapture \
-#       --latitude $latitude \
-#       --longitude $longitude \
-#       --elevation $elevation
+python -m RMS.WriteCapture \
+       --latitude $latitude \
+       --longitude $longitude \
+       --elevation $elevation
 
 exit 0
