@@ -15,52 +15,22 @@ import os
 import datetime
 import argparse
 from RMS.CaptureDuration import captureDuration
-# from RMS.ExternalScript import makeDateTime
-# from RMS.ExternalScript import makeLogFile
-
-def makeDateTime(time_str):
-    """ 
-    Create and return a datetime object from the time_str,
-    assumed to be in ISO format with blank separator between date and time.
-    I.e., "2020-05-20 02:33:45.123456". No time zone. 
-    Only needed for Python 2, which does not have 
-    datetime.datetime.fromisoformat(time_str) method.
-    We add half a second using a timedelta to round up to nearest second.
-    """
-    half_sec = datetime.timedelta(milliseconds = 500)
-    parts = time_str.split(' ')
-    date = parts[0]
-    hour = parts[1]
-    date_parts = date.split('-')
-    hour_parts = hour.split(':')
-    sec_parts = (hour_parts[2]).split('.')
-    return datetime.datetime(year = int(date_parts[0]), \
-                             month = int(date_parts[1]), \
-                             day = int(date_parts[2]), \
-                             hour = int(hour_parts[0]), \
-                             minute = int(hour_parts[1]), \
-                             second = int(sec_parts[0]), \
-                             microsecond = int(sec_parts[1]) ) \
-        + half_sec
-
 
 def makeLogFile(log_file_dir, prefix, time_arg=None):
     
     # Create a log file to provide as stdout and stderr for
     # the subprocess.calls of the shell scripts.
     # Return the file pointer to the log file in OPEN state.
-    # time_arg, if given, is a date string of the form
-    # "2020-05-20 02:33:45.123456". Cannot include a timezone at the end.
+    # time_arg, if given, is a datetime object.
 
     if time_arg is None:
         time_to_use = datetime.datetime.utcnow()
     else:
-        time_to_use = makeDateTime(time_arg)
+        time_to_use = time_arg
 
-    log_filename = prefix + "_{0}_{1}_{2}".format \
-        (time_to_use.year, \
-         time_to_use.month, \
-         time_to_use.day)
+    log_filename = prefix + "_" + \
+        time_to_use.strftime( '%Y_%m_%d' ) + ".log"
+
     full_filename = log_file_dir + log_filename
     print("Creating log file name %s\n" % full_filename)
     return full_filename
@@ -100,7 +70,7 @@ if __name__ == "__main__":
         print ("WriteCapture.py, current_time: %s" % current)
 
     duration_int = round(duration)
-    time_str = start_time.isoformat(' ')
+    time_str = start_time
     print ("Time string is: %s" % time_str)
     time_file = makeLogFile('/home/pi/RMS_data/logs/', "CaptureTimes", time_str)
 
