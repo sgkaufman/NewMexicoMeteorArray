@@ -45,10 +45,10 @@ declare capture_dir=$HOME/RMS_data/CapturedFiles
 declare log_dir=$HOME/RMS_data/logs
 declare latitude longitude elevation
 declare capture_file start_date capture_float
+declare system_os
 declare -i start_time capture_len capture_end
-declare -i capture_end
 declare -i file_time now delta
-declare -i wait_time=900
+declare -i wait_sec
 
 time_from_file () {
     # Given a fits file, determines its creation time in seonds from epoch.
@@ -95,6 +95,28 @@ time_from_file () {
     echo $last_fits_time
 }
 
+###################################################################
+# Begin main watchdog
+
+system_os=$( grep -Eo 'buster|jessie' /etc/os-release )
+printf "system type: %s\n" "$system_os"
+if [[ -n "$system_os" ]]; then
+    case ${system_os:0:6} in
+	buster )
+	    wait_sec=120
+	    system_os="buster"
+	    ;;
+	jessie )
+	    wait_sec=180
+	    system_os="jessie"
+	    ;;
+    esac
+else
+    echo "Raspbian OS neither buster nor jessie. Strange ..."
+    exit 1
+fi
+
+
 # Switch to the ~/source/RMS directory so relative path references,
 # and python -m calls, work. Required at the top of the loop as
 # this code changes directories further down.
@@ -106,7 +128,6 @@ latitude=$(sed -n '/^latitude/'p .config | egrep -o '[+-]?[0-9]+\.[0-9]+{4}')
 longitude=$(sed -n '/^longitude/'p .config | egrep -o '[+-]?[0-9]+\.[0-9]+{4}')
 elevation=$(sed -n '/^elevation/'p .config | egrep -o ' [+-]?[0-9]+(\.[0-9]+)? ')
 
-
 if [ ! $elevation ]
 then
     echo "Error parsing elevation in .config file - exiting ..."
@@ -116,7 +137,6 @@ fi
 echo "Latitude: " $latitude
 echo "Longitude: " $longitude
 echo "Elevation: " $elevation
-
 
 python -m RMS.WriteCapture \
        --latitude $latitude \
@@ -131,7 +151,6 @@ env printf "Using %s for start time and capture duration\n" $capture_file
     read -r start_date
     capture_len=$(grep -Eo ^[0-9]+ -)
 } < $capture_file
-
 
 start_time=$(date --date="$start_date" +%s)
 echo 'Start time, UTC: ' $start_date
@@ -151,7 +170,8 @@ echo 'Watchdog stop time ' $capture_end_iso
 now=$(date +%s)
 if [ $start_time -gt $now ]
 then
-    echo 'Now it is ' $now ' seconds since epoch'
+    env printf 'Now it is %d seconds since epoch\n' "$now" # time is\n' $now  \
+#	$(date --date=@$now)
     init_wait_time=$(($start_time-$now))
     echo "Initial wait time: " $init_wait_time
     env sleep $(($init_wait_time-100))
@@ -167,7 +187,7 @@ fi
 #### Just in case sleep ended too soon ...
 now=$(date +%s)
 while [ $now -lt $start_time ]; do
-    env sleep $((wait_time/3))
+    env sleep $((wait_sec/3))
     now=$(date +%s)
     printf "%d seconds to go ...\n" $(($start_time - $now))
 done
@@ -179,7 +199,6 @@ while [ $now -lt $capture_end ]; do
     
     # Establish the time
     now=$(date +%s)
-    echo $now
 
     # Find the most recent CapturedFiles directory
     
@@ -217,7 +236,7 @@ while [ $now -lt $capture_end ]; do
     # Has it been too long since a FITS file was created?
     delta=$(($now - $file_time))
     printf "file time delta = %d\n" $delta
-    if [ $delta -gt $wait_time ];
+    if [ $delta -gt $wait_sec ];
     then
 	# Capture has failed
 	echo "Capture has failed..."
@@ -233,8 +252,15 @@ while [ $now -lt $capture_end ]; do
         lxterminal -e Scripts/RMS_StartCapture.sh -r
     fi
 
-    # Wait for the chosen time interval
-    env sleep $wait_time
+    # Wait for the processing queue to be reloaded
+    
+    env sleep 180 # Hardwired at 3 minutes based on experience.
+
+    while [ -f /home/pi/RMS_data/.capture_resuming ] ;
+    do
+       env sleep $wait_sec
+    done
+    env sleep $wait_sec
 done
 
 printf "Recording watchdog finished for the night, time is "
