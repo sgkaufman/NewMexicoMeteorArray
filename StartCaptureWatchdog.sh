@@ -9,7 +9,7 @@ log_dir="/home/pi/RMS_data/logs"
 
 # Find the latest CaptureTimes file in the log directory
 
-capture_file=$(ls -lt $log_dir/"CaptureTimes"* | sed -n 1p | cut -d' ' -f9)
+capture_file=$(ls -lt $log_dir/"CaptureTimes"* | sed -n 1p | cut -d' ' -f10)
 echo $capture_file
 read time < $capture_file
 mo=$(date --date="$time" +%m)
