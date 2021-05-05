@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Last Revision: 02-May-2021; Byte count: 8211
+# Last Revision: 05-May-2021; Byte count: 8872
 # 07/09/2020: Added "-r" option to Scripts/RMS_StartCapture.sh,
 # and call to logger, like the kern.log watchdog.
 # RMS_RecordWatchdog.sh, version 0.1, Steve Kaufman
