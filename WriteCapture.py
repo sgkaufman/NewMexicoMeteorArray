@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Version of 04-May-2021; Bytes: 4861
+Version of 05-May-2021; Bytes: 3496
 Version 0.1, SGK, 6/28/2020. This file belongs in directory
 /home/pi/source/RMS/RMS/.
 This file calls the RMS function captureDuration (from RMS.CaptureDuration)
