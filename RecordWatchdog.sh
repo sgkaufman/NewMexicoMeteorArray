@@ -1,33 +1,47 @@
 #!/bin/bash
 
-# Last Revision: 02-May-2021; Byte count: 8211
-# 07/09/2020: Added "-r" option to Scripts/RMS_StartCapture.sh,
-# and call to logger, like the kern.log watchdog.
-# RMS_RecordWatchdog.sh, version 0.1, Steve Kaufman
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+# Last Revision: 09-May-2021; Byte count: 9297
+# RMS_RecordWatchdog.sh, version 0.1, Steve Kaufman and Pete Eschman
 # This file belongs in directory /home/pi/source/RMS/Scripts.
-# It is intended to be started at boot (/etc/xdg/lxsession/LXDE-pi/autostart).
+# It is intended to be started at boot
+# (Buster: /etc/xdg/lxsession/LXDE-pi/autostart
+#  Jessie: /home/pi/.config/lxsession/LXDE-pi/autostart).
+# Dependencies: 
+# 1. ~/source/RMS/StartRecordCapture.sh
+# 2. ~/source/RMS/RMS/WriteCapture.py
 
-# This file tracks the creation of files in the directory
+# This file tracks the creation of FITS files in the directory
 # /home/pi/RMS_data/CapturedFiles. If too long elapses between
-# the creation of FITS files, a notification is made.
-# The notification indicates that the capture process has stopped.
-# The interval between invocations is the interval judged to be
-# "too long" between the creation of FITS files.
+# the creation of FITS files, the RMS system is restarted.
+# "Too long" is defined in the variable $wait_sec
 
-# Here is the outline of the algorithm. It is an infinite loop,
+# Here is the outline of the algorithm. 
 # with these major steps:
-# Step 1: Find ephemeris capture_start time,
+# Step 1: Identify system type, set $wait_sec appropriately.
+# Step 2: Find ephemeris capture_start time,
 # 	capture duration, and current time.
-# Step 2: Is current time < capture_start time? 
-#	Step 2a (Yes) sleep until capture_start time. Go to Step 3.
-#	Step 2b (No) continue to Step 3.
-# Step 3: Loop until end of capture time, every 3 minutes:
+# Step 3: Is current time < capture_start time? 
+#	Step 3a (Yes) sleep until capture_start time. Go to Step 4.
+#	Step 3b (No) continue to Step 4.
+# Step 4: Loop until end of capture time, every $wait_sec interval
 #       a. Get current time
 #	b. Check most recent FITS file, and its modification time
-#             Is FITS modification time > 3 minutes since current time?
-#             (Yes) Restart Capture 
-#	      (No) Continue
-#	      Repeat Step 3.
+#             Is FITS modification time > $wait_sec since current time?
+#             (Yes) Restart Capture
+#	      (No)  Wait $wait_sec seconds, continue step 4 loop.
 
 ### NOTE ON printf: When printf is used in this script,
 ### it is called as "env printf". Using the env command first guarantees
@@ -44,78 +58,43 @@
 declare capture_dir=$HOME/RMS_data/CapturedFiles
 declare log_dir=$HOME/RMS_data/logs
 declare latitude longitude elevation
-declare capture_file start_date capture_float
+declare capture_file start_date
 declare system_os
 declare -i start_time capture_len capture_end
 declare -i file_time now delta
 declare -i wait_sec
+declare -i new_log_count log_count
+declare -i loop_count
 
-time_from_file () {
-    # Given a fits file, determines its creation time in seonds from epoch.
-    # Arguments are the directory name (under CapturedFiles) and file name.
-    # This function assumes the RMS log directory file naming convention:
-    # %Y%m%d_%H%M%S.%f which in human reads as
-    # YYYYMMDD-HHMMSS.mmmmmm.log (m for microseconds).
-    # Return value is created in the "echo" statement at the end.
+# System identification
 
-    local hour day yr mo dt hr mn sec
-    #printf "In time_from_file: 1st arg is %s, 2nd arg is %s\n" $1 $2
+if [[ -f /etc/os-release ]]; then
+    system_os=$( grep -Eo 'buster|jessie' /etc/os-release )
 
-    if [ ! -e $capture_dir/$1/$2 ];
-    then
-	return 1
+    if [[ -n "$system_os" ]]; then
+	case ${system_os:0:6} in
+	    buster )
+		wait_sec=120
+		system_os="buster"
+		;;
+	    jessie )
+		wait_sec=180
+		system_os="jessie"
+		;;
+	    *      )
+		wait_sec=120
+		system_os=${system_os:0:6}
+		;;
+	esac
+	env printf "System type: %s\n" "$system_os"
+    else
+	echo "OS neither buster nor jessie. Forging ahead ... "
     fi
-    
-    # Extract the date field from the filename
-    day="$(echo $filename | cut -d'_' -f3)"
-
-    # Extract the time field from the filename
-    hour="$(echo $filename | cut -d'_' -f4)"
-
-    # Extract components of each
-    yr=${day:0:4}
-    mo=${day:4:2}
-    dt=${day:6:2}
-    hr=${hour:0:2}
-    mn=${hour:2:2}
-    sec=${hour:4:2}
-
-    # Create strings suitable for the date parameter to date command.
-    # First the day, with a trailing space
-    ds=$yr-$mo-$dt" "
-    # Second the time string
-    hs=$hr:$mn:$sec
-
-    # printf "date string = %s\n" $ds 
-    #printf "hour string = %s\n" $hs
-
-    # Convert the date and hour string into integer time
-    last_fits_time=$(date --date="${ds} ${hs}" +%s)
-
-    echo $last_fits_time
-}
-
-###################################################################
-# Begin main watchdog
-
-system_os=$( grep -Eo 'buster|jessie' /etc/os-release )
-printf "system type: %s\n" "$system_os"
-if [[ -n "$system_os" ]]; then
-    case ${system_os:0:6} in
-	buster )
-	    wait_sec=120
-	    system_os="buster"
-	    ;;
-	jessie )
-	    wait_sec=180
-	    system_os="jessie"
-	    ;;
-    esac
 else
-    echo "Raspbian OS neither buster nor jessie. Strange ..."
-    exit 1
+    env printf "No file /etc/os-release to identify system type. Forging ahead ...\n"
+    wait_sec=120
+    system_os="unknown"
 fi
-
 
 # Switch to the ~/source/RMS directory so relative path references,
 # and python -m calls, work. Required at the top of the loop as
@@ -124,9 +103,9 @@ cd /home/pi/source/RMS
     
 # Step 1: Find ephemeris sunset time and capture time.
 # Requires latitude, longitude, and elevation from the .config file
-latitude=$(sed -n '/^latitude/'p .config | egrep -o '[+-]?[0-9]+\.[0-9]+{4}')
-longitude=$(sed -n '/^longitude/'p .config | egrep -o '[+-]?[0-9]+\.[0-9]+{4}')
-elevation=$(sed -n '/^elevation/'p .config | egrep -o ' [+-]?[0-9]+(\.[0-9]+)? ')
+latitude=$(sed -n '/^latitude/'p .config | grep -Eo '[+-]?[0-9]+\.[0-9]+{4}')
+longitude=$(sed -n '/^longitude/'p .config | grep -Eo '[+-]?[0-9]+\.[0-9]+{4}')
+elevation=$(sed -n '/^elevation/'p .config | grep -Eo ' [+-]?[0-9]+(\.[0-9]+)? ')
 
 if [ ! $elevation ]
 then
@@ -143,13 +122,16 @@ python -m RMS.WriteCapture \
        --longitude $longitude \
        --elevation $elevation
 
-capture_file=$(ls -t $log_dir/'CaptureTimes'* | sed -n 1p)
+# Find the latest CaptureTimes file in the log directory
+
+capture_file=$(ls -t $log_dir/"CaptureTimes"* | sed -n 1p)
+
 env printf "Using %s for start time and capture duration\n" $capture_file
 
 # Read the start time and capture duration from the file
 {
     read -r start_date
-    capture_len=$(grep -Eo ^[0-9]+ -)
+    capture_len=$(grep -Eo '^[0-9]+' -)
 } < $capture_file
 
 start_time=$(date --date="$start_date" +%s)
@@ -157,24 +139,25 @@ echo 'Start time, UTC: ' $start_date
 echo Start time, seconds since epoch: $start_time
 echo Capture length, seconds: $capture_len
     
-# capture_end is reduced by 16.67 minutes (1000 seconds)
+# capture_end is reduced by 15 minutes (900 seconds)
 # because RMS will not restart capture if it is restarted with 15 or 
 # fewer minutes before capture is scheduled to end.
 # So there is no point restarting in this time period.
-capture_end=$(($start_time + $capture_len - 1000))
-echo Watchdog stop time, seconds: $capture_end
-capture_end_iso=$(date --date='@'$capture_end)
-echo 'Watchdog stop time ' $capture_end_iso
+capture_end=$((start_time + capture_len - 900))
+env printf "Watchdog stop time, seconds: %d\n" "$capture_end"
+capture_end_iso=$(date --date='@'"$capture_end")
+echo 'Watchdog stop time ' "$capture_end_iso"
 
 # Step 2: Check time now vs start time
 now=$(date +%s)
+now_iso=$(date --date='@'"$now")
 if [ $start_time -gt $now ]
 then
-    env printf 'Now it is %d seconds since epoch\n' "$now" # time is\n' $now  \
-#	$(date --date=@$now)
-    init_wait_time=$(($start_time-$now))
+    env printf 'Now it is %d seconds since epoch' "$now"
+    env printf "\t($now_iso)\n"
+    init_wait_time=$((start_time - now))
     echo "Initial wait time: " $init_wait_time
-    env sleep $(($init_wait_time-100))
+    env sleep $((init_wait_time - 100))
 fi
 
 ### Wait until it's time for capture. The wait interval is 1/3 the interval
@@ -189,7 +172,7 @@ now=$(date +%s)
 while [ $now -lt $start_time ]; do
     env sleep $((wait_sec/3))
     now=$(date +%s)
-    printf "%d seconds to go ...\n" $(($start_time - $now))
+    env printf "%d seconds to go ...\n" $((start_time - now))
 done
 
 ### Step 3: Capture loop
@@ -207,7 +190,7 @@ while [ $now -lt $capture_end ]; do
     echo $dir
     if [ ! -d $dir ];
     then 
-	printf "%s is not a directory, exiting...\n" $dir
+	env printf "%s is not a directory, exiting...\n" $dir
 	exit 1
     fi
 
@@ -217,7 +200,7 @@ while [ $now -lt $capture_end ]; do
     # Sort the fits files by modification time, and grab the most recent.
     # First, be sure that fits files have been created.
     # Send the listing and any errors of "no files found" to the bit bucket.
-    ls -tl *.fits &> /dev/null
+    ls -tl ./*.fits &> /dev/null
     if [ $? -ne 0 ]  # Did ls fail?
     then
 	echo 'No FITS file yet'
@@ -227,15 +210,15 @@ while [ $now -lt $capture_end ]; do
 
     # reset $now in case the above loop led to sleep
     now=$(date +%s)
-    base_string=$(ls -tl *.fits | sed -n 1p)
-    filename=$(echo $base_string | cut -d' ' -f9)
+    base_string=$(ls -tl --time-style="+%s" -- *.fits | sed -n 1p)
+    filename=$(echo $base_string | cut -d' ' -f7)
     echo $filename
-
-    file_time=$(time_from_file $dir $filename)
+    file_time=$(echo $base_string | cut -d' ' -f6)
+    echo 
 	
     # Has it been too long since a FITS file was created?
-    delta=$(($now - $file_time))
-    printf "file time delta = %d\n" $delta
+    delta=$((now - file_time))
+    env printf "file time delta = %d\n" $delta
     if [ $delta -gt $wait_sec ];
     then
 	# Capture has failed
@@ -244,29 +227,51 @@ while [ $now -lt $capture_end ]; do
 	    $file_time $now $delta
 	# write message to /var/log/syslog
 	sudo logger 'record watchdog triggered'
-	touch /home/pi/source/RMS/.crash
 	killall python
         env sleep 2
         cd $HOME/source/RMS
 	source $HOME/vRMS/bin/activate
         lxterminal -e Scripts/RMS_StartCapture.sh -r
+
+	# Wait for the processing queue to be reloaded
+	# First we wait for a new log file to be created
+	log_count=$(ls /home/pi/RMS_data/logs/log*.log | wc -l)
+	new_log_count=0
+	loop_count=0
+	while [ $new_log_count -le $log_count ] 
+	do
+	    new_log_count=$(ls /home/pi/RMS_data/logs/log*.log | wc -l)
+	    loop_count=$(( loop_count + 1 ))
+	    timenow=$(date +%H:%M:%S)
+	    env printf "%s loop: %d, new_log_count: %d, waiting for new log file...\n" \
+		$timenow $loop_count $new_log_count
+	    env sleep 60
+	done
+
+	# Wait for camera frame grabbing other other restart overhead
+	env sleep $wait_sec 
+
+	# Now wait for any processing of previous images to be completed
+	loop_count=0
+	while [ -f /home/pi/RMS_data/.capture_resuming ] ;
+	do
+	    timenow=$(date +%H:%M:%S)
+	    env printf "%s loop: %d, waiting for .capture_resuming flag...\n" \
+		$timenow $loop_count 
+	    env sleep $wait_sec
+	    loop_count=$(( loop_count + 1 ))
+ 	done
+	# end of restart actions
+    else
+	# No problem detected - wait for another $wait_sec interval
+	sleep $wait_sec
     fi
-
-    # Wait for the processing queue to be reloaded
-    
-    env sleep 180 # Hardwired at 3 minutes based on experience.
-
-    while [ -f /home/pi/RMS_data/.capture_resuming ] ;
-    do
-       env sleep $wait_sec
-    done
-    env sleep $wait_sec
 done
 
-printf "Recording watchdog finished for the night, time is "
+env printf "Recording watchdog finished for the night, time is "
 date
 
-sleep 1000
+sleep 900
 
 cd /home/pi/source/RMS
 
