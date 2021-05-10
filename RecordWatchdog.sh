@@ -13,7 +13,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# Last Revision: 09-May-2021; Byte count: 9297
+# Last Revision: 10-May-2021; Byte count: 9212
 # RMS_RecordWatchdog.sh, version 0.1, Steve Kaufman and Pete Eschman
 # This file belongs in directory /home/pi/source/RMS/Scripts.
 # It is intended to be started at boot
@@ -39,8 +39,8 @@
 # Step 4: Loop until end of capture time, every $wait_sec interval
 #       a. Get current time
 #	b. Check most recent FITS file, and its modification time
-#             Is FITS modification time > $wait_sec since current time?
-#             (Yes) Restart Capture
+#	      Is FITS modification time > $wait_sec since current time?
+#	      (Yes) Restart Capture
 #	      (No)  Wait $wait_sec seconds, continue step 4 loop.
 
 ### NOTE ON printf: When printf is used in this script,
@@ -219,6 +219,7 @@ while [ $now -lt $capture_end ]; do
     # Has it been too long since a FITS file was created?
     delta=$((now - file_time))
     env printf "file time delta = %d\n" $delta
+    
     if [ $delta -gt $wait_sec ];
     then
 	# Capture has failed
@@ -228,13 +229,13 @@ while [ $now -lt $capture_end ]; do
 	# write message to /var/log/syslog
 	sudo logger 'record watchdog triggered'
 	killall python
-        env sleep 2
-        cd $HOME/source/RMS
-	source $HOME/vRMS/bin/activate
-        lxterminal -e Scripts/RMS_StartCapture.sh -r
+	env sleep 5
 
-	# Wait for the processing queue to be reloaded
-	# First we wait for a new log file to be created
+	cd $HOME/source/RMS
+	source $HOME/vRMS/bin/activate
+	lxterminal -e Scripts/RMS_StartCapture.sh -r
+
+	# Wait for a new log file to be created
 	log_count=$(ls /home/pi/RMS_data/logs/log*.log | wc -l)
 	new_log_count=0
 	loop_count=0
@@ -248,10 +249,10 @@ while [ $now -lt $capture_end ]; do
 	    env sleep 60
 	done
 
-	# Wait for camera frame grabbing other other restart overhead
+	# Wait for camera frame grabbing and any other restart overhead
 	env sleep $wait_sec 
 
-	# Now wait for any processing of previous images to be completed
+	# Wait longer if the processing queue is still reloading 
 	loop_count=0
 	while [ -f /home/pi/RMS_data/.capture_resuming ] ;
 	do
@@ -260,11 +261,12 @@ while [ $now -lt $capture_end ]; do
 		$timenow $loop_count 
 	    env sleep $wait_sec
 	    loop_count=$(( loop_count + 1 ))
- 	done
+	done
 	# end of restart actions
+
     else
 	# No problem detected - wait for another $wait_sec interval
-	sleep $wait_sec
+	env sleep $wait_sec
     fi
 done
 
