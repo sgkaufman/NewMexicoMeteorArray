@@ -1,6 +1,6 @@
 m#!/bin/bash
 
-# Version 0.2, 01-Mar-2021. Byte count = 1693
+# Version 0.2, 10-May-2021. Byte count = 1594
 # This script copies files in /home/pi/NMMA/NewMexicoMeteorArray
 # into /home/pi/source/RMS and its subdirectories, as determined
 # by the Raspbian OS version specified in file /etc/os-release.
