@@ -1,4 +1,4 @@
-#!/bin/bash
+m#!/bin/bash
 
 # Version 0.2, 01-Mar-2021. Byte count = 1693
 # This script copies files in /home/pi/NMMA/NewMexicoMeteorArray
@@ -21,29 +21,24 @@ else
     cd "/home/pi/source/NMMA/NewMexicoMeteorArray"
 fi
 
-var=$( grep -Eo 'buster|jessie' /etc/os-release )
-if [[ -n "$var" ]]; then
-    printf "grepped the following: %s\n" "$var"
+printf "Copying TimeLapse.sh to %s\n" "$RMS_dir"
+cp ./TimeLapse.sh /home/pi/source/RMS/TimeLapse.sh
+printf "Copying ExternalScript.py to %s/RMS/ExternalScript.py\n" \
+       "$RMS_dir"
+cp ./ExternalScript.py "$RMS_dir"/RMS/ExternalScript.py
+printf "Copying RecordWatchdog.sh to %s/Scripts/RecordWatchdog.sh\n" \
+       "$RMS_dir"
+cp ./RecordWatchdog.sh "$RMS_dir"/Scripts/RecordWatchdog.sh
+printf "Copying StartCaptureWatchdog.sh to %s/StartCaptureWatchdog.sh\n" \
+       "$RMS_dir"
+cp ./StartCaptureWatchdog.sh "$RMS_dir"/StartCaptureWatchdog.sh
+printf "Copying WriteCapture.py to %s/RMS/WriteCapture.py\n" \
+       "$RMS_dir"
+cp ./WriteCapture.py "$RMS_dir"/RMS/WriteCapture.py
+printf "Copying FlushNMqueue.py to %s/RMS/FlushNMqueue.py\n" \
+       "$RMS_dir"
+cp ./FlushNMqueue.py "$RMS_dir"/RMS/FlushNMqueue.py
+printf "Copying RecordWatchdog.sh to %s/Scripts/RecordWatchdog.sh\n" \
+       "$RMS_dir"
+cp ./RecordWatchdog.sh "$RMS_dir"/Scripts/FlushNMqueue.py
 
-    case ${var:0:6} in
-	buster )
-	    printf "Copying TimeLapse.sh to %s\n" "$RMS_dir"
-	    cp ./TimeLapse.sh /home/pi/source/RMS/TimeLapse.sh
-	    printf "Copying ExternalScript.py to %s/RMS/ExternalScript.py\n" "$RMS_dir"
-	    cp ./ExternalScript.py "$RMS_dir"/RMS/ExternalScript.py
-	    printf "Copying RecordWatchdog.sh to %s/Scripts/RecordWatchdog.sh"
-	    cp ./RecordWatchdog.sh "$RMS_dir"/Scripts/RecordWatchdog.sh
-	    printf "Copying StartCaptureWatchdog.sh to %s/StartCaptureWatchdog.sh"
-	    cp ./StartCaptureWatchdog.sh "$RMS_dir"/StartCaptureWatchdog.sh
-	    ;;
-	jessie )
-	    printf "Copying TimeLapse.sh to %s\n" "$RMS_dir"
-	    cp ./TimeLapse.sh "$RMS_dir"/TimeLapse.sh
-	    printf "Copying ExternalScript_Python2.py to %s/RMS/ExternalScript.py\n" \
-	   "$RMS_dir"
-	    cp ./ExternalScript_Python2.py "$RMS_dir"/RMS/ExternalScript.py
-	    ;;
-    esac
-else
-    echo "Raspbian OS neither buster nor jessie. Strange ..."
-fi
