@@ -11,10 +11,17 @@ log_dir="/home/pi/RMS_data/logs"
 
 capture_file=$(ls -lt $log_dir/"CaptureTimes"* | sed -n 1p | cut -d' ' -f10)
 echo $capture_file
-read time < $capture_file
-mo=$(date --date="$time" +%m)
-day=$(date --date="$time" +%d)
-yr=$(date --date="$time" +%Y)
+
+if [[ -f $capture_file ]]; then
+	read time < $capture_file
+	mo=$(date --date="$time" +%m)
+	day=$(date --date="$time" +%d)
+	yr=$(date --date="$time" +%Y)
+else
+	mo=$(date +'%m')
+	day=$(date +'%d')
+	yr=$(date +'%Y')
+fi
 
 log_file=$log_dir/"RMS_RecordWatchdog_"$mo"_"$day"_"$yr".log"
 

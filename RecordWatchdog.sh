@@ -103,9 +103,10 @@ cd /home/pi/source/RMS
     
 # Step 1: Find ephemeris sunset time and capture time.
 # Requires latitude, longitude, and elevation from the .config file
-latitude=$(sed -n '/^latitude/'p .config | grep -Eo '[+-]?[0-9]+\.[0-9]+{4}')
-longitude=$(sed -n '/^longitude/'p .config | grep -Eo '[+-]?[0-9]+\.[0-9]+{4}')
-elevation=$(sed -n '/^elevation/'p .config | grep -Eo ' [+-]?[0-9]+(\.[0-9]+)? ')
+# The 3rd 'grep' is used to ensure that only value comes back, even if there are multiple values (commented out of .config)
+latitude=$(sed -n '/^latitude/'p .config | grep -Eo '[+-]?[0-9]+\.[0-9]+{4}' | grep -Eo -m 1 '^[+-]?[0-9]+\.[0-9]+{4}')
+longitude=$(sed -n '/^longitude/'p .config | grep -Eo '[+-]?[0-9]+\.[0-9]+{4}' | grep -Eo -m 1 '^[+-]?[0-9]+\.[0-9]+{4}')
+elevation=$(sed -n '/^elevation/'p .config | grep -Eo '[+-]?[0-9]+(\.[0-9]+)?' | grep -Eo -m 1 '[+-]?[0-9]+(\.[0-9]+)?')
 
 if [ ! $elevation ]
 then
