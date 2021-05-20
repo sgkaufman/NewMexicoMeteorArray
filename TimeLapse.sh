@@ -2,26 +2,26 @@
 
 # TimeLapse.sh  script, see printf below for rev date
 #
-# Create timelapse file, then move it, .csv, & *radiants.txt files 
+# Create timelapse file, then move it, .csv, & *radiants.txt files
 #  so they can be easily located.
 # Argument1 ($1): ArchivedFiles directory name
 # Argument2 ($2): False, 0 or No will skip creating TimeLapse.mp4
 # Argument3 ($3): False, 0 or No will skip creating stack of CapturedFiles
 # Default script action is to create TimeLapse.mp4 and Capture stack
 
-printf 'TimeLapse.sh, revised 24-Feb-2021, byte count = 8986, '
+printf 'TimeLapse.sh, revised 15-May-2021, byte count = 9209, '
 printf 'was called with\nArg 1 = %s, arg 2 = %s, arg 3 = %s\n\n' "$1" "$2" "$3"
 printf 'TimeLapse.sh copies radiants.txt, and .csv files to RMS_data/csv/,\n'
 printf 'then creates a TimeLapse.mp4 file, and stack of all captured images,\n'
 printf 'which are moved to RMS_data. You can suppress creation of the mp4\n'
-printf 'and captured stack by specifying  False, 0 or No  as the second\n' 
+printf 'and captured stack by specifying  False, 0 or No  as the second\n'
 printf 'argument for mp4 and third argument for captured stack.\n'
 printf 'TimeLapse.mp4, Radiants, Stack and Capture jpg files can optionally\n'
 printf 'be copied to My_Uploads by setting My_Uploads=1 in this script file.\n'
 printf 'You can change the default actions of this script by editing the\n'
 printf 'values for TimeLapse and CapStack in this script file.\n\n'
 
-# Use the following three vars to control script default actions: 
+# Use the following three vars to control script default actions:
 #  0 for no, 1 for yes
 TimeLapse=1
 CapStack=1
@@ -33,7 +33,7 @@ if [[ "$2" = "False" || "$2" = "0" || "$2" = "No" ]] ; then
 fi
 
 # Let's check that third argument.
-if [[ "$3" = "False" || "$3" = "0" || "$3" = "No" ]] ; then 
+if [[ "$3" = "False" || "$3" = "0" || "$3" = "No" ]] ; then
     CapStack=0
 fi
 
@@ -89,8 +89,8 @@ if [[ $TimeLapse = 0 ]] ; then
     printf "\nSkipping creation of Timelapse mp4 for directory %s/%s\n" \
         "${capture_dir}" "$1"
 else
-    if [[ -d "${capture_dir}/$1" ]] ; then 
-        printf '%s\n' "Creating Timelapse of directory ${capture_dir}/$1" 
+    if [[ -d "${capture_dir}/$1" ]] ; then
+        printf '%s\n' "Creating Timelapse of directory ${capture_dir}/$1"
         python -m Utils.GenerateTimelapse /home/pi/RMS_data/CapturedFiles/"$1"
         # Move the timelapse up to the RMS_data directory
         printf 'Moving Timelapse to RMS_data\n'
@@ -112,7 +112,7 @@ if [[ $CapStack = 0 ]] ; then
           "${capture_dir}" "$1"
 else
     if [[ -d "${capture_dir}/$1" ]]
-    then 
+    then
 	# save capture stack
 	cd -- $capture_dir/"$1"
 	d_stack=$(ls ./*stack*_meteors.jpg)
@@ -145,7 +145,7 @@ else
 	   "${capture_dir}/$1"
     fi
 fi
-    
+
 cd -- $archive_dir/"$1"
 # Check for existence of the ~/RMS_data/csv directory
 if [[ ! -d "${data_dir}"/csv ]] ; then
@@ -182,7 +182,7 @@ fi
 
 fits_count=$(find "/home/pi/RMS_data/CapturedFiles/$1"/*.fits -type f -printf x | wc -c)
 
-printf "\n" 
+printf "\n"
 printf 'Number of fits files in Capture directory: %d\n' "$fits_count"
 
 # Find the number of detections in the stack file
@@ -208,7 +208,7 @@ fi
 # from the first positional parameter (the directory name).
 # It uses substring syntax (take the substring starting at position 0
 # and extending 15 characters).
-# The variable "id_string" holds the station name and date in a pattern. 
+# The variable "id_string" holds the station name and date in a pattern.
 
 id_string=${1:0:15}
 printf "id_string: %s\n" "$id_string"
@@ -248,7 +248,7 @@ else
         "$fits_count" "$detected" "$num_captured_dirs" "$num_archived_dirs"
 fi
 
-# Now check for the TOTAL number of files in the CapturedFiles directory,
+# Now check for the TOTAL number of directories in the CapturedFiles directory,
 # not just the number matching the date.
 pushd "$capture_dir" > /dev/null
 captured=(./*"$station_name"*)
@@ -257,11 +257,16 @@ printf "total_captured (number of directories under CapturedFiles): %d\n" \
        "$total_captured"
 popd > /dev/null
 
-if [[ $total_captured -gt 1 ]]; then
-    printf "\n" >> "$OUTFILE"
-else
-    printf " Running out of space! Only Room for %d Capture Directory!\n" \
-           "$total_captured" >> "$OUTFILE"
+if [[ $total_captured -eq 1 ]]; then
+   total_space=$(df --output=size -h "$PWD" | sed '1d;s/[^0-9]//g')
+   free_space=$(df --output=avail -h "$PWD" | sed '1d;s/[^0-9]//g')
+   alarm_target=$(( total_space / 5 ))
+
+   if [[ $free_space -lt $alarm_target ]]; then
+      printf " Only %d GB free! Only Room for %d Capture Directory!" \
+           "$free_space" "$total_captured" >> "$OUTFILE"
+   fi
 fi
+printf "\n" >> "$OUTFILE"
 
 printf "fits file count and number of detections saved to: %s\n" "$OUTFILE"
