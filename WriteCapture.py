@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Version of 05-May-2021; Bytes: 3496
+Version of 05-May-20211; Bytes: 3496
 Version 0.1, SGK, 6/28/2020. This file belongs in directory
 /home/pi/source/RMS/RMS/.
 This file calls the RMS function captureDuration (from RMS.CaptureDuration)
@@ -14,6 +14,7 @@ from __future__ import print_function
 import os
 import datetime
 import argparse
+import ephem
 from RMS.CaptureDuration import captureDuration
 
 def makeLogFile(log_file_dir, prefix, time_arg=None):
@@ -47,27 +48,45 @@ if __name__ == "__main__":
     config_parser.add_argument('--elevation', type=float, \
                                help="Station elevation from .config file")
     args = config_parser.parse_args()
+    lat  = args.latitude
+    lon  = args.longitude
+    elev = args.elevation
 
-    print ("WriteCapture.py, Latitude: ", args.latitude)
-    print ("WriteCapture.py, Longitude: ", args.longitude)
-    print ("WriteCapture.py, Elevation: ", args.elevation)
+    print ("WriteCapture.py, Latitude: ",  lat)
+    print ("WriteCapture.py, Longitude: ", lon)
+    print ("WriteCapture.py, Elevation: ", elev)
     
     # Compute and write out the next start time and capture timedatetime.
-    start_time, duration = captureDuration(args.latitude, \
-                                           args.longitude, \
-                                           args.elevation)
+    start_time, duration = captureDuration(lat, lon, elev)
     if (start_time == True):
-        current = datetime.datetime.utcnow()
-        twelve = datetime.timedelta(hours=12)
-        prev = current - twelve
-        start_time, duration = captureDuration(args.latitude, \
-                                               args.longitude, \
-                                               args.elevation, \
-                                               current_time=prev)
-        print ("WriteCapture.py, Latitude: ", args.latitude)
-        print ("WriteCapture.py, Longitude: ", args.longitude)
-        print ("WriteCapture.py, Elevation: ", args.elevation)
-        print ("WriteCapture.py, current_time: %s" % current)
+        # We will use the ephemeris code directly
+        # to compute the previous sunset time, to get start_time and duration.
+        # Code copied fromCaptureDuration.py
+        
+        # Initialize the observer
+        o = ephem.Observer()  
+        o.lat = str(lat)
+        o.long = str(lon)
+        o.elevation = elev
+
+        # The Sun should be about 5.5 degrees below the horizon when the capture should begin/end
+        o.horizon = '-5:26'
+        # Calculate the locations of the Sun
+        s = ephem.Sun()  
+        s.compute()
+        # End of code segment copied from CaptuureDuration.py
+        
+        prev_set = o.previous_setting(s).datetime()
+        next_rise = o.next_rising(s).datetime()
+        now = datetime.datetime.utcnow()
+
+        # Ensure that prev_set occurs before next_rise
+        if next_rise > prev_set:
+            duration = next_rise - now
+        else:
+            duration = 0
+        duration = duration.total_seconds()
+        start_time = prev_set
 
     duration_int = round(duration)
     time_str = start_time
