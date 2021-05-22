@@ -7,13 +7,13 @@
 # 
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 # 
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-# Last Revision: 21-May-2021; Byte count: 7791
+# Last Revision: 22-May-2021; Byte count: 7932
 # RMS_RecordWatchdog.sh, version 0.1, Steve Kaufman and Pete Eschman
 # This file belongs in directory /home/pi/source/RMS/Scripts.
 # It is intended to be started at boot
@@ -90,7 +90,7 @@ start_time=$(date --date="$start_date" +%s)
 echo 'Start time, UTC: ' $start_date
 echo Start time, seconds since epoch: $start_time
 echo Capture length, seconds: $capture_len
-    
+
 # capture_end is reduced by 15 minutes (900 seconds)
 # because RMS will not restart capture if it is restarted with 15 or 
 # fewer minutes before capture is scheduled to end.
@@ -127,16 +127,18 @@ while [ $now -lt $start_time ]; do
     env printf "%d seconds to go ...\n" $((start_time - now))
 done
 
+restart_count=0
+
 ### Step 3: Capture loop
 while [ $now -lt $capture_end ]; do
 
-    cd $capture_dir    
+    cd $capture_dir  
     
     # Establish the time
     now=$(date +%s)
 
     # Find the most recent CapturedFiles directory
-    
+
     ds=$(ls -tl --time-style="+%Y %m %d %H %M %S" | sed -n 2p)
     dir=$(echo $ds | cut -d' ' -f12)
     echo $dir
@@ -171,11 +173,12 @@ while [ $now -lt $capture_end ]; do
     # Has it been too long since a FITS file was created?
     delta=$((now - file_time))
     env printf "file time delta = %d\n" $delta
-    
+
     if [ $delta -gt $wait_sec ];
     then
 	# Capture has failed
-	echo "Capture has failed..."
+	restart_count=$(( restart_count + 1 ))
+	env printf "Capture failure # %d \n" $restart_count
 	env printf "last fits file created %d, current time %d, time delta = %d \n"\
 	    $file_time $now $delta
 	# write message to /var/log/syslog
@@ -222,6 +225,7 @@ while [ $now -lt $capture_end ]; do
     fi
 done
 
+env printf "There were a total of %d capture restart_count\n" $restart_count
 env printf "Recording watchdog finished for the night, time is "
 date
 
