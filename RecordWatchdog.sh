@@ -13,7 +13,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# Last Revision: 10-May-2021; Byte count: 9212
+# Last Revision: 21-May-2021; Byte count: 7791
 # RMS_RecordWatchdog.sh, version 0.1, Steve Kaufman and Pete Eschman
 # This file belongs in directory /home/pi/source/RMS/Scripts.
 # It is intended to be started at boot
@@ -57,71 +57,22 @@
 # Variables
 declare capture_dir=$HOME/RMS_data/CapturedFiles
 declare log_dir=$HOME/RMS_data/logs
-declare latitude longitude elevation
 declare capture_file start_date
-declare system_os
 declare -i start_time capture_len capture_end
 declare -i file_time now delta
 declare -i wait_sec
 declare -i new_log_count log_count
-declare -i loop_count
+declare -i loop_count restart_count
 
-# System identification
+# Read the $wait_sec argument
 
-if [[ -f /etc/os-release ]]; then
-    system_os=$( grep -Eo 'buster|jessie' /etc/os-release )
-
-    if [[ -n "$system_os" ]]; then
-	case ${system_os:0:6} in
-	    buster )
-		wait_sec=120
-		system_os="buster"
-		;;
-	    jessie )
-		wait_sec=180
-		system_os="jessie"
-		;;
-	    *      )
-		wait_sec=120
-		system_os=${system_os:0:6}
-		;;
-	esac
-	env printf "System type: %s\n" "$system_os"
-    else
-	echo "OS neither buster nor jessie. Forging ahead ... "
-    fi
-else
-    env printf "No file /etc/os-release to identify system type. Forging ahead ...\n"
-    wait_sec=120
-    system_os="unknown"
-fi
+wait_sec=$1
+echo "wait_sec = " "$wait_sec"
 
 # Switch to the ~/source/RMS directory so relative path references,
 # and python -m calls, work. Required at the top of the loop as
 # this code changes directories further down.
 cd /home/pi/source/RMS
-    
-# Step 1: Find ephemeris sunset time and capture time.
-# Requires latitude, longitude, and elevation from the .config file
-# The 3rd 'grep' is used to ensure that only value comes back, even if there are multiple values (commented out of .config)
-latitude=$(sed -n '/^latitude/'p .config | grep -Eo '[+-]?[0-9]+\.[0-9]+{4}' | grep -Eo -m 1 '^[+-]?[0-9]+\.[0-9]+{4}')
-longitude=$(sed -n '/^longitude/'p .config | grep -Eo '[+-]?[0-9]+\.[0-9]+{4}' | grep -Eo -m 1 '^[+-]?[0-9]+\.[0-9]+{4}')
-elevation=$(sed -n '/^elevation/'p .config | grep -Eo '[+-]?[0-9]+(\.[0-9]+)?' | grep -Eo -m 1 '[+-]?[0-9]+(\.[0-9]+)?')
-
-if [ ! $elevation ]
-then
-    echo "Error parsing elevation in .config file - exiting ..."
-    exit 1
-fi
-
-echo "Latitude: " $latitude
-echo "Longitude: " $longitude
-echo "Elevation: " $elevation
-
-python -m RMS.WriteCapture \
-       --latitude $latitude \
-       --longitude $longitude \
-       --elevation $elevation
 
 # Find the latest CaptureTimes file in the log directory
 
@@ -273,14 +224,5 @@ done
 
 env printf "Recording watchdog finished for the night, time is "
 date
-
-sleep 900
-
-cd /home/pi/source/RMS
-
-python -m RMS.WriteCapture \
-       --latitude $latitude \
-       --longitude $longitude \
-       --elevation $elevation
 
 exit 0
