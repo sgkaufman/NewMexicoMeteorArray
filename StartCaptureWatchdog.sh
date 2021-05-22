@@ -6,6 +6,7 @@
 
 # Variable definitions
 declare log_dir="/home/pi/RMS_data/logs"
+declare config_file="/home/pi/source/RMS/.config"
 declare system_os
 declare -i wait_sec
 declare latitude longitude elevation
@@ -44,9 +45,9 @@ fi
 # Requires latitude, longitude, and elevation from the .config file
 # The 3rd 'grep' is used to ensure that only 1 value comes back,
 # even if there are multiple values (e.g., commented out in .config)
-latitude=$(sed -n '/^latitude/'p .config | grep -Eo '[+-]?[0-9]+\.[0-9]+{4}' | grep -Eo -m 1 '^[+-]?[0-9]+\.[0-9]+{4}')
-longitude=$(sed -n '/^longitude/'p .config | grep -Eo '[+-]?[0-9]+\.[0-9]+{4}' | grep -Eo -m 1 '^[+-]?[0-9]+\.[0-9]+{4}')
-elevation=$(sed -n '/^elevation/'p .config | grep -Eo '[+-]?[0-9]+(\.[0-9]+)?' | grep -Eo -m 1 '[+-]?[0-9]+(\.[0-9]+)?')
+latitude=$(sed -n '/^latitude/'p "$config_file" | grep -Eo '[+-]?[0-9]+\.[0-9]+{4}' | grep -Eo -m 1 '^[+-]?[0-9]+\.[0-9]+{4}')
+longitude=$(sed -n '/^longitude/'p "$config_file" | grep -Eo '[+-]?[0-9]+\.[0-9]+{4}' | grep -Eo -m 1 '^[+-]?[0-9]+\.[0-9]+{4}')
+elevation=$(sed -n '/^elevation/'p "$config_file" | grep -Eo '[+-]?[0-9]+(\.[0-9]+)?' | grep -Eo -m 1 '[+-]?[0-9]+(\.[0-9]+)?')
 
 if [ ! $elevation ]
 then
@@ -83,5 +84,5 @@ log_file=$log_dir/"RMS_RecordWatchdog_"$mo"_"$day"_"$yr".log"
 
 cd /home/pi/source/RMS/Scripts
 echo Logging RMS_StartWatchdog.sh to $log_file ...
-./RecordWatchdog.sh $wait_sec >> $log_file &
+/home/pi/source/RMS/Scripts/RecordWatchdog.sh $wait_sec >> $log_file &
 exit 0
