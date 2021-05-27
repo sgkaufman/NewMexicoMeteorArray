@@ -13,7 +13,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-# Last Revision: 22-May-2021; Byte count: 7932
+# Last Revision: 26-May-2021; Byte count: 8041
 # RMS_RecordWatchdog.sh, version 0.1, Steve Kaufman and Pete Eschman
 # This file belongs in directory /home/pi/source/RMS/Scripts.
 # It is intended to be started at boot
@@ -217,6 +217,9 @@ while [ $now -lt $capture_end ]; do
 	    env sleep $wait_sec
 	    loop_count=$(( loop_count + 1 ))
 	done
+	timenow=$(date +%H:%M:%S)
+	env printf "%s Record Watchdog watching for new fits files now...\n\n" \
+		$timenow
 	# end of restart actions
 
     else
@@ -225,7 +228,7 @@ while [ $now -lt $capture_end ]; do
     fi
 done
 
-env printf "There were a total of %d capture restart_count\n" $restart_count
+env printf "Capture failure occured %d times last night\n" $restart_count
 env printf "Recording watchdog finished for the night, time is "
 date
 

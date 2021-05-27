@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# TimeLapse.sh  script, see printf below for rev date
+# TimeLapse.sh, see printf below for rev date
 #
 # Create timelapse file, then move it, .csv, & *radiants.txt files
 #  so they can be easily located.
@@ -9,7 +9,7 @@
 # Argument3 ($3): False, 0 or No will skip creating stack of CapturedFiles
 # Default script action is to create TimeLapse.mp4 and Capture stack
 
-printf 'TimeLapse.sh, revised 15-May-2021, byte count = 9209, '
+printf 'TimeLapse.sh, revised 24-May-2021, byte count = 8952, '
 printf 'was called with\nArg 1 = %s, arg 2 = %s, arg 3 = %s\n\n' "$1" "$2" "$3"
 printf 'TimeLapse.sh copies radiants.txt, and .csv files to RMS_data/csv/,\n'
 printf 'then creates a TimeLapse.mp4 file, and stack of all captured images,\n'
@@ -42,30 +42,26 @@ capture_dir="/home/pi/RMS_data/CapturedFiles"
 data_dir="/home/pi/RMS_data"
 
 # Sanity checks
-if [[ ! -d $archive_dir ]]
-then
+if [[ ! -d $archive_dir ]] ; then
     echo "Directory $archive_dir does not exist! Exiting ..." >&2
     exit 1
 fi
 
-if [[ ! -d $capture_dir ]]
-then
+if [[ ! -d $capture_dir ]] ; then
     echo "Warning: Directory $capture_dir does not exist! Exiting ..." >&2
     exit 1
 fi
 
-if [[ ! -d $data_dir ]]
-then
-    echo  "Directory $data_dir does not exist! Exiting ..." >&2
+if [[ ! -d $data_dir ]] ; then
+    echo "Directory $data_dir does not exist! Exiting ..." >&2
     exit 1
 fi
 # End Sanity Checks
 
 # Let's check that first argument. It must be an ArchivedFiles directory.
-if [[ $1 = '' || ! -d "${archive_dir}"/$1 ]] ;
-then
+if [[ $1 = '' || ! -d "${archive_dir}"/$1 ]] ; then
     printf 'Argument %s must specify a first-level sub-directory of %s\n' \
-        "$1" ${archive_dir}
+	"$1" ${archive_dir}
     exit 1
 fi
 
@@ -87,32 +83,31 @@ fi
 # Create the timelapse
 if [[ $TimeLapse = 0 ]] ; then
     printf "\nSkipping creation of Timelapse mp4 for directory %s/%s\n" \
-        "${capture_dir}" "$1"
+	"${capture_dir}" "$1"
 else
     if [[ -d "${capture_dir}/$1" ]] ; then
-        printf '%s\n' "Creating Timelapse of directory ${capture_dir}/$1"
-        python -m Utils.GenerateTimelapse /home/pi/RMS_data/CapturedFiles/"$1"
-        # Move the timelapse up to the RMS_data directory
-        printf 'Moving Timelapse to RMS_data\n'
-        cd -- $capture_dir/"$1"
-        if [[ ${My_Uploads} = 1 ]]; then
-            printf 'Copying TimeLapse.mp4 to My_Uploads\n'
-            cp ./*.mp4 /home/pi/RMS_data/My_Uploads/TimeLapse.mp4
-        fi
-        mv -v -- ./*.mp4 ${data_dir}
+	printf '%s\n' "Creating Timelapse of directory ${capture_dir}/$1"
+	python -m Utils.GenerateTimelapse /home/pi/RMS_data/CapturedFiles/"$1"
+	# Move the timelapse up to the RMS_data directory
+	printf 'Moving Timelapse to RMS_data\n'
+	cd -- $capture_dir/"$1"
+	if [[ ${My_Uploads} = 1 ]]; then
+	    printf 'Copying TimeLapse.mp4 to My_Uploads\n'
+	    cp ./*.mp4 /home/pi/RMS_data/My_Uploads/TimeLapse.mp4
+	fi
+	mv -v -- ./*.mp4 ${data_dir}
     else
 	printf 'Directory %s does not exist. TimeLapse will not be created.\n' \
-	       "${capture_dir}/$1"
+	    "${capture_dir}/$1"
     fi
 fi
 
 # Create a stack of the capture directory
 if [[ $CapStack = 0 ]] ; then
     printf "\nSkipping creation of stack of CapturedFiles for directory %s/%s\n" \
-          "${capture_dir}" "$1"
+	"${capture_dir}" "$1"
 else
-    if [[ -d "${capture_dir}/$1" ]]
-    then
+    if [[ -d "${capture_dir}/$1" ]] ; then
 	# save capture stack
 	cd -- $capture_dir/"$1"
 	d_stack=$(ls ./*stack*_meteors.jpg)
@@ -121,7 +116,7 @@ else
 	cd /home/pi/source/RMS/
 	printf "Creating a stack of the capture directory: %s\n" "$1"
 	python -m Utils.StackFFs /home/pi/RMS_data/CapturedFiles/"$1" jpg -s -x \
-	       > /dev/null
+		> /dev/null
 
 	cd -- $capture_dir/"$1"
 	c_stack=$(ls ./*stack*_meteors.jpg)
@@ -132,17 +127,16 @@ else
 	mv m "$d_stack"
 
 	# Check to see if this capture stack should be moved
-	if [[ ${My_Uploads} = 1 ]]
-	then
-            printf 'Copying Captured stack to My_Uploads\n'
-            cp ./*captured.jpg /home/pi/RMS_data/My_Uploads/Captured.jpg
+	if [[ ${My_Uploads} = 1 ]] ; then
+	    printf 'Copying Captured stack to My_Uploads\n'
+	    cp ./*captured.jpg /home/pi/RMS_data/My_Uploads/Captured.jpg
 	fi
 	cp ./*captured.jpg "${data_dir}"
 	cp ./*captured.jpg "${archive_dir}/$1"
 	
     else
 	printf 'Directory %s does not exist. Captured stack will not be created.\n' \
-	   "${capture_dir}/$1"
+	    "${capture_dir}/$1"
     fi
 fi
 
@@ -188,8 +182,7 @@ printf 'Number of fits files in Capture directory: %d\n' "$fits_count"
 # Find the number of detections in the stack file
 stack=$(ls "/home/pi/RMS_data/ArchivedFiles/$1"/*meteors.jpg)
 # Anything such file found?
-if [[ -n $stack ]]
-then
+if [[ -n $stack ]] ; then
     # Yes! Find the number of meteors encoded in the file name
     detected=$(echo "$stack" | grep -Eo '[[:digit:]]+_meteors' | grep -Eo '[[:digit:]]+')
 else
@@ -233,19 +226,17 @@ popd > /dev/null
 # Write it out to the file in the csv directory
 
 printf "%s: " "$1" >> "$OUTFILE"
-if [[ $num_captured_dirs -eq $num_archived_dirs ]]
-then
-   if [[ $num_archived_dirs -eq 1 ]]
-   then
-      printf "%d\t%d" >> "$OUTFILE" \
-        "$fits_count" "$detected"
+if [[ $num_captured_dirs -eq $num_archived_dirs ]] ; then
+   if [[ $num_archived_dirs -eq 1 ]] ; then
+	printf "%d\t%d" >> "$OUTFILE" \
+	"$fits_count" "$detected"
    else
-      printf "%d\t%d\t Arch_Dir: %d" >> "$OUTFILE" \
-        "$fits_count" "$detected" "$num_archived_dirs"
+	printf "%d\t%d\t Arch_Dir: %d" >> "$OUTFILE" \
+	"$fits_count" "$detected" "$num_archived_dirs"
    fi
 else
-  printf "%d\t%d\tCap_Dir: %d\tArch_Dir: %d" >> "$OUTFILE" \
-        "$fits_count" "$detected" "$num_captured_dirs" "$num_archived_dirs"
+    printf "%d\t%d\tCap_Dir: %d\tArch_Dir: %d" >> "$OUTFILE" \
+	"$fits_count" "$detected" "$num_captured_dirs" "$num_archived_dirs"
 fi
 
 # Now check for the TOTAL number of directories in the CapturedFiles directory,
@@ -254,19 +245,16 @@ pushd "$capture_dir" > /dev/null
 captured=(./*"$station_name"*)
 total_captured=${#captured[@]}
 printf "total_captured (number of directories under CapturedFiles): %d\n" \
-       "$total_captured"
+	"$total_captured"
 popd > /dev/null
 
 if [[ $total_captured -eq 1 ]]; then
-   total_space=$(df --output=size -h "$PWD" | sed '1d;s/[^0-9]//g')
-   free_space=$(df --output=avail -h "$PWD" | sed '1d;s/[^0-9]//g')
-   alarm_target=$(( total_space / 5 ))
-
-   if [[ $free_space -lt $alarm_target ]]; then
-      printf " Only %d GB free! Only Room for %d Capture Directory!" \
-           "$free_space" "$total_captured" >> "$OUTFILE"
-   fi
+    total_space=$(df --output=size -h "$PWD" | sed '1d;s/[^0-9]//g')
+    free_space=$(df --output=avail -h "$PWD" | sed '1d;s/[^0-9]//g')
+    printf " Only one Capture Directory! %d GB free / %d GB total" \
+	"$free_space" "$total_space" >> "$OUTFILE"
 fi
+
 printf "\n" >> "$OUTFILE"
 
 printf "fits file count and number of detections saved to: %s\n" "$OUTFILE"
