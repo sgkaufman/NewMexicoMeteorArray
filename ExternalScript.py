@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
 """
-This is Version 0.9 of file ExternalScript.py. Dated 04/05/2021. 
+This is Version 1.0 of file ExternalScript.py. Dated 05/23/2021.
  v0.9 reduces the number of files uploaded to NM Server
-Byte count = 13759
-This script 
-1: Moves, creates, and copies files on the RMS stations, and 
+Byte count = 13663
+This script
+1: Moves, creates, and copies files on the RMS stations, and
 2: Uploads files to the New Mexico Meteor Array Server.
 """
 from __future__ import print_function
@@ -49,7 +49,7 @@ def makeLogFile(log_file_dir="", prefix="", date_only=False):
     return full_filename
 
 ########################################################################
-    
+
 def findFiles(dataDir, allFiles, pattern):
     """
     Searches allFiles for those matching the pattern.
@@ -68,9 +68,9 @@ def getFilesAndUpload(logger, nm_config, main_data_dir, log_file_fd):
 
     # The argument "log_file_fd" is assumed to be passed in
     # open state, and need not be closed during the call.
-    
+
     logger.info('Starting the NM upload manager ...')
-    
+
     # create the upload manager for the local files
     upload_manager = UploadManager(nm_config)
     upload_manager.start()
@@ -84,7 +84,7 @@ def getFilesAndUpload(logger, nm_config, main_data_dir, log_file_fd):
     upload_manager.addFiles(png_files)
 
     jpg_files = findFiles(main_data_dir, all_files, "*.jpg")
-    print("Adding %d jpg files to queue ..." % len(jpg_files), file=log_file_fd)   
+    print("Adding %d jpg files to queue ..." % len(jpg_files), file=log_file_fd)
     upload_manager.addFiles(jpg_files)
 
     ftp_files = findFiles(main_data_dir, all_files, "FTP*")
@@ -132,7 +132,7 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
 
     # Variable definitions
     main_data_dir = archived_night_dir
-    extra_uploads_file = "/home/pi/source/RMS/Extra_Uploads.sh"
+    My_Uploads_file = "/home/pi/source/RMS/My_Uploads.sh"
     remote_dir = '/Users/meteorstations/Public'
 
     RMS_data_dir_name = os.path.abspath("/home/pi/RMS_data/")
@@ -174,7 +174,7 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
         log_file_name = makeLogFile(log_dir_name, "ShellScriptLog", False)
     else:
         log_file_name ="/dev/null"
-        
+
     with open(log_file_name, 'w+') as log_file:
         # Print out the arguments and variables of interest
         print ("Version 0.9 of ExternalScript.py, 05-Apr-2021, bytes = 13759", file=log_file)
@@ -203,7 +203,7 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
             TimeLapse_cmd_str = TimeLapse_cmd_str + " Yes"
         else:
             TimeLapse_cmd_str = TimeLapse_cmd_str + " No"
-            
+
         print("TimeLapse_cmd_str = ", TimeLapse_cmd_str, file=log_file)
         status = subprocess.call(TimeLapse_cmd_str, \
                                  stdout=log_file, \
@@ -226,27 +226,27 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
         # Otherwise the program name is "__main__"
         if __name__ == "__main__" and log_upload:
             initLogging(config, "NM_UPLOAD_")
-            # Get the logger handle. 
+            # Get the logger handle.
             log = logging.getLogger("logger.ExternalScript")
         else:
             log = logging.getLogger("logger")
 
-                    
+
         # Upload files to the NM Server
         getFilesAndUpload(log, nm_config, main_data_dir, log_file)
 
-        # Test for existence of "Extra_Uploads.sh".
+        # Test for existence of "My_Uploads.sh".
         # Execute it if it exists.
 
-        if (os.path.exists(extra_uploads_file)):
-            status = subprocess.call(extra_uploads_file, \
+        if (os.path.exists(My_Uploads_file)):
+            status = subprocess.call(My_Uploads_file, \
                                      stdout=log_file, \
                                      stderr=log_file, \
                                      shell=True)
-            print(extra_uploads_file, " executed with status ", \
+            print(My_Uploads_file, " executed with status ", \
                   status, file=log_file)
         else:
-            print("No ", extra_uploads_file, " found to execute", \
+            print("No ", My_Uploads_file, " found to execute", \
                   file=log_file)
 
     # Reboot the Pi if requested. Code stolen from StartCapture.py.
@@ -278,7 +278,7 @@ def str2bool(v):
 if __name__ == "__main__":
 
     nmp = argparse.ArgumentParser(description="""Upload files to New_Mexico_Server, and optionally move other files to storage devices, create a TimeLapse.mp4 file, and reboot the system after all processing.""")
-    
+
     nmp.add_argument('--directory', type=str, \
                            help="Subdirectory of CapturedFiles or ArchiveFiles to upload. For example, US0006_20190421_020833_566122")
     nmp.add_argument('--log_script', type=str2bool, \
