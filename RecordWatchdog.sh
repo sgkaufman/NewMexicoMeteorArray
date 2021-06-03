@@ -13,7 +13,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-# Last Revision: 26-May-2021; Byte count: 8041
+# Last Revision: 03-Jun-2021; Byte count: 8115
 # RMS_RecordWatchdog.sh, version 0.1, Steve Kaufman and Pete Eschman
 # This file belongs in directory /home/pi/source/RMS/Scripts.
 # It is intended to be started at boot
@@ -61,6 +61,7 @@ declare capture_file start_date
 declare -i start_time capture_len capture_end
 declare -i file_time now delta
 declare -i wait_sec
+declare -a logs new_logs
 declare -i new_log_count log_count
 declare -i loop_count restart_count
 
@@ -191,17 +192,20 @@ while [ $now -lt $capture_end ]; do
 	lxterminal -e Scripts/RMS_StartCapture.sh -r
 
 	# Wait for a new log file to be created
-	log_count=$(ls /home/pi/RMS_data/logs/log*.log | wc -l)
+	logs=(/home/pi/RMS_data/logs/log*.log)
+	log_count=${#new_logs[@]}
 	new_log_count=0
 	loop_count=0
 	while [ $new_log_count -le $log_count ] 
 	do
-	    new_log_count=$(ls /home/pi/RMS_data/logs/log*.log | wc -l)
+	    env printf "Waiting for new log file ...\n"
+	    env sleep 60
+	    new_logs=(/home/pi/RMS_data/logs/log*.log)
+	    new_log_count=${#new_logs[@]}
 	    loop_count=$(( loop_count + 1 ))
 	    timenow=$(date +%H:%M:%S)
-	    env printf "%s loop: %d, new_log_count: %d, waiting for new log file...\n" \
+	    env printf "%s loop: %d, new_log_count: %d \n" \
 		$timenow $loop_count $new_log_count
-	    env sleep 60
 	done
 
 	# Wait for camera frame grabbing and any other restart overhead
