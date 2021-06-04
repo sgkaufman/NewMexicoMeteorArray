@@ -1,9 +1,8 @@
 #!/bin/bash
 
-# Version 0.2, 03-Jun-2021. Byte count = 1329
+# Version 0.2, 04-Jun-2021. Byte count = 1249
 # This script copies files in /home/pi/NMMA/NewMexicoMeteorArray
-# into /home/pi/source/RMS and its subdirectories, as determined
-# by the Raspbian OS version specified in file /etc/os-release.
+# into /home/pi/source/RMS and its subdirectories.
 
 declare git_dir="/home/pi/source/NMMA/NewMexicoMeteorArray"
 declare RMS_dir="/home/pi/source/RMS"
