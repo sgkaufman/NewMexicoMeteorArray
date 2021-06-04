@@ -28,7 +28,7 @@ cp ./WriteCapture.py "$RMS_dir"/RMS/WriteCapture.py
 
 printf "Copying FlushNMqueue.py to %s/RMS/FlushNMqueue.py\n" \
        "$RMS_dir"
-cp ./RecordWatchdog.sh "$RMS_dir"/RMS/FlushNMqueue.py
+cp ./FlushNMqueue.py "$RMS_dir"/RMS/FlushNMqueue.py
 
 printf "Copying RecordWatchdog.sh to %s/Scripts/RecordWatchdog.sh\n" \
        "$RMS_dir"
