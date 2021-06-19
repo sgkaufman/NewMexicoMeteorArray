@@ -29,6 +29,8 @@ def makeLogFile(log_file_dir, prefix, time_arg=None):
     else:
         time_to_use = time_arg
 
+    print( 'time_to_use in making CaptureTimes file: %s\n' % time_to_use)
+
     log_filename = prefix + "_" + \
         time_to_use.strftime( '%Y_%m_%d' ) + ".log"
 
@@ -89,10 +91,10 @@ if __name__ == "__main__":
         start_time = prev_set
 
     duration_int = round(duration)
-    time_str = start_time
-    print ("Time string is: %s" % time_str)
-    time_file = makeLogFile('/home/pi/RMS_data/logs/', "CaptureTimes", time_str)
+    print ("Time string is: %s" % start_time)
+    time_file = makeLogFile('/home/pi/RMS_data/logs/', "CaptureTimes", \
+                            start_time)
 
     with open(time_file, 'w+') as time_fd:
-        print(time_str, file=time_fd)
+        print(start_time, file=time_fd)
         print("%d" % duration_int, file=time_fd)
