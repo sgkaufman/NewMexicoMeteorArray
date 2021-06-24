@@ -13,7 +13,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-# Last Revision: 03-Jun-2021; Byte count: 8115
+# Last Revision: 18-June-2021; Byte count: 8278
 # RMS_RecordWatchdog.sh, version 0.1, Steve Kaufman and Pete Eschman
 # This file belongs in directory /home/pi/source/RMS/Scripts.
 # It is intended to be started at boot
@@ -37,7 +37,7 @@
 #	Step 3a (Yes) sleep until capture_start time. Go to Step 4.
 #	Step 3b (No) continue to Step 4.
 # Step 4: Loop until end of capture time, every $wait_sec interval
-#       a. Get current time
+#	a. Get current time
 #	b. Check most recent FITS file, and its modification time
 #	      Is FITS modification time > $wait_sec since current time?
 #	      (Yes) Restart Capture
@@ -61,9 +61,11 @@ declare capture_file start_date
 declare -i start_time capture_len capture_end
 declare -i file_time now delta
 declare -i wait_sec
-declare -a logs new_logs
 declare -i new_log_count log_count
 declare -i loop_count restart_count
+declare -i log_level
+
+log_level=0
 
 # Read the $wait_sec argument
 
@@ -91,6 +93,7 @@ start_time=$(date --date="$start_date" +%s)
 echo 'Start time, UTC: ' $start_date
 echo Start time, seconds since epoch: $start_time
 echo Capture length, seconds: $capture_len
+echo '  for an estimated total fits file count of ' $(( $capture_len * 100 / 1024 ))
 
 # capture_end is reduced by 15 minutes (900 seconds)
 # because RMS will not restart capture if it is restarted with 15 or 
@@ -142,7 +145,10 @@ while [ $now -lt $capture_end ]; do
 
     ds=$(ls -tl --time-style="+%Y %m %d %H %M %S" | sed -n 2p)
     dir=$(echo $ds | cut -d' ' -f12)
-    echo $dir
+    if [ $log_level -gt 0 ];
+    then
+	echo $dir
+    fi
     if [ ! -d $dir ];
     then 
 	env printf "%s is not a directory, exiting...\n" $dir
@@ -167,13 +173,19 @@ while [ $now -lt $capture_end ]; do
     now=$(date +%s)
     base_string=$(ls -tl --time-style="+%s" -- *.fits | sed -n 1p)
     filename=$(echo $base_string | cut -d' ' -f7)
-    echo $filename
     file_time=$(echo $base_string | cut -d' ' -f6)
-    echo 
+    if [ $log_level -gt 0 ];
+    then
+	echo $filename
+	echo
+    fi 
 	
     # Has it been too long since a FITS file was created?
     delta=$((now - file_time))
-    env printf "file time delta = %d\n" $delta
+    if [ $log_level -gt 0 ];
+    then
+	env printf "file time delta = %d\n" $delta
+    fi
 
     if [ $delta -gt $wait_sec ];
     then
@@ -192,20 +204,17 @@ while [ $now -lt $capture_end ]; do
 	lxterminal -e Scripts/RMS_StartCapture.sh -r
 
 	# Wait for a new log file to be created
-	logs=(/home/pi/RMS_data/logs/log*.log)
-	log_count=${#new_logs[@]}
+	log_count=$(ls /home/pi/RMS_data/logs/log*.log | wc -l)
 	new_log_count=0
 	loop_count=0
 	while [ $new_log_count -le $log_count ] 
 	do
-	    env printf "Waiting for new log file ...\n"
-	    env sleep 60
-	    new_logs=(/home/pi/RMS_data/logs/log*.log)
-	    new_log_count=${#new_logs[@]}
+	    new_log_count=$(ls /home/pi/RMS_data/logs/log*.log | wc -l)
 	    loop_count=$(( loop_count + 1 ))
 	    timenow=$(date +%H:%M:%S)
-	    env printf "%s loop: %d, new_log_count: %d \n" \
+	    env printf "%s loop: %d, new_log_count: %d, waiting for new log file...\n" \
 		$timenow $loop_count $new_log_count
+	    env sleep 60
 	done
 
 	# Wait for camera frame grabbing and any other restart overhead

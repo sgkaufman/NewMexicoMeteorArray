@@ -1,4 +1,7 @@
 How to turn ExternalScript.py and TimeLapse.sh features on and off
+27-Apr, 2021 change line number for turning off uploads to NM_server in ES to line 236
+		matching ES 05-Apr, 2021 (13759)
+
 03-Apr, 2021 	added directions to turn shell script logging on
 		added instructions on how to enable Extra_Uploads.sh
 
@@ -37,8 +40,8 @@ my uploads
 
 uploads to NM server
 	For both manual and RMS methods
-	For ES (14564 bytes) put # in front of line 247
-	- this will add one byte to file size, so now 14565 bytes
+        For ES (13759 bytes) put # in front of line 236
+        - this adds one byte to file size, so now 13760 bytes
 
 reboot at end of ES
 	For ES v0.8: Enable the reboot behavior when ES is called manually,

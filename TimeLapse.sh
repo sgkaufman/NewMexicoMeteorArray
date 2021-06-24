@@ -3,13 +3,13 @@
 # TimeLapse.sh, see printf below for rev date
 #
 # Create timelapse file, then move it, .csv, & *radiants.txt files
-#  so they can be easily located.
+#  so they can be easily located
 # Argument1 ($1): ArchivedFiles directory name
 # Argument2 ($2): False, 0 or No will skip creating TimeLapse.mp4
 # Argument3 ($3): False, 0 or No will skip creating stack of CapturedFiles
 # Default script action is to create TimeLapse.mp4 and Capture stack
 
-printf 'TimeLapse.sh, revised 24-May-2021, byte count = 8952, '
+printf 'TimeLapse.sh, revised 22-Jun-2021, byte count = 10297, '
 printf 'was called with\nArg 1 = %s, arg 2 = %s, arg 3 = %s\n\n' "$1" "$2" "$3"
 printf 'TimeLapse.sh copies radiants.txt, and .csv files to RMS_data/csv/,\n'
 printf 'then creates a TimeLapse.mp4 file, and stack of all captured images,\n'
@@ -27,12 +27,12 @@ TimeLapse=1
 CapStack=1
 My_Uploads=0
 
-# Let's check that second argument.
+# Let's check that second argument
 if [[ "$2" = "False" || "$2" = "0" || "$2" = "No" ]] ; then
     TimeLapse=0
 fi
 
-# Let's check that third argument.
+# Let's check that third argument
 if [[ "$3" = "False" || "$3" = "0" || "$3" = "No" ]] ; then
     CapStack=0
 fi
@@ -58,7 +58,7 @@ if [[ ! -d $data_dir ]] ; then
 fi
 # End Sanity Checks
 
-# Let's check that first argument. It must be an ArchivedFiles directory.
+# Let's check that first argument to be sure it is an ArchivedFiles directory
 if [[ $1 = '' || ! -d "${archive_dir}"/$1 ]] ; then
     printf 'Argument %s must specify a first-level sub-directory of %s\n' \
 	"$1" ${archive_dir}
@@ -133,7 +133,7 @@ else
 	fi
 	cp ./*captured.jpg "${data_dir}"
 	cp ./*captured.jpg "${archive_dir}/$1"
-	
+
     else
 	printf 'Directory %s does not exist. Captured stack will not be created.\n' \
 	    "${capture_dir}/$1"
@@ -171,13 +171,45 @@ if [[ ${My_Uploads} = 1 ]]; then
     cp ./*radiants.png /home/pi/RMS_data/My_Uploads/Radiants.png
 fi
 
-# Collect information for output to csv file.
+# Collect information for output to csv file
 # First, the number of FITS files
 
 fits_count=$(find "/home/pi/RMS_data/CapturedFiles/$1"/*.fits -type f -printf x | wc -c)
-
 printf "\n"
 printf 'Number of fits files in Capture directory: %d\n' "$fits_count"
+
+# Next, find the total capture time and estimate the number of fits files
+capture_len=0
+total_fits=0
+result=0
+short_fall=0
+secs_missed=0
+min_missed=0
+
+# Find the latest CaptureTimes file in the log directory
+capture_file=$(ls -t ~/RMS_data/logs/"CaptureTimes"* | sed -n 1p)
+
+
+# Read the start time and capture duration from the file
+{
+    read -r start_date
+    capture_len=$(grep -Eo '^[0-9]+' -)
+} < "$capture_file"
+
+total_fits=$(( capture_len * 100 / 1024 ))
+result="$( awk -v x="$capture_len" 'BEGIN { print ( x / 10.24 ) }' )"
+env printf "A capture lasting %d seconds, should create an estimated %d (%0.01f) fits files \n" \
+	"$capture_len"  "$total_fits" "$result"
+
+# estimated total_fits is typically 3 more than observed, so we subtract 3 from total
+total_fits=$(( total_fits - 3))
+short_fall=$(( fits_count - total_fits ))
+secs_missed=$(( short_fall * 1024 / 100 ))
+min_missed="$( awk -v x=$secs_missed 'BEGIN { print ( x / 60 ) }' )"
+env printf "We have a short fall of: %d fits, %d secs, %0.1f min\n\n" \
+	$short_fall $secs_missed $min_missed
+# Done finding the total capture time and the estimated number of fits files
+
 
 # Find the number of detections in the stack file
 stack=$(ls "/home/pi/RMS_data/ArchivedFiles/$1"/*meteors.jpg)
@@ -186,7 +218,7 @@ if [[ -n $stack ]] ; then
     # Yes! Find the number of meteors encoded in the file name
     detected=$(echo "$stack" | grep -Eo '[[:digit:]]+_meteors' | grep -Eo '[[:digit:]]+')
 else
-    # No such file found. No detections.
+    # No such file found, there were no detections
     detected=0
 fi
 
@@ -196,11 +228,10 @@ if [[ ${My_Uploads} = 1 ]]; then
 fi
 
 # Count the number of directories under CapturedFiles and ArchivedFiles
-# The variable "id_string" extracts the station name and
-# the date (in the form yyyymmdd)
-# from the first positional parameter (the directory name).
-# It uses substring syntax (take the substring starting at position 0
-# and extending 15 characters).
+# The variable "id_string" extracts the station name and the date (in the 
+# form yyyymmdd) from the first positional parameter (the directory # name). 
+# It uses substring syntax (take the substring starting at position # 0 and 
+# extending 15 characters).
 # The variable "id_string" holds the station name and date in a pattern.
 
 id_string=${1:0:15}
@@ -230,6 +261,13 @@ if [[ $num_captured_dirs -eq $num_archived_dirs ]] ; then
    if [[ $num_archived_dirs -eq 1 ]] ; then
 	printf "%d\t%d" >> "$OUTFILE" \
 	"$fits_count" "$detected"
+
+	# echo the short fall in fits files if large enough
+	if [[ $short_fall -lt 0 ]] ; then
+	   printf "\t%d fits %d secs %0.1f min" >> "$OUTFILE" \
+	   "$short_fall" "$secs_missed" "$min_missed"
+	fi
+
    else
 	printf "%d\t%d\t Arch_Dir: %d" >> "$OUTFILE" \
 	"$fits_count" "$detected" "$num_archived_dirs"
@@ -239,8 +277,8 @@ else
 	"$fits_count" "$detected" "$num_captured_dirs" "$num_archived_dirs"
 fi
 
-# Now check for the TOTAL number of directories in the CapturedFiles directory,
-# not just the number matching the date.
+# Now check for the TOTAL number of directories in the CapturedFiles 
+# directory, not just the number matching the date
 pushd "$capture_dir" > /dev/null
 captured=(./*"$station_name"*)
 total_captured=${#captured[@]}
