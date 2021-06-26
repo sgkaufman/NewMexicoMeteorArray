@@ -9,7 +9,7 @@
 # Argument3 ($3): False, 0 or No will skip creating stack of CapturedFiles
 # Default script action is to create TimeLapse.mp4 and Capture stack
 
-printf 'TimeLapse.sh, revised 22-Jun-2021, byte count = 10297, '
+printf 'TimeLapse.sh, revised 25-Jun-2021, byte count = 10274, '
 printf 'was called with\nArg 1 = %s, arg 2 = %s, arg 3 = %s\n\n' "$1" "$2" "$3"
 printf 'TimeLapse.sh copies radiants.txt, and .csv files to RMS_data/csv/,\n'
 printf 'then creates a TimeLapse.mp4 file, and stack of all captured images,\n'
@@ -201,8 +201,8 @@ result="$( awk -v x="$capture_len" 'BEGIN { print ( x / 10.24 ) }' )"
 env printf "A capture lasting %d seconds, should create an estimated %d (%0.01f) fits files \n" \
 	"$capture_len"  "$total_fits" "$result"
 
-# estimated total_fits is typically 3 more than observed, so we subtract 3 from total
-total_fits=$(( total_fits - 3))
+# estimated total_fits is typically 4 more than observed, so we subtract 4 from total
+total_fits=$(( total_fits - 4))
 short_fall=$(( fits_count - total_fits ))
 secs_missed=$(( short_fall * 1024 / 100 ))
 min_missed="$( awk -v x=$secs_missed 'BEGIN { print ( x / 60 ) }' )"
@@ -264,8 +264,8 @@ if [[ $num_captured_dirs -eq $num_archived_dirs ]] ; then
 
 	# echo the short fall in fits files if large enough
 	if [[ $short_fall -lt 0 ]] ; then
-	   printf "\t%d fits %d secs %0.1f min" >> "$OUTFILE" \
-	   "$short_fall" "$secs_missed" "$min_missed"
+	   printf "\t%d fits %0.1f min" >> "$OUTFILE" \
+	   "$short_fall" "$min_missed"
 	fi
 
    else
