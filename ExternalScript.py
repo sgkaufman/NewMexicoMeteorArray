@@ -1,12 +1,16 @@
 #!/usr/bin/env python
 
 """
-This is Version 1.0 of file ExternalScript.py. Dated 05/23/2021.
- v0.9 reduces the number of files uploaded to NM Server
-Byte count = 13663
+This is Version 1.0 of file ExternalScript.py. Dated 26-Jun-2021.
+Byte count = 13173
 This script
 1: Moves, creates, and copies files on the RMS stations, and
 2: Uploads files to the New Mexico Meteor Array Server.
+3. Calls TimeLapse.sh, and optionally logs results of that call.
+   The argument CreateTimeLapse must be True for that call to be made,
+   and the argument log_script must be True for the logging to be done.
+   The argument CreateTimeLapse defaults to True, 
+   and the argument log_script defaults to False.
 """
 from __future__ import print_function
 
@@ -150,21 +154,6 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
     nm_config.upload_queue_file = 'NM_FILES_TO_UPLOAD.inf'
     # nm_config.data_dir = os.path.join(os.path.expanduser('~'), 'NM_data')
     # nm_config.log_dir = os.path.join(os.path.expanduser('~'), 'NM_data/logs')
-
-    # Compute and write out the next start time and capture time
-    start_time, duration = captureDuration(config.latitude, \
-                                           config.longitude, \
-                                           config.elevation)
-    # Ensure that we have a datetime object.
-    # captureDuration returns True if capture has begun.
-    if isinstance(start_time, datetime.datetime):
-        time_str = start_time.isoformat(' ')
-        print ("Time string is: {0}".format(time_str))
-        time_file = makeLogFile(log_dir_name, "CaptureTimes", True)
-        duration_int = round(duration)
-        with open(time_file, 'w') as time_fd:
-            print(time_str, file=time_fd)
-            print(duration_int, file=time_fd)
 
     # Make and save the file descriptor for shell script and print function
     # calls. The "w+" mode ensures that the files is created if necessary.
