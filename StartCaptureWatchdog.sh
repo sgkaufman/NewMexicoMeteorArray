@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Date: 21-May-2021; Byte count: 2403
+# Date: 25-Jun-2021; Byte count: 2668
 # Starts the RecordWatchdog.sh monitoring program
 # (to restart RMS if capture stops).
 
@@ -10,6 +10,8 @@ declare config_file="/home/pi/source/RMS/.config"
 declare system_os
 declare -i wait_sec
 declare latitude longitude elevation
+
+sudo logger 'StartCaptureWatchdog.sh started'
 
 # System identification
 
@@ -64,20 +66,22 @@ python -m RMS.WriteCapture \
        --longitude $longitude \
        --elevation $elevation
 
-# Find the latest CaptureTimes file in the log directory
+# Find the latest CaptureTimes file just created in the log directory.
 
-capture_file=$(ls -lt $log_dir/"CaptureTimes"* | sed -n 1p | cut -d' ' -f10)
+capture_file=$(find $log_dir/"CaptureTimes"* -maxdepth 1 -mmin -10)
 echo $capture_file
 
 if [[ -f $capture_file ]]; then
-	read time < $capture_file
-	mo=$(date --date="$time" +%m)
-	day=$(date --date="$time" +%d)
-	yr=$(date --date="$time" +%Y)
+    printf "Reading capture file %s\n" $capture_file
+    read time < $capture_file
+    mo=$(date --date="$time" +%m)
+    day=$(date --date="$time" +%d)
+    yr=$(date --date="$time" +%Y)
 else
-	mo=$(date +'%m')
-	day=$(date +'%d')
-	yr=$(date +'%Y')
+    printf "Not reading a capture file\n"
+    mo=$(date +'%m')
+    day=$(date +'%d')
+    yr=$(date +'%Y')
 fi
 
 log_file=$log_dir/"RMS_RecordWatchdog_"$mo"_"$day"_"$yr".log"
