@@ -1,13 +1,10 @@
 #!/usr/bin/env bash
 # Backup.sh
 # script backs up key files so microSD can be swapped
-# script can be located on ~/Desktop
 
-printf "Backup.sh 14-April, 2020: backs up files prior to microSD swap.\n"
-printf "Byte count = 1036.\n"
+printf "Backup.sh 09-Jul, 2021, byte count ~996 : backs up files prior to microSD swap\n"
 
 destination="/media/pi/D25B-C884/US000N_Backup/Swap_MicroSD"
-
 mkdir ${destination}
 mkdir ${destination}/source
 mkdir ${destination}/source/RMS
@@ -15,15 +12,15 @@ mkdir ${destination}/source/RMS/RMS
 mkdir ${destination}/RMS_data
 mkdir ${destination}/RMS_data/csv
 
-cp -r /home/pi/.ssh ${destination}
-cp -r ~/Desktop ${destination}
-cp /home/pi/source/RMS/*.sh  ${destination}/source/RMS
-cp /home/pi/source/RMS/platepar_cmn2010.cal ${destination}/source/RMS
-cp /home/pi/source/RMS/mask.bmp ${destination}/source/RMS
-cp /home/pi/source/RMS/.config ${destination}/source/RMS
-cp /home/pi/source/RMS/RMS/ExternalScript.py ${destination}/source/RMS/RMS
-cp /home/pi/RMS_data/csv/*_fits_counts.txt ${destination}/RMS_data/csv
-cp /home/pi/RMS_data/myup.txt ${destination}/RMS_data
+cp -r $HOME/.ssh ${destination}
+cp -r $HOME/Desktop ${destination}
+cp $HOME/source/RMS/*.sh  ${destination}/source/RMS
+cp $HOME/source/RMS/platepar_cmn2010.cal ${destination}/source/RMS
+cp $HOME/source/RMS/mask.bmp ${destination}/source/RMS
+cp $HOME/source/RMS/.config ${destination}/source/RMS
+cp $HOME/source/RMS/RMS/ExternalScript.py ${destination}/source/RMS/RMS
+cp $HOME/RMS_data/csv/*_fits_counts.txt ${destination}/RMS_data/csv
+cp $HOME/RMS_data/myup.txt ${destination}/RMS_data
 
 printf "\nBackup.sh has completed\n"
 ls ${destination}
