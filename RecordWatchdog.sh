@@ -13,18 +13,18 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-# Last Revision: 18-June-2021; Byte count: 8278
+# Last Revision: 09-Jul-2021; Byte count: 8282
 # RMS_RecordWatchdog.sh, version 0.1, Steve Kaufman and Pete Eschman
-# This file belongs in directory /home/pi/source/RMS/Scripts.
+# This file belongs in directory $HOME/source/RMS/Scripts.
 # It is intended to be started at boot
 # (Buster: /etc/xdg/lxsession/LXDE-pi/autostart
-#  Jessie: /home/pi/.config/lxsession/LXDE-pi/autostart).
+#  Jessie: $HOME/.config/lxsession/LXDE-pi/autostart).
 # Dependencies: 
 # 1. ~/source/RMS/StartRecordCapture.sh
 # 2. ~/source/RMS/RMS/WriteCapture.py
 
 # This file tracks the creation of FITS files in the directory
-# /home/pi/RMS_data/CapturedFiles. If too long elapses between
+# $HOME/RMS_data/CapturedFiles. If too long elapses between
 # the creation of FITS files, the RMS system is restarted.
 # "Too long" is defined in the variable $wait_sec
 
@@ -55,8 +55,8 @@
 ### at the time of this writing.
 
 # Variables
-declare capture_dir=$HOME/RMS_data/CapturedFiles
-declare log_dir=$HOME/RMS_data/logs
+declare capture_dir="$HOME""/RMS_data/CapturedFiles"
+declare log_dir="$HOME""/RMS_data/logs"
 declare capture_file start_date
 declare -i start_time capture_len capture_end
 declare -i file_time now delta
@@ -75,7 +75,7 @@ echo "wait_sec = " "$wait_sec"
 # Switch to the ~/source/RMS directory so relative path references,
 # and python -m calls, work. Required at the top of the loop as
 # this code changes directories further down.
-cd /home/pi/source/RMS
+cd "$HOME""/source/RMS"
 
 # Find the latest CaptureTimes file in the log directory
 
@@ -199,17 +199,17 @@ while [ $now -lt $capture_end ]; do
 	killall python
 	env sleep 5
 
-	cd $HOME/source/RMS
-	source $HOME/vRMS/bin/activate
+	cd "$HOME""/source/RMS"
+	source "$HOME""/vRMS/bin/activate"
 	lxterminal -e Scripts/RMS_StartCapture.sh -r
 
 	# Wait for a new log file to be created
-	log_count=$(ls /home/pi/RMS_data/logs/log*.log | wc -l)
+	log_count=$(ls "$HOME"/RMS_data/logs/log*.log | wc -l)
 	new_log_count=0
 	loop_count=0
 	while [ $new_log_count -le $log_count ] 
 	do
-	    new_log_count=$(ls /home/pi/RMS_data/logs/log*.log | wc -l)
+	    new_log_count=$(ls "$HOME"/RMS_data/logs/log*.log | wc -l)
 	    loop_count=$(( loop_count + 1 ))
 	    timenow=$(date +%H:%M:%S)
 	    env printf "%s loop: %d, new_log_count: %d, waiting for new log file...\n" \
@@ -222,7 +222,7 @@ while [ $now -lt $capture_end ]; do
 
 	# Wait longer if the processing queue is still reloading 
 	loop_count=0
-	while [ -f /home/pi/RMS_data/.capture_resuming ] ;
+	while [ -f "$HOME"/RMS_data/.capture_resuming ] ;
 	do
 	    timenow=$(date +%H:%M:%S)
 	    env printf "%s loop: %d, waiting for .capture_resuming flag...\n" \

@@ -1,12 +1,12 @@
 #!/bin/bash
 
-# Date: 28-Jun-2021; Byte count: 2734
+# Date: 09-Jul-2021; Byte count: 2728
 # Starts the RecordWatchdog.sh monitoring program
 # (to restart RMS if capture stops).
 
 # Variable definitions
-declare log_dir="/home/pi/RMS_data/logs"
-declare config_file="/home/pi/source/RMS/.config"
+declare log_dir="$HOME""/RMS_data/logs"
+declare config_file="$HOME""/source/RMS/.config"
 declare system_os
 declare -i wait_sec
 declare latitude longitude elevation
@@ -61,8 +61,8 @@ echo "Latitude: " $latitude
 echo "Longitude: " $longitude
 echo "Elevation: " $elevation
 
-pushd /home/pi/source/RMS
-source /home/pi/vRMS/bin/activate
+pushd "$HOME"/source/RMS
+source "$HOME"/vRMS/bin/activate
 python -m RMS.WriteCapture \
        --latitude $latitude \
        --longitude $longitude \
@@ -89,8 +89,8 @@ fi
 
 log_file=$log_dir/"RMS_RecordWatchdog_"$mo"_"$day"_"$yr".log"
 
-cd /home/pi/source/RMS/Scripts
+cd "$HOME"/source/RMS/Scripts
 echo Logging RMS_StartWatchdog.sh to $log_file ...
-/home/pi/source/RMS/Scripts/RecordWatchdog.sh $wait_sec >> $log_file &
+"$HOME"/source/RMS/Scripts/RecordWatchdog.sh $wait_sec >> $log_file &
 
 exit 0

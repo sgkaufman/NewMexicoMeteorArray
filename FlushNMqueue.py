@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 """
-FlushNMqueue.py (1505 bytes) 15-Apr-2021.
 This script flushes the queue for files uploaded to New Mexico Meteor Array Server.
 
 It contains code fragments from ExternalScript.py v0.8, Dated 03/25/2021 (14564 bytes)
@@ -20,9 +19,9 @@ from RMS.Logger import initLogging
 
 if __name__ == "__main__":
 
-    config = RMS.ConfigReader.loadConfigFromDirectory(None, "/home/pi/source/RMS/.config")
+    config = RMS.ConfigReader.loadConfigFromDirectory(None, ""$HOME"/source/RMS/.config")
 
-    print("Running FlushNMqueue.py, 07-Apr, 2021, byte count = 1528, flushing the NM upload queue...")
+    print("Running FlushNMqueue.py, 09-Jul, 2021, byte count 1459: flushing the NM upload queue...")
 
     # Create the config object for New Mexico Meteor Array purposes
     nm_config = copy.copy(config)

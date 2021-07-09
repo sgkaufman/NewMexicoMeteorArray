@@ -1,10 +1,10 @@
 #!/bin/bash
 #
-# Chk_Website.sh 27-May, 2021, 1210 bytes
+# Chk_Website.sh 09-Jul, 2021, 1209 bytes
 
 # added (Buster): sudo nano /etc/xdg/lxsession/LXDE-pi/autostart
 # sleep 2
-# @lxterminal -e "/home/pi/source/RMS/Chk_Website.sh"
+# @lxterminal -e ""$HOME"/source/RMS/Chk_Website.sh"
 #
 
 echo "Press [CTRL+C] to stop monitoring complex.org/~gnto status..."
