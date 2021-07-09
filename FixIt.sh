@@ -1,5 +1,5 @@
 #!/bin/bash
-# FixIt.sh	see printf line below for date of last update
+# FixIt.sh
 # Combine reprocessing & external script calls
 #  a typical call is:	./FixIt.sh US0008_20191002_011553_128819
 #
@@ -32,15 +32,15 @@
 # A run on ArchiveFilesReprocessed data, no reboot, no mp4, no CapStack wouild be:
 #			./FixIt.sh <directory name> 0 0 0 1
 
-cd /home/pi/source/RMS
-printf "\nFixIt.sh, 15-Apr, 2021, byte count = 3539 : Combining reprocess and external script calls...\n"
+cd $HOME/source/RMS
+printf "\nFixIt.sh, 09-Jul, 2021, byte count 3502 : Combining reprocess and external script calls...\n"
 
 if [ $# -eq 0 ] ; then 
    printf "No first argument given, exiting now\n"
    exit 1
    fi
 
-if [ ! -d /home/pi/RMS_data/CapturedFiles/"$1" ] && [ ! -d /home/pi/RMS_data/ArchivedFilesReprocessed/"$1" ] ; then
+if [ ! -d $HOME/RMS_data/CapturedFiles/"$1" ] && [ ! -d $HOME/RMS_data/ArchivedFilesReprocessed/"$1" ] ; then
    printf "First argument: %s  must be a valid directory to reprocess\n" "$1"
    exit 1
    fi
@@ -48,27 +48,27 @@ if [ ! -d /home/pi/RMS_data/CapturedFiles/"$1" ] && [ ! -d /home/pi/RMS_data/Arc
 case $# in
     "5")
          printf "Reprocessing data in ArchivedFilesReprocessed %s, with reboot=%s, create mp4=%s, and create CapStack=%s\n" "$1" "$2" "$3" "$4"
-         python -m RMS.Reprocess ~/RMS_data/ArchivedFilesReprocessed/"$1"
+         python -m RMS.Reprocess $HOME/RMS_data/ArchivedFilesReprocessed/"$1"
          python -m RMS.ExternalScript --directory "$1" --log_script 0 --reboot "$2" --CreateTimeLapse "$3" --CreateCaptureStack "$4"
          ;;
     "4")
          printf "Reprocessing data in CapturedFiles %s, with reboot=%s, create mp4=%s, and create CapStack=%s\n" "$1" "$2" "$3" "$4"
-         python -m RMS.Reprocess ~/RMS_data/ArchivedFilesReprocessed/"$1"
+         python -m RMS.Reprocess $HOME/RMS_data/ArchivedFilesReprocessed/"$1"
          python -m RMS.ExternalScript --directory "$1" --log_script 0 --reboot "$2" --CreateTimeLapse "$3"--CreateCaptureStack "$4"
          ;;
     "3")
          printf "Reprocessing data in CapturedFiles %s, with reboot=%s, and create mp4=%s\n" "$1" "$2" "$3"
-         python -m RMS.Reprocess ~/RMS_data/CapturedFiles/"$1"
+         python -m RMS.Reprocess $HOME/RMS_data/CapturedFiles/"$1"
          python -m RMS.ExternalScript --directory "$1" --log_script 0 --reboot "$2" --CreateTimeLapse "$3"
          ;;
     "2")
          printf "Reprocessing data in CapturedFiles %s, with reboot=%s\n" "$1" "$2"
-         python -m RMS.Reprocess ~/RMS_data/CapturedFiles/"$1"
+         python -m RMS.Reprocess $HOME/RMS_data/CapturedFiles/"$1"
          python -m RMS.ExternalScript --directory "$1" --log_script 0 --reboot "$2"
          ;;
     *)
          printf "Reprocessing data in CapturedFiles %s, with default reboot\n" "$1"
-         python -m RMS.Reprocess ~/RMS_data/CapturedFiles/"$1"
+         python -m RMS.Reprocess $HOME/RMS_data/CapturedFiles/"$1"
          python -m RMS.ExternalScript --directory "$1" --log_script 0
          ;;
 esac

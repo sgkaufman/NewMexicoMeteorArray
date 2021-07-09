@@ -1,17 +1,5 @@
 How to turn ExternalScript.py and TimeLapse.sh features on and off
-27-Apr, 2021 change line number for turning off uploads to NM_server in ES to line 236
-		matching ES 05-Apr, 2021 (13759)
-
-03-Apr, 2021 	added directions to turn shell script logging on
-		added instructions on how to enable Extra_Uploads.sh
-
-27-Mar, 2021 change line number for turning off uploads to NM_server ES 245  -> 247
-		matching ES 25-Mar, 2021 (14564)
-
-19-Mar, 2021 change line number for turning off uploads to NM_server ES 237  -> 245
-		matching ES 12-Mar, 2021 (14383)
-
-13-Mar, 2021 last major revision
+09-Jul, 2021, byte count 4679
 
 IMPORTANT!: When making any changes to TimeLapse.sh, there can be NO SPACES
 between any symbols on the line! Use the examples as they are written, so
@@ -62,6 +50,12 @@ enable extra uploads
 	the correct upload instructions in a file called "Extra_Uploads.sh"
 	located in source/RMS
 	also see note above about My_Uploads=1 in TL
+
+turn off uploads to GMN
+	in .config, change true to false (~line number 113, after [Upload]):
+	; Flag for enabling/disabling upload to server
+	upload_enabled: true 
+
 _______________
 
 Future changes:ES v0.9: drops upload to NM_Server for *.cal, .config, platepar
@@ -126,11 +120,11 @@ comments and a few minor coding differences.
 Below are the contents of the version on US000G
 Contents of Extra_Uploads.sh	03/10/2020
 #!/bin/bash
-cd /home/pi/RMS_data/My_Uploads
+cd $HOME/RMS_data/My_Uploads
 sftp -b ../myup.txt gnto@complex.org
 
 
-myup.txt should be located in /home/pi/RMS_data
+myup.txt should be located in $HOME/RMS_data
 Contents of myup.txt	03/08/2020
 cd public_html
 mput *
