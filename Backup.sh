@@ -3,9 +3,10 @@
 # script backs up key files so microSD can be swapped
 # script can be located on ~/Desktop
 
-printf "Backup.sh 24-Feb, 2021, byte count ~1009 : backs up files prior to microSD swap\n"
+printf "Backup.sh 14-April, 2020: backs up files prior to microSD swap.\n"
+printf "Byte count = 1036.\n"
 
-destination="/media/pi/32GB_F32_2/Swap_microSD"
+destination="/media/pi/D25B-C884/US000N_Backup/Swap_MicroSD"
 
 mkdir ${destination}
 mkdir ${destination}/source
