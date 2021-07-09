@@ -1,5 +1,5 @@
 How to turn ExternalScript.py and TimeLapse.sh features on and off
-09-Jul, 2021, byte count 4679
+09-Jul, 2021, byte count 4683
 
 IMPORTANT!: When making any changes to TimeLapse.sh, there can be NO SPACES
 between any symbols on the line! Use the examples as they are written, so
@@ -120,11 +120,11 @@ comments and a few minor coding differences.
 Below are the contents of the version on US000G
 Contents of Extra_Uploads.sh	03/10/2020
 #!/bin/bash
-cd $HOME/RMS_data/My_Uploads
+cd "$HOME"/RMS_data/My_Uploads
 sftp -b ../myup.txt gnto@complex.org
 
 
-myup.txt should be located in $HOME/RMS_data
+myup.txt should be located in "$HOME"/RMS_data
 Contents of myup.txt	03/08/2020
 cd public_html
 mput *

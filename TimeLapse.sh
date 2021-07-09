@@ -9,7 +9,7 @@
 # Argument3 ($3): False, 0 or No will skip creating stack of CapturedFiles
 # Default script action is to create TimeLapse.mp4 and Capture stack
 
-printf 'TimeLapse.sh, revised 09-Jul, 2021, byte count 10206, '
+printf 'TimeLapse.sh, revised 09-Jul, 2021, byte count 10244, '
 printf 'was called with\nArg 1 = %s, arg 2 = %s, arg 3 = %s\n\n' "$1" "$2" "$3"
 printf 'TimeLapse.sh copies radiants.txt, and .csv files to RMS_data/csv/,\n'
 printf 'then creates a TimeLapse.mp4 file, and stack of all captured images,\n'
@@ -37,9 +37,9 @@ if [[ "$3" = "False" || "$3" = "0" || "$3" = "No" ]] ; then
     CapStack=0
 fi
 
-archive_dir="$HOME/RMS_data/ArchivedFiles"
-capture_dir="$HOME/RMS_data/CapturedFiles"
-data_dir="$HOME/RMS_data"
+archive_dir=""$HOME"/RMS_data/ArchivedFiles"
+capture_dir=""$HOME"/RMS_data/CapturedFiles"
+data_dir=""$HOME"/RMS_data"
 
 # Sanity checks
 if [[ ! -d $archive_dir ]] ; then
@@ -68,16 +68,16 @@ fi
 # The substring operator in the following line grabs the station name
 # from the directory name
 station_name=${1:0:6}
-OUTFILE="$HOME/RMS_data/csv/"${station_name}_"fits_counts.txt"
+OUTFILE=""$HOME"/RMS_data/csv/"${station_name}_"fits_counts.txt"
 echo "Station_name is ${station_name}"
 
 # Get the environment for Python set up, and move to the right directory
-source $HOME/vRMS/bin/activate
-cd $HOME/source/RMS/
+source "$HOME"/vRMS/bin/activate
+cd "$HOME"/source/RMS/
 
 if [[ ${My_Uploads} = 1 ]]; then
     printf 'Cleaning out older files in My_Uploads\n'
-    rm $HOME/RMS_data/My_Uploads/*
+    rm "$HOME"/RMS_data/My_Uploads/*
 fi
 
 # Create the timelapse
@@ -87,13 +87,13 @@ if [[ $TimeLapse = 0 ]] ; then
 else
     if [[ -d "${capture_dir}/$1" ]] ; then
 	printf '%s\n' "Creating Timelapse of directory ${capture_dir}/$1"
-	python -m Utils.GenerateTimelapse $HOME/RMS_data/CapturedFiles/"$1"
+	python -m Utils.GenerateTimelapse "$HOME"/RMS_data/CapturedFiles/"$1"
 	# Move the timelapse up to the RMS_data directory
 	printf 'Moving Timelapse to RMS_data\n'
 	cd -- $capture_dir/"$1"
 	if [[ ${My_Uploads} = 1 ]]; then
 	    printf 'Copying TimeLapse.mp4 to My_Uploads\n'
-	    cp ./*.mp4 $HOME/RMS_data/My_Uploads/TimeLapse.mp4
+	    cp ./*.mp4 "$HOME"/RMS_data/My_Uploads/TimeLapse.mp4
 	fi
 	mv -v -- ./*.mp4 ${data_dir}
     else
@@ -113,9 +113,9 @@ else
 	d_stack=$(ls ./*stack*_meteors.jpg)
 	mv ./*_meteors.jpg m
 
-	cd $HOME/source/RMS/
+	cd "$HOME"/source/RMS/
 	printf "Creating a stack of the capture directory: %s\n" "$1"
-	python -m Utils.StackFFs $HOME/RMS_data/CapturedFiles/"$1" jpg -s -x \
+	python -m Utils.StackFFs "$HOME"/RMS_data/CapturedFiles/"$1" jpg -s -x \
 		> /dev/null
 
 	cd -- $capture_dir/"$1"
@@ -129,7 +129,7 @@ else
 	# Check to see if this capture stack should be moved
 	if [[ ${My_Uploads} = 1 ]] ; then
 	    printf 'Copying Captured stack to My_Uploads\n'
-	    cp ./*captured.jpg $HOME/RMS_data/My_Uploads/Captured.jpg
+	    cp ./*captured.jpg "$HOME"/RMS_data/My_Uploads/Captured.jpg
 	fi
 	cp ./*captured.jpg "${data_dir}"
 	cp ./*captured.jpg "${archive_dir}/$1"
@@ -141,7 +141,7 @@ else
 fi
 
 cd -- $archive_dir/"$1"
-# Check for existence of the $HOME/RMS_data/csv directory
+# Check for existence of the "$HOME"/RMS_data/csv directory
 if [[ ! -d "${data_dir}"/csv ]] ; then
     printf 'Directory %s does not exist\n' "${data_dir}/csv"
     if [[ -f "${data_dir}"/csv ]] ; then
@@ -154,7 +154,7 @@ if [[ ! -d "${data_dir}"/csv ]] ; then
     mkdir "${data_dir}"/csv
     echo 'Number of fits files in Capture directory' > "$OUTFILE"
 else
-    # There already is a directory $HOME/RMS_data/csv
+    # There already is a directory "$HOME"/RMS_data/csv
     printf '\nDirectory %s already exists\n' "${data_dir}/csv"
 fi
 
@@ -168,13 +168,13 @@ cp -v -- ./*radiants.txt "${data_dir}/csv"
 
 if [[ ${My_Uploads} = 1 ]]; then
     printf 'Copying Radiants.jpg to My_Uploads\n'
-    cp ./*radiants.png $HOME/RMS_data/My_Uploads/Radiants.png
+    cp ./*radiants.png "$HOME"/RMS_data/My_Uploads/Radiants.png
 fi
 
 # Collect information for output to csv file
 # First, the number of FITS files
 
-fits_count=$(find "$HOME/RMS_data/CapturedFiles/$1"/*.fits -type f -printf x | wc -c)
+fits_count=$(find ""$HOME"/RMS_data/CapturedFiles/$1"/*.fits -type f -printf x | wc -c)
 printf "\n"
 printf 'Number of fits files in Capture directory: %d\n' "$fits_count"
 
@@ -187,7 +187,7 @@ secs_missed=0
 min_missed=0
 
 # Find the latest CaptureTimes file in the log directory
-capture_file=$(ls -t $HOME/RMS_data/logs/"CaptureTimes"* | sed -n 1p)
+capture_file=$(ls -t "$HOME"/RMS_data/logs/"CaptureTimes"* | sed -n 1p)
 
 
 # Read the start time and capture duration from the file
@@ -212,7 +212,7 @@ env printf "We have a short fall of: %d fits, %d secs, %0.1f min\n\n" \
 
 
 # Find the number of detections in the stack file
-stack=$(ls "$HOME/RMS_data/ArchivedFiles/$1"/*meteors.jpg)
+stack=$(ls ""$HOME"/RMS_data/ArchivedFiles/$1"/*meteors.jpg)
 # Anything such file found?
 if [[ -n $stack ]] ; then
     # Yes! Find the number of meteors encoded in the file name
@@ -224,7 +224,7 @@ fi
 
 if [[ ${My_Uploads} = 1 ]]; then
     printf 'Copying Detected Stack.jpg to My_Uploads\n'
-    cp ./*meteors.jpg $HOME/RMS_data/My_Uploads/Stack.jpg
+    cp ./*meteors.jpg "$HOME"/RMS_data/My_Uploads/Stack.jpg
 fi
 
 # Count the number of directories under CapturedFiles and ArchivedFiles
