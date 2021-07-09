@@ -19,9 +19,9 @@ from RMS.Logger import initLogging
 
 if __name__ == "__main__":
 
-    config = RMS.ConfigReader.loadConfigFromDirectory(None, "$HOME/source/RMS/.config")
+    config = RMS.ConfigReader.loadConfigFromDirectory(None, ""$HOME"/source/RMS/.config")
 
-    print("Running FlushNMqueue.py, 09-Jul, 2021, byte count 1457: flushing the NM upload queue...")
+    print("Running FlushNMqueue.py, 09-Jul, 2021, byte count 1459: flushing the NM upload queue...")
 
     # Create the config object for New Mexico Meteor Array purposes
     nm_config = copy.copy(config)
