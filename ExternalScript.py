@@ -137,10 +137,9 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
     # Variable definitions
     main_data_dir = archived_night_dir
     remote_dir = '/Users/meteorstations/Public'
-    home_dir = os.getenv('HOME')
-    My_Uploads_file = "{0}/source/RMS/My_Uploads.sh".format(home_dir)
+    My_Uploads_file = "~/source/RMS/My_Uploads.sh"
 
-    RMS_data_dir_name = os.path.abspath("{0}/RMS_data/".format(home_dir))
+    RMS_data_dir_name = os.path.expanduser("~/RMS_data/")
     print ("RMS_data_dir_name = {0}".format(RMS_data_dir_name))
     data_dir_name = os.path.basename(main_data_dir)
     print ("data_dir_name = {0}".format(data_dir_name))
@@ -183,7 +182,7 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
         # Prepare for calls to TimeLapse.sh,
         # second arg based on CreateTimeLapse,
         # third arg based on CreateCaptureStack.
-        TimeLapse_cmd_str = "{0}/source/RMS/TimeLapse.sh ".format(home_dir) + data_dir_name
+        TimeLapse_cmd_str = "~/source/RMS/TimeLapse.sh " + data_dir_name
         if  CreateTimeLapse:
             TimeLapse_cmd_str = TimeLapse_cmd_str + " Yes"
         else:
@@ -203,7 +202,7 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
               status, file=log_file)
 
         # backup data to thumb drive, PNE 12/08/2019
-        status = subprocess.call("{0}/source/RMS/BackupToUSB.sh ".format(home_dir) \
+        status = subprocess.call("~/source/RMS/BackupToUSB.sh " \
                                  + data_dir_name, \
                                  stdout=log_file, \
                                  stderr=log_file, \
@@ -293,8 +292,6 @@ if __name__ == "__main__":
                      help="which fileset to upload (not currently implemented)")
     args = nmp.parse_args()
 
-    home_dir = os.getenv('HOME')
-
     if args.directory == None:
         print ("Directory argument not present! Exiting ...")
         sys.exit()
@@ -305,7 +302,7 @@ if __name__ == "__main__":
     print ('CreateCaptureStack arg: ', args.CreateCaptureStack)
     print ('preset arg: ', args.preset)
 
-    config = RMS.ConfigReader.loadConfigFromDirectory(None, "{0}/source/RMS/.config".format(home_dir))
+    config = RMS.ConfigReader.loadConfigFromDirectory(None, "~/source/RMS/.config")
 
     print("config.data_dir = ", config.data_dir)
 
