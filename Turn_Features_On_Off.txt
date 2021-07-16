@@ -1,5 +1,5 @@
 How to turn ExternalScript.py and TimeLapse.sh features on and off
-13-Jul, 2021, byte count 4495
+16-Jul, 2021, byte count 4589
 
 IMPORTANT!: When making any changes to TimeLapse.sh, there can be NO SPACES
 between any symbols on the line! Use the examples as they are written, so
@@ -28,14 +28,16 @@ my uploads
 
 uploads to NM server
 	For both manual and RMS methods
-	For ES (13759 bytes) put # in front of line 236
-	 This will increasee byte count by 1
+	For ES (11916 bytes) put # in front on line 225:
+	# Upload files to the NM Server
+	# getFilesAndUpload(log, nm_config, main_data_dir, log_file)
+	this may increase byte count by 1
 
 reboot at end of ES
 	For ES v1.0: Enable the reboot behavior when ES is called manually,
 	line 123: change reboot=True to False:
 	log_upload=True, log_script=False, reboot=False, \
-	 This will increasee byte count by 1
+	 This will increase byte count by 1
 
 shell script in ES
 	For ES v1.0: Enable the shell script logging when ES is called manually,
