@@ -4,7 +4,7 @@
 CaptureTimes.py is a hacked version of WriteCapture.py
  capture time information is written to a static file named
  ~/RMS_data/logs/CaptureTimes.log
-Version of 14-July-2021; Bytes: 3283
+Version of 15-July-2021; Bytes: 3283
 
 Version of 21-May-2021; Bytes: 3820
 Version 0.1, SGK, 6/28/2020. This file belongs in directory
@@ -38,9 +38,9 @@ if __name__ == "__main__":
     lon  = args.longitude
     elev = args.elevation
 
-    print ("WriteCapture.py, Latitude: ",  lat)
-    print ("WriteCapture.py, Longitude: ", lon)
-    print ("WriteCapture.py, Elevation: ", elev)
+    print ("CaptureTimes.py, Latitude: ",  lat)
+    print ("CaptureTimes.py, Longitude: ", lon)
+    print ("CaptureTimes.py, Elevation: ", elev)
 
     # Compute and write out the next start time and capture timedatetime.
     start_time, duration = captureDuration(lat, lon, elev)
