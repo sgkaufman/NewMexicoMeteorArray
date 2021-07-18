@@ -2,7 +2,7 @@
 
 """
 This is Version 1.0 of file ExternalScript.py. Dated 10-Jul-2021.
-Byte count = 11916
+Byte count = 12915
 This script
 1: Moves, creates, and copies files on the RMS stations, and
 2: Uploads files to the New Mexico Meteor Array Server.
@@ -40,12 +40,12 @@ def makeLogFile(log_file_dir="", prefix="", date_only=False):
     """
 
     if date_only:
-	format_str = '%Y_%m_%d'
+        format_str = '%Y_%m_%d'
     else:
-	format_str = '%Y_%m_%d_%H%M%S.%f'
+        format_str = '%Y_%m_%d_%H%M%S.%f'
 
     log_filename = prefix + "_" + \
-	datetime.datetime.utcnow().strftime(format_str) + ".log"
+        datetime.datetime.utcnow().strftime(format_str) + ".log"
 
     full_filename = log_file_dir + log_filename
     print("Creating log file name %s\n" % full_filename)
@@ -64,8 +64,8 @@ def findFiles(dataDir, allFiles, pattern):
     found_files = []
     pattern_files = fnmatch.filter(allFiles, pattern)
     for pattern_file in pattern_files:
-	full_file = os.path.join(dataDir, pattern_file)
-	found_files.append(full_file)
+        full_file = os.path.join(dataDir, pattern_file)
+        found_files.append(full_file)
     return found_files
 
 def getFilesAndUpload(logger, nm_config, main_data_dir, log_file_fd):
@@ -107,9 +107,9 @@ def getFilesAndUpload(logger, nm_config, main_data_dir, log_file_fd):
     print("csv_dir set to %s" % csv_dir, file=log_file_fd)
 
     fits_count_file = findFiles(csv_dir, os.listdir(csv_dir), \
-			       "*fits_counts.txt")
+                               "*fits_counts.txt")
     print("Adding %d fits_count.txt files to queue ..." % len(fits_count_file), \
-	  file=log_file_fd)
+          file=log_file_fd)
     upload_manager.addFiles(fits_count_file)
 
     # Begin the upload!
@@ -120,18 +120,18 @@ def getFilesAndUpload(logger, nm_config, main_data_dir, log_file_fd):
 
 
 def uploadFiles(captured_night_dir, archived_night_dir, config, \
-		log_upload=True, log_script=False, reboot=True, \
-		CreateTimeLapse=True, CreateCaptureStack=True, \
-		preset='micro'):
+                log_upload=True, log_script=False, reboot=True, \
+                CreateTimeLapse=True, CreateCaptureStack=True, \
+                preset='micro'):
     """ Function to upload selected files from the ArchivedData or CapturedData
-	directory to the New_Mexico_Server.
-	Files to transfer include:
-	*.png
-	*.jpg
-	FTP*.txt
-	*_radiants.txt
-	*.csv
-	*_fits_count.txt
+        directory to the New_Mexico_Server.
+        Files to transfer include:
+        *.png
+        *.jpg
+        FTP*.txt
+        *_radiants.txt
+        *.csv
+        *_fits_count.txt
     """
 
     # Variable definitions
@@ -160,83 +160,83 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
     # The file remains open for writing until its "closed" method is called.
 
     if log_script:
-	log_file_name = makeLogFile(log_dir_name, "ShellScriptLog", False)
+        log_file_name = makeLogFile(log_dir_name, "ShellScriptLog", False)
     else:
-	log_file_name ="/dev/null"
+        log_file_name ="/dev/null"
 
     with open(log_file_name, 'w+') as log_file:
-	# Print out the arguments and variables of interest
-	print ("Version 0.9 of ExternalScript.py, 05-Apr-2021, bytes = 13759", file=log_file)
-	print("remote_dir set to %s" % remote_dir, file=log_file)
-	print("Name of program running = %s" % (__name__), file=log_file)
-	print("reboot arg = %s" % reboot, file=log_file)
-	print("CreateTimeLapse arg = %s" % CreateTimeLapse, file=log_file)
-	print("log_dir_name = %s" % log_dir_name, file=log_file)
-	print("ArchivedFiles directory = %s" % archived_night_dir, \
-	      file=log_file)
+        # Print out the arguments and variables of interest
+        print ("Version 0.9 of ExternalScript.py, 05-Apr-2021, bytes = 13759", file=log_file)
+        print("remote_dir set to %s" % remote_dir, file=log_file)
+        print("Name of program running = %s" % (__name__), file=log_file)
+        print("reboot arg = %s" % reboot, file=log_file)
+        print("CreateTimeLapse arg = %s" % CreateTimeLapse, file=log_file)
+        print("log_dir_name = %s" % log_dir_name, file=log_file)
+        print("ArchivedFiles directory = %s" % archived_night_dir, \
+              file=log_file)
 
-	# What is it about subprocess.call, with shell=True, that makes
-	# StartCapture execute? Or, at least some update checking
-	# take place?
+        # What is it about subprocess.call, with shell=True, that makes
+        # StartCapture execute? Or, at least some update checking
+        # take place?
 
-	# Prepare for calls to TimeLapse.sh,
-	# second arg based on CreateTimeLapse,
-	# third arg based on CreateCaptureStack.
-	TimeLapse_cmd_str = "~/source/RMS/TimeLapse.sh " + data_dir_name
-	if  CreateTimeLapse:
-	    TimeLapse_cmd_str = TimeLapse_cmd_str + " Yes"
-	else:
-	    TimeLapse_cmd_str = TimeLapse_cmd_str + " No"
+        # Prepare for calls to TimeLapse.sh,
+        # second arg based on CreateTimeLapse,
+        # third arg based on CreateCaptureStack.
+        TimeLapse_cmd_str = "~/source/RMS/TimeLapse.sh " + data_dir_name
+        if  CreateTimeLapse:
+            TimeLapse_cmd_str = TimeLapse_cmd_str + " Yes"
+        else:
+            TimeLapse_cmd_str = TimeLapse_cmd_str + " No"
 
-	if CreateCaptureStack:
-	    TimeLapse_cmd_str = TimeLapse_cmd_str + " Yes"
-	else:
-	    TimeLapse_cmd_str = TimeLapse_cmd_str + " No"
+        if CreateCaptureStack:
+            TimeLapse_cmd_str = TimeLapse_cmd_str + " Yes"
+        else:
+            TimeLapse_cmd_str = TimeLapse_cmd_str + " No"
 
-	print("TimeLapse_cmd_str = ", TimeLapse_cmd_str, file=log_file)
-	status = subprocess.call(TimeLapse_cmd_str, \
-				 stdout=log_file, \
-				 stderr=log_file, \
-				 shell=True)
-	print("TimeLapse call returned with status ", \
-	      status, file=log_file)
+        print("TimeLapse_cmd_str = ", TimeLapse_cmd_str, file=log_file)
+        status = subprocess.call(TimeLapse_cmd_str, \
+                                 stdout=log_file, \
+                                 stderr=log_file, \
+                                 shell=True)
+        print("TimeLapse call returned with status ", \
+              status, file=log_file)
 
-	# backup data to thumb drive, PNE 12/08/2019
-	status = subprocess.call("~/source/RMS/BackupToUSB.sh " \
-				 + data_dir_name, \
-				 stdout=log_file, \
-				 stderr=log_file, \
-				 shell=True)
-	print("BackupToUSB call returned with status ", \
-	      status, file=log_file)
+        # backup data to thumb drive, PNE 12/08/2019
+        status = subprocess.call("~/source/RMS/BackupToUSB.sh " \
+                                 + data_dir_name, \
+                                 stdout=log_file, \
+                                 stderr=log_file, \
+                                 shell=True)
+        print("BackupToUSB call returned with status ", \
+              status, file=log_file)
 
-	# logging needed when run as part of RMS, or when the argument is set
-	# NOTE: When run as part of RMS, the program name is "ExternalScript".
-	# Otherwise the program name is "__main__"
-	if __name__ == "__main__" and log_upload:
-	    initLogging(config, "NM_UPLOAD_")
-	    # Get the logger handle.
-	    log = logging.getLogger("logger.ExternalScript")
-	else:
-	    log = logging.getLogger("logger")
+        # logging needed when run as part of RMS, or when the argument is set
+        # NOTE: When run as part of RMS, the program name is "ExternalScript".
+        # Otherwise the program name is "__main__"
+        if __name__ == "__main__" and log_upload:
+            initLogging(config, "NM_UPLOAD_")
+            # Get the logger handle.
+            log = logging.getLogger("logger.ExternalScript")
+        else:
+            log = logging.getLogger("logger")
 
 
-	# Upload files to the NM Server
-	getFilesAndUpload(log, nm_config, main_data_dir, log_file)
+        # Upload files to the NM Server
+        getFilesAndUpload(log, nm_config, main_data_dir, log_file)
 
-	# Test for existence of "My_Uploads.sh".
-	# Execute it if it exists.
+        # Test for existence of "My_Uploads.sh".
+        # Execute it if it exists.
 
-	if (os.path.exists(My_Uploads_file)):
-	    status = subprocess.call(My_Uploads_file, \
-				     stdout=log_file, \
-				     stderr=log_file, \
-				     shell=True)
-	    print(My_Uploads_file, " executed with status ", \
-		  status, file=log_file)
-	else:
-	    print("No ", My_Uploads_file, " found to execute", \
-		  file=log_file)
+        if (os.path.exists(My_Uploads_file)):
+            status = subprocess.call(My_Uploads_file, \
+                                     stdout=log_file, \
+                                     stderr=log_file, \
+                                     shell=True)
+            print(My_Uploads_file, " executed with status ", \
+                  status, file=log_file)
+        else:
+            print("No ", My_Uploads_file, " found to execute", \
+                  file=log_file)
 
     # Reboot the Pi if requested. Code stolen from StartCapture.py.
     # (script needs sudo priviledges, works only on Linux)
@@ -244,13 +244,13 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
     log.info("ExternalScript has finished!")
 
     if reboot:
-	log.info('Rebooting now!')
-	try:
-	    os.system('sudo shutdown -r now')
+        log.info('Rebooting now!')
+        try:
+            os.system('sudo shutdown -r now')
 
-	except Exception as e:
-	    log.debug('Rebooting failed with message:\n' + repr(e))
-	    log.debug(repr(traceback.format_exception(*sys.exc_info())))
+        except Exception as e:
+            log.debug('Rebooting failed with message:\n' + repr(e))
+            log.debug(repr(traceback.format_exception(*sys.exc_info())))
 
 ########################################################################
 
@@ -258,43 +258,43 @@ def str2bool(v):
     if isinstance(v, bool):
        return v
     if v.lower() in ('yes', 'true', '1'):
-	return True
+        return True
     elif v.lower() in ('no', 'false', '0'):
-	return False
+        return False
     else:
-	raise argparse.ArgumentTypeError('Boolean value expected.')
+        raise argparse.ArgumentTypeError('Boolean value expected.')
 
 if __name__ == "__main__":
 
     nmp = argparse.ArgumentParser(description="""Upload files to New_Mexico_Server, and optionally move other files to storage devices, create a TimeLapse.mp4 file, and reboot the system after all processing.""")
 
     nmp.add_argument('--directory', type=str, \
-			   help="Subdirectory of CapturedFiles or ArchiveFiles to upload. For example, US0006_20190421_020833_566122")
+                           help="Subdirectory of CapturedFiles or ArchiveFiles to upload. For example, US0006_20190421_020833_566122")
     nmp.add_argument('--log_script', type=str2bool, \
-		     choices=[True, False, 'Yes', 'No', '0', '1'], \
-		     default=False, \
-		     help="When True, create a log file for the calls to TimeLapse.sh and BackuupToUSB.sh, and any others. When False, no log file is created."
-		     )
+                     choices=[True, False, 'Yes', 'No', '0', '1'], \
+                     default=False, \
+                     help="When True, create a log file for the calls to TimeLapse.sh and BackuupToUSB.sh, and any others. When False, no log file is created."
+                     )
     nmp.add_argument('--reboot', type=str2bool, \
-		     choices=[True, False, 'Yes', 'No', '0', '1'], \
-		     default=True, \
-		     help="When True, Yes, or 1, reboot at end of ExternalScript. False, No, or 0 prevents reboot. Default is True.")
+                     choices=[True, False, 'Yes', 'No', '0', '1'], \
+                     default=True, \
+                     help="When True, Yes, or 1, reboot at end of ExternalScript. False, No, or 0 prevents reboot. Default is True.")
     nmp.add_argument('--CreateTimeLapse', type=str2bool, \
-		     choices=[True, False, 'Yes', 'No', '0', '1'], \
-		     default=True, \
-		     help="When True, Yes, or 1, create the TimeLapse.mp4 file. False, No, or 0 prevents creation. Default is True")
+                     choices=[True, False, 'Yes', 'No', '0', '1'], \
+                     default=True, \
+                     help="When True, Yes, or 1, create the TimeLapse.mp4 file. False, No, or 0 prevents creation. Default is True")
     nmp.add_argument('--CreateCaptureStack', type=str2bool, \
-		     choices=[True, False, 'Yes', 'No', '0', '1'], \
-		     default=True, \
-		     help="When True, Yes, or 1, create the stack of all Captures in a JPEG file. False, No, or 0 prevents creation. Default is True")
+                     choices=[True, False, 'Yes', 'No', '0', '1'], \
+                     default=True, \
+                     help="When True, Yes, or 1, create the stack of all Captures in a JPEG file. False, No, or 0 prevents creation. Default is True")
     nmp.add_argument('--preset', type=str, default='micro', \
-		     choices=['full', 'minimal', 'micro', 'imgs'], \
-		     help="which fileset to upload (not currently implemented)")
+                     choices=['full', 'minimal', 'micro', 'imgs'], \
+                     help="which fileset to upload (not currently implemented)")
     args = nmp.parse_args()
 
     if args.directory == None:
-	print ("Directory argument not present! Exiting ...")
-	sys.exit()
+        print ("Directory argument not present! Exiting ...")
+        sys.exit()
 
     print ('directory arg: ', args.directory)
     print ('Reboot arg: ', args.reboot)
@@ -310,9 +310,9 @@ if __name__ == "__main__":
     archive_data_dir = os.path.join(config.data_dir, 'ArchivedFiles', args.directory)
 
     uploadFiles(captured_data_dir, archive_data_dir, config, \
-		log_upload=True,
-		log_script=args.log_script, \
-		reboot=args.reboot, \
-		CreateTimeLapse=args.CreateTimeLapse, \
-		CreateCaptureStack=args.CreateCaptureStack, \
-		preset='micro')
+                log_upload=True,
+                log_script=args.log_script, \
+                reboot=args.reboot, \
+                CreateTimeLapse=args.CreateTimeLapse, \
+                CreateCaptureStack=args.CreateCaptureStack, \
+                preset='micro')
