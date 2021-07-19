@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 """
-This is Version 1.0 of file ExternalScript.py. Dated 10-Jul-2021.
-Byte count = 12915
+This is Version 1.0 of file ExternalScript.py. Dated 19-Jul-2021.
+Byte count = 13141
 This script
 1: Moves, creates, and copies files on the RMS stations, and
 2: Uploads files to the New Mexico Meteor Array Server.
