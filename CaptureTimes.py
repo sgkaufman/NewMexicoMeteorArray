@@ -4,7 +4,7 @@
 CaptureTimes.py is a hacked version of WriteCapture.py
  capture time information is written to a static file named
  ~/RMS_data/logs/CaptureTimes.log
-Version of 18-July-2021; Bytes: 3280
+Version of 20-July-2021; Bytes: 3297
 
 Version of 21-May-2021; Bytes: 3820
 Version 0.1, SGK, 6/28/2020. This file belongs in directory
@@ -34,17 +34,17 @@ if __name__ == "__main__":
     config_parser.add_argument('--elevation', type=float, \
                                help="Station elevation from .config file")
     args = config_parser.parse_args()
-    lat  = args.latitude
-    lon  = args.longitude
+    lat = args.latitude
+    lon = args.longitude
     elev = args.elevation
 
-    print ("CaptureTimes.py, Latitude: ",  lat)
+    print ("CaptureTimes.py, Latitude: ", lat)
     print ("CaptureTimes.py, Longitude: ", lon)
     print ("CaptureTimes.py, Elevation: ", elev)
 
     # Compute and write out the next start time and capture timedatetime.
     start_time, duration = captureDuration(lat, lon, elev)
-    if (start_time == True):
+    if start_time:
         # We will use the ephemeris code directly
         # to compute the previous sunset time, to get start_time and duration.
         # Code copied fromCaptureDuration.py
@@ -77,6 +77,6 @@ if __name__ == "__main__":
     duration_int = round(duration)
     print ("Time string is: %s" % start_time)
 
-    with open("/home/pi/RMS_data/logs/CaptureTimes.log", 'w') as time_fd:
+    with open(os.path.join(os.path.expanduser('~'), "RMS_data/logs/CaptureTimes.log"), 'w') as time_fd:
         print(start_time, file=time_fd)
         print("%d" % duration_int, file=time_fd)
