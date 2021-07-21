@@ -4,7 +4,7 @@
 CaptureTimes.py is a hacked version of WriteCapture.py
  capture time information is written to a static file named
  ~/RMS_data/logs/CaptureTimes.log
-Version of 20-July-2021; Bytes: 3297
+Version of 21-July-2021; Bytes: 3359
 
 Version of 21-May-2021; Bytes: 3820
 Version 0.1, SGK, 6/28/2020. This file belongs in directory
@@ -44,7 +44,7 @@ if __name__ == "__main__":
 
     # Compute and write out the next start time and capture timedatetime.
     start_time, duration = captureDuration(lat, lon, elev)
-    if start_time:
+    if start_time is True:
         # We will use the ephemeris code directly
         # to compute the previous sunset time, to get start_time and duration.
         # Code copied fromCaptureDuration.py
@@ -76,6 +76,7 @@ if __name__ == "__main__":
 
     duration_int = round(duration)
     print ("Time string is: %s" % start_time)
+    print ("Capture Duration is: %d" % duration_int)
 
     with open(os.path.join(os.path.expanduser('~'), "RMS_data/logs/CaptureTimes.log"), 'w') as time_fd:
         print(start_time, file=time_fd)
