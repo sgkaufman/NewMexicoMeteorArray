@@ -1,19 +1,21 @@
 #!/usr/bin/env python
 
 """
-CaptureTimes.py is a hacked version of WriteCapture.py
- capture time information is written to a static file named
+Version of 22-Jul-2021; Bytes: 3293
+Version 0.2, PNE, 7/22/2021
+ This file belongs in directory
+ ~/source/RMS/RMS/.
+ capture time information is written to a static filename:
  ~/RMS_data/logs/CaptureTimes.log
-Version of 21-July-2021; Bytes: 3359
 
-Version of 21-May-2021; Bytes: 3820
-Version 0.1, SGK, 6/28/2020. This file belongs in directory
-/home/pi/source/RMS/RMS/.
+Version 0.1, SGK, 6/28/2020;  Bytes: 3820
 This file calls the RMS function captureDuration (from RMS.CaptureDuration)
 and writes it to a log file for use by the shell script RecordWatchdog.sh.
 The log file is named CaptureTimes_yyyy_mm_dd, and is put into directory
-~/RMS_data/logs/, and writes the start time in ISO format, and capture time
-as an integer, rounded from the floating point value retutrn by captureDuration.
+~/RMS_data/logs/
+
+The start time in ISO format, and capture time as an integer, rounded from
+the floating point value retutrn by captureDuration.
 """
 from __future__ import print_function
 import os
@@ -38,9 +40,9 @@ if __name__ == "__main__":
     lon = args.longitude
     elev = args.elevation
 
-    print ("CaptureTimes.py, Latitude: ", lat)
-    print ("CaptureTimes.py, Longitude: ", lon)
-    print ("CaptureTimes.py, Elevation: ", elev)
+    print ("WriteCapture.py, Latitude: ", lat)
+    print ("WriteCapture.py, Longitude: ", lon)
+    print ("WriteCapture.py, Elevation: ", elev)
 
     # Compute and write out the next start time and capture timedatetime.
     start_time, duration = captureDuration(lat, lon, elev)
