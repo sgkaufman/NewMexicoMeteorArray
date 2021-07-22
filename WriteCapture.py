@@ -3,7 +3,7 @@
 """
 Version of 21-May-2021; Bytes: 3820
 Version 0.1, SGK, 6/28/2020. This file belongs in directory
-/home/pi/source/RMS/RMS/.
+$HOME/source/RMS/RMS/.
 This file calls the RMS function captureDuration (from RMS.CaptureDuration)
 and writes it to a log file for use by the shell script RecordWatchdog.sh.
 The log file is named CaptureTimes_yyyy_mm_dd, and is put into directory
@@ -95,6 +95,7 @@ if __name__ == "__main__":
     time_file = makeLogFile('/home/pi/RMS_data/logs/', "CaptureTimes", \
                             start_time)
 
-    with open(time_file, 'w+') as time_fd:
+    with open(os.path.join(os.path.expanduser('~'), "RMS_data/logs/CaptureTimes") \
+              'w+') as time_fd:
         print(start_time, file=time_fd)
         print("%d" % duration_int, file=time_fd)
