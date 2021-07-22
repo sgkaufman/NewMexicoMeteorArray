@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Version of 21-May-2021; Bytes: 3820
+Version of 22-Jul-2021; Bytes: 3978
 Version 0.1, SGK, 6/28/2020. This file belongs in directory
 $HOME/source/RMS/RMS/.
 This file calls the RMS function captureDuration (from RMS.CaptureDuration)
@@ -95,7 +95,7 @@ if __name__ == "__main__":
     time_file = makeLogFile('/home/pi/RMS_data/logs/', "CaptureTimes", \
                             start_time)
 
-    with open(os.path.join(os.path.expanduser('~'), "RMS_data/logs/CaptureTimes") \
+    with open(os.path.join(os.path.expanduser('~'), "RMS_data/logs/CaptureTimes"), \
               'w+') as time_fd:
         print(start_time, file=time_fd)
         print("%d" % duration_int, file=time_fd)
