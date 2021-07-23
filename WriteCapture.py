@@ -73,9 +73,7 @@ if __name__ == "__main__":
 
     duration_int = round(duration)
     print ("Time string is: %s" % start_time)
-    time_file = makeLogFile('/home/pi/RMS_data/logs/', "CaptureTimes", \
-                            start_time)
-
+   
     with open(os.path.join(os.path.expanduser('~'), "RMS_data/logs/CaptureTimes"), \
               'w+') as time_fd:
         print(start_time, file=time_fd)
