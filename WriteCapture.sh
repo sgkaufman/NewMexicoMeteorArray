@@ -1,18 +1,23 @@
 #!/bin/bash
 
-# CaptureTimes.sh is a hacked version of StartCaptureWatchdog.sh from 09-July-2021
-# 14-July, 2021; Byte count: 1477
-#
-# Date: 09-Jul-2021; Byte count: 2728
-# Starts the RecordWatchdog.sh monitoring program
-# (to restart RMS if capture stops).
+# WriteCapture.sh, 24-July, 2021, Byte count: 1697
+# This is a trimmed down version of StartCaptureWatchdog.sh (09-July-2021)
+# On Buster RMS stations, this file can reside in $HOME/source/RMS and be
+# called by autoexec so that the CaptureTimes.log file is written at boot
+# sudo nano /etc/xdg/lxsession/LXDE-pi/autostart
+# 
+#  #Start Milan's watchdog
+#  sleep 5
+#  /home/pi/source/RMS/Scripts/RMS_watchdog.sh &
+#  sleep 4
+#  /home/pi/source/RMS/WriteCapture.sh
 
-# Variable definitions
+# Variable definitions:
 declare log_dir="$HOME""/RMS_data/logs"
 declare config_file="$HOME""/source/RMS/.config"
 declare latitude longitude elevation
 
-sudo logger 'CaptureTimes.sh started'
+sudo logger 'WriteCapture.sh started'
 
 # Step 1: Find ephemeris sunset time and capture time.
 # Requires latitude, longitude, and elevation from the .config file
@@ -34,7 +39,7 @@ echo "Elevation: " $elevation
 
 pushd "$HOME"/source/RMS
 source "$HOME"/vRMS/bin/activate
-python -m RMS.CaptureTimes \
+python -m RMS.WriteCapture \
        --latitude $latitude \
        --longitude $longitude \
        --elevation $elevation
