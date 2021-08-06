@@ -135,7 +135,7 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
     # Variable definitions
     main_data_dir = archived_night_dir
     remote_dir = '/Users/meteorstations/Public'
-    My_Uploads_file = "~/source/RMS/My_Uploads.sh"
+    My_Uploads_file = os.path.expanduser("~/source/RMS/My_Uploads.sh")
 
     RMS_data_dir_name = os.path.expanduser("~/RMS_data/")
     print ("RMS_data_dir_name = {0}".format(RMS_data_dir_name))

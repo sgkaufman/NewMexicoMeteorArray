@@ -4,22 +4,22 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-# Last Revision: 09-Jul-2021; Byte count: 8282
+# Last Revision: 26-Jul-2021; Byte count: 8441
 # RMS_RecordWatchdog.sh, version 0.1, Steve Kaufman and Pete Eschman
 # This file belongs in directory $HOME/source/RMS/Scripts.
 # It is intended to be started at boot
 # (Buster: /etc/xdg/lxsession/LXDE-pi/autostart
 #  Jessie: $HOME/.config/lxsession/LXDE-pi/autostart).
-# Dependencies: 
+# Dependencies:
 # 1. ~/source/RMS/StartRecordCapture.sh
 # 2. ~/source/RMS/RMS/WriteCapture.py
 
@@ -28,12 +28,12 @@
 # the creation of FITS files, the RMS system is restarted.
 # "Too long" is defined in the variable $wait_sec
 
-# Here is the outline of the algorithm. 
+# Here is the outline of the algorithm.
 # with these major steps:
 # Step 1: Identify system type, set $wait_sec appropriately.
 # Step 2: Find ephemeris capture_start time,
 # 	capture duration, and current time.
-# Step 3: Is current time < capture_start time? 
+# Step 3: Is current time < capture_start time?
 #	Step 3a (Yes) sleep until capture_start time. Go to Step 4.
 #	Step 3b (No) continue to Step 4.
 # Step 4: Loop until end of capture time, every $wait_sec interval
@@ -96,7 +96,7 @@ echo Capture length, seconds: $capture_len
 echo '  for an estimated total fits file count of ' $(( $capture_len * 100 / 1024 ))
 
 # capture_end is reduced by 15 minutes (900 seconds)
-# because RMS will not restart capture if it is restarted with 15 or 
+# because RMS will not restart capture if it is restarted with 15 or
 # fewer minutes before capture is scheduled to end.
 # So there is no point restarting in this time period.
 capture_end=$((start_time + capture_len - 900))
@@ -136,8 +136,8 @@ restart_count=0
 ### Step 3: Capture loop
 while [ $now -lt $capture_end ]; do
 
-    cd $capture_dir  
-    
+    cd $capture_dir
+
     # Establish the time
     now=$(date +%s)
 
@@ -150,7 +150,7 @@ while [ $now -lt $capture_end ]; do
 	echo $dir
     fi
     if [ ! -d $dir ];
-    then 
+    then
 	env printf "%s is not a directory, exiting...\n" $dir
 	exit 1
     fi
@@ -178,7 +178,7 @@ while [ $now -lt $capture_end ]; do
     then
 	echo $filename
 	echo
-    fi 
+    fi
 	
     # Has it been too long since a FITS file was created?
     delta=$((now - file_time))
@@ -196,7 +196,12 @@ while [ $now -lt $capture_end ]; do
 	    $file_time $now $delta
 	# write message to /var/log/syslog
 	sudo logger 'record watchdog triggered'
-	killall python
+	# killall python
+	# Restart RMS, taking care not to kill other python apps or the watchdog
+	ps -ef | grep RMS_ | egrep -v "atch|data|grep"|awk '{print $2}' | while read i
+	do
+	  kill $i
+	done
 	env sleep 5
 
 	cd "$HOME""/source/RMS"
@@ -207,7 +212,7 @@ while [ $now -lt $capture_end ]; do
 	log_count=$(ls "$HOME"/RMS_data/logs/log*.log | wc -l)
 	new_log_count=0
 	loop_count=0
-	while [ $new_log_count -le $log_count ] 
+	while [ $new_log_count -le $log_count ]
 	do
 	    new_log_count=$(ls "$HOME"/RMS_data/logs/log*.log | wc -l)
 	    loop_count=$(( loop_count + 1 ))
@@ -218,15 +223,15 @@ while [ $now -lt $capture_end ]; do
 	done
 
 	# Wait for camera frame grabbing and any other restart overhead
-	env sleep $wait_sec 
+	env sleep $wait_sec
 
-	# Wait longer if the processing queue is still reloading 
+	# Wait longer if the processing queue is still reloading
 	loop_count=0
 	while [ -f "$HOME"/RMS_data/.capture_resuming ] ;
 	do
 	    timenow=$(date +%H:%M:%S)
 	    env printf "%s loop: %d, waiting for .capture_resuming flag...\n" \
-		$timenow $loop_count 
+		$timenow $loop_count
 	    env sleep $wait_sec
 	    loop_count=$(( loop_count + 1 ))
 	done
