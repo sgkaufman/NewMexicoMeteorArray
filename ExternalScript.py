@@ -2,7 +2,7 @@
 
 """
 This is Version 1.0 of file ExternalScript.py. Dated 06-Aug-2021.
-Byte count = 13219
+Byte count = 13172
 This script
 1: Moves, creates, and copies files on the RMS stations, and
 2: Uploads files to the New Mexico Meteor Array Server.
@@ -23,8 +23,6 @@ import argparse
 import subprocess
 import time
 import datetime
-# import ftplib
-# from ftplib import FTP_TLS
 
 import RMS.ConfigReader
 from RMS.UploadManager import UploadManager
