@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 
 """
-This is Version 1.0 of file ExternalScript.py. Dated 19-Jul-2021.
-Byte count = 13141
+This is Version 1.0 of file ExternalScript.py. Dated 23-Jul-2021.
+Byte count = 13197
 This script
 1: Moves, creates, and copies files on the RMS stations, and
 2: Uploads files to the New Mexico Meteor Array Server.
 3. Calls TimeLapse.sh, and optionally logs results of that call.
    The argument CreateTimeLapse must be True for that call to be made,
    and the argument log_script must be True for the logging to be done.
-   The argument CreateTimeLapse defaults to True, 
+   The argument CreateTimeLapse defaults to True,
    and the argument log_script defaults to False.
 """
 from __future__ import print_function
@@ -23,13 +23,12 @@ import argparse
 import subprocess
 import time
 import datetime
+import ftplib
+# from ftplib import FTP_TLS
 
-from RMS.CaptureDuration import captureDuration
 import RMS.ConfigReader
 from RMS.UploadManager import UploadManager
 from RMS.Logger import initLogging
-import ftplib
-from ftplib import FTP_TLS
 
 def makeLogFile(log_file_dir="", prefix="", date_only=False):
     """
@@ -69,9 +68,8 @@ def findFiles(dataDir, allFiles, pattern):
     return found_files
 
 def getFilesAndUpload(logger, nm_config, main_data_dir, log_file_fd):
-
-    # The argument "log_file_fd" is assumed to be passed in
-    # open state, and need not be closed during the call.
+    """The argument 'log_file_fd' is assumed to be passed in
+    open state, and need not be closed during the call."""
 
     logger.info('Starting the NM upload manager ...')
 
@@ -162,7 +160,7 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
     if log_script:
         log_file_name = makeLogFile(log_dir_name, "ShellScriptLog", False)
     else:
-        log_file_name ="/dev/null"
+        log_file_name = "/dev/null"
 
     with open(log_file_name, 'w+') as log_file:
         # Print out the arguments and variables of interest
@@ -227,7 +225,7 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
         # Test for existence of "My_Uploads.sh".
         # Execute it if it exists.
 
-        if (os.path.exists(My_Uploads_file)):
+        if os.path.exists(My_Uploads_file):
             status = subprocess.call(My_Uploads_file, \
                                      stdout=log_file, \
                                      stderr=log_file, \
@@ -255,8 +253,10 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
 ########################################################################
 
 def str2bool(v):
+    """Turns strings of 'yes', 'no', 'true', 'false', '0', '1'
+into boolean values True and False. For parsing arguments."""
     if isinstance(v, bool):
-       return v
+        return v
     if v.lower() in ('yes', 'true', '1'):
         return True
     elif v.lower() in ('no', 'false', '0'):
@@ -273,8 +273,7 @@ if __name__ == "__main__":
     nmp.add_argument('--log_script', type=str2bool, \
                      choices=[True, False, 'Yes', 'No', '0', '1'], \
                      default=False, \
-                     help="When True, create a log file for the calls to TimeLapse.sh and BackuupToUSB.sh, and any others. When False, no log file is created."
-                     )
+                     help="When True, create a log file for the calls to TimeLapse.sh and BackuupToUSB.sh, and any others. When False, no log file is created.")
     nmp.add_argument('--reboot', type=str2bool, \
                      choices=[True, False, 'Yes', 'No', '0', '1'], \
                      default=True, \
@@ -292,7 +291,7 @@ if __name__ == "__main__":
                      help="which fileset to upload (not currently implemented)")
     args = nmp.parse_args()
 
-    if args.directory == None:
+    if args.directory is None:
         print ("Directory argument not present! Exiting ...")
         sys.exit()
 
