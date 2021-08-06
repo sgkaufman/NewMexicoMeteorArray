@@ -23,7 +23,7 @@ import argparse
 import subprocess
 import time
 import datetime
-import ftplib
+# import ftplib
 # from ftplib import FTP_TLS
 
 import RMS.ConfigReader
