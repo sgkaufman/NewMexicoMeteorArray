@@ -164,7 +164,7 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
 
     with open(log_file_name, 'w+') as log_file:
         # Print out the arguments and variables of interest
-        print ("Version 0.9 of ExternalScript.py, 05-Apr-2021, bytes = 13759", file=log_file)
+        print ("Version 1.0 of ExternalScript.py, 07-Aug-2021, bytes = 13131", file=log_file)
         print("remote_dir set to %s" % remote_dir, file=log_file)
         print("Name of program running = %s" % (__name__), file=log_file)
         print("reboot arg = %s" % reboot, file=log_file)
