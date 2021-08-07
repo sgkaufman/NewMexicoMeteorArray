@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
 """
-This is Version 1.0 of file ExternalScriptRPi.py. Dated 06-Aug-2021.
+This is Version 1.0 of file ExternalScriptRPi.py. Dated 07-Aug-2021.
 It is a test version for checking the new NM Server hosted on an RPi4.
-Byte count = 13232
+Byte count = 13131
 This script
 1: Moves, creates, and copies files on the RMS stations, and
 2: Uploads files to the New Mexico Meteor Array Server.
