@@ -88,7 +88,8 @@ def getFilesAndUpload(logger, nm_config, main_data_dir, log_file_fd):
     print("Adding %d jpg files to queue ..." % len(jpg_files), file=log_file_fd)
     upload_manager.addFiles(jpg_files)
 
-    ftp_files = findFiles(main_data_dir, all_files, "FTP*")
+    ftp_files = findFiles(main_data_dir, all_files, \
+                          "FTP*_[0-9][0-9][0-9][0-9][0-9][0-9].txt")
     print("Adding %d ftp files to queue ..." % ftp_files.__len__())
     upload_manager.addFiles(ftp_files)
 
@@ -171,10 +172,6 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
         print("log_dir_name = %s" % log_dir_name, file=log_file)
         print("ArchivedFiles directory = %s" % archived_night_dir, \
               file=log_file)
-
-        # What is it about subprocess.call, with shell=True, that makes
-        # StartCapture execute? Or, at least some update checking
-        # take place?
 
         # Prepare for calls to TimeLapse.sh,
         # second arg based on CreateTimeLapse,
