@@ -25,9 +25,9 @@ if __name__ == "__main__":
 
     # Create the config object for New Mexico Meteor Array purposes
     nm_config = copy.copy(config)
-    nm_config.stationID = 'meteorstations'
-    nm_config.hostname = '10.8.0.61' # 69.195.111.36 for Bluehost
-    nm_config.remote_dir = '/Users/meteorstations/Public'
+    nm_config.stationID = 'pi'
+    nm_config.hostname = '10.8.0.61'
+    nm_config.remote_dir = '/home/pi/RMS_Station_data'
     nm_config.upload_queue_file = 'NM_FILES_TO_UPLOAD.inf'
 
     initLogging(config, "NM_UPLOAD_")
