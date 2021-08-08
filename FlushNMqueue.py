@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 
 """
-This script flushes the queue for files uploaded to New Mexico Meteor Array Server.
+This script flushes the queue for files uploaded to New Mexico Meteor Array Server. Dated 08-Aug-2021; byte count = 1452
 
-It contains code fragments from ExternalScript.py v0.8, Dated 03/25/2021 (14564 bytes)
+It contains code fragments from ExternalScriptRPi.py v1.0, 
+dated 07-Aug-2021 (13131 bytes)
 """
 
 from __future__ import print_function
@@ -21,7 +22,7 @@ if __name__ == "__main__":
 
     config = RMS.ConfigReader.loadConfigFromDirectory(None, "~/source/RMS/.config")
 
-    print("Running FlushNMqueue.py, 10-Jul, 2021, byte count 1453: flushing the NM upload queue...")
+    print("Running FlushNMqueue.py, 08-Aug, 2021, byte count 1452: flushing the NM upload queue...")
 
     # Create the config object for New Mexico Meteor Array purposes
     nm_config = copy.copy(config)
