@@ -1,4 +1,4 @@
-# New Mexico Meteor Array 11-Aug, 2021
+# New Mexico Meteor Array 19-Aug, 2021
 Files for the New Mexico Meteor Array sub-network of the Global Meteor Network
 
 Files by type
@@ -30,7 +30,7 @@ _____
 Backup.sh	 	7/9/2021 11:37 AM  1015
 	Creates reference copy of key microSD card files
 
-BackupToUSB.sh		 7/9/2021 11:38 AM  1634
+BackupToUSB.sh		 8/17/2021  2:13 PM  1626
 	Backup data every morning to thumb drive, called by ExternalScript.py
 
 CamSet.sh	 	4/15/2021 11:11 AM  1239
@@ -39,7 +39,7 @@ CamSet.sh	 	4/15/2021 11:11 AM  1239
 Chk_Website.sh	 	7/9/2021 11:39 AM  1209
 	Status monitor Pete runs on US0002
 
-ExternalScript.py	 8/7/2021  5:13 PM  13131
+ExternalScript.py	 8/19/2021  8:37 AM  12988
 	NMMA ExternalScript
 	If My_Uploads.sh is found will be used to copy station files 
 	to a station owner's web site. Calls TimeLapse.sh, and My_Uploads.sh

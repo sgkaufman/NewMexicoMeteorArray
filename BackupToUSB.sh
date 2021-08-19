@@ -6,7 +6,7 @@
 # assumes that the destination has directories bz2, csv, CapStack, and TimeLapse
 # Argument1: ArchivedFiles directory name
 
-printf "BackupToUSB.sh 09-Jul, 2021, byte count ~1634 : backs up data to thumb drive\n"
+printf "BackupToUSB.sh 17-Aug, 2021, byte count ~1626 : backs up data to thumb drive\n"
 
 # set station specific USB drive designation
 USB_drive="/media/pi/US0002B_BK/US0002"
@@ -51,6 +51,6 @@ mv "${target}" "${USB_drive}/TimeLapse"
 # move Captured_Stack.jpg
 target="${data_dir}/$1*_captured.jpg"
 printf "Moving %s\n" "${target}"
-mv "$HOME"/Desktop/RMS_data/US*.jpg "${USB_drive}/CapStack"
+mv "$HOME"/RMS_data/US*.jpg "${USB_drive}/CapStack"
 
 printf "Done copying data to USB drive %s\n " "${USB_drive}"
