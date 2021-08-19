@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
 """
-This is Version 1.0 of file ExternalScript.py. Dated 06-Aug-2021.
-Byte count = 13172
+This is Version 1.0 of file ExternalScriptRPi.py. Dated 07-Aug-2021.
+It is a test version for checking the new NM Server hosted on an RPi4.
+Byte count = 13131
 This script
 1: Moves, creates, and copies files on the RMS stations, and
 2: Uploads files to the New Mexico Meteor Array Server.
@@ -80,32 +81,34 @@ def getFilesAndUpload(logger, nm_config, main_data_dir, log_file_fd):
     all_files = os.listdir(main_data_dir)
 
     png_files = findFiles(main_data_dir, all_files, "*.png")
-    print("Adding %d png files to queue ..." % len(png_files), file=log_file_fd)
+    logger.info("Adding %d png files to queue ..." % len(png_files) )
+#                file=log_file_fd)
     upload_manager.addFiles(png_files)
 
     jpg_files = findFiles(main_data_dir, all_files, "*.jpg")
-    print("Adding %d jpg files to queue ..." % len(jpg_files), file=log_file_fd)
+    logger.info("Adding %d jpg files to queue ..." % len(jpg_files) )
     upload_manager.addFiles(jpg_files)
 
-    ftp_files = findFiles(main_data_dir, all_files, "FTP*")
-    print("Adding %d ftp files to queue ..." % ftp_files.__len__())
+    ftp_files = findFiles(main_data_dir, all_files, \
+                          "FTP*_[0-9][0-9][0-9][0-9][0-9][0-9].txt")
+    logger.info("Adding %d ftp files to queue ..." % len(ftp_files) )
     upload_manager.addFiles(ftp_files)
 
     txt_files = findFiles(main_data_dir, all_files, "*_radiants.txt")
-    print("Adding %d txt files to queue ..." % len(txt_files), file=log_file_fd)
+    logger.info("Adding %d txt files to queue ..." % len(txt_files) )
     upload_manager.addFiles(txt_files)
 
     csv_files = findFiles(main_data_dir, all_files, "*.csv")
-    print("Adding %d csv files to queue ..." % len(csv_files), file=log_file_fd)
+    logger.info("Adding %d csv files to queue ..." % len(csv_files) )
     upload_manager.addFiles(csv_files)
 
     csv_dir = os.path.join(nm_config.data_dir, 'csv/')
-    print("csv_dir set to %s" % csv_dir, file=log_file_fd)
+    logger.info("csv_dir set to %s" % csv_dir)
 
     fits_count_file = findFiles(csv_dir, os.listdir(csv_dir), \
                                "*fits_counts.txt")
-    print("Adding %d fits_count.txt files to queue ..." % len(fits_count_file), \
-          file=log_file_fd)
+    logger.info("Adding %d fits_count.txt files to queue ..." \
+                % len(fits_count_file) )
     upload_manager.addFiles(fits_count_file)
 
     # Begin the upload!
@@ -132,7 +135,7 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
 
     # Variable definitions
     main_data_dir = archived_night_dir
-    remote_dir = '/Users/meteorstations/Public'
+    remote_dir = '/home/pi/RMS_Station_data'
     My_Uploads_file = os.path.expanduser("~/source/RMS/My_Uploads.sh")
 
     RMS_data_dir_name = os.path.expanduser("~/RMS_data/")
@@ -144,16 +147,26 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
 
     # Create the config object for New Mexico Meteor Array purposes
     nm_config = copy.copy(config)
-    nm_config.stationID = 'meteorstations'
+    nm_config.stationID = 'pi'
     nm_config.hostname = '10.8.0.61' # 69.195.111.36 for Bluehost
     nm_config.remote_dir = remote_dir
     nm_config.upload_queue_file = 'NM_FILES_TO_UPLOAD.inf'
     # nm_config.data_dir = os.path.join(os.path.expanduser('~'), 'NM_data')
     # nm_config.log_dir = os.path.join(os.path.expanduser('~'), 'NM_data/logs')
 
+    # logging needed when run as part of RMS, or when the argument is set
+    # NOTE: When run as part of RMS, the program name is "ExternalScript".
+    # When called from command line the program name is "__main__".
+    
+    if __name__ == "__main__" and log_upload:
+        initLogging(config, "NM_UPLOAD_")
+        # Get the logger handle.
+        log = logging.getLogger("logger.ExternalScript")
+    else:
+        log = logging.getLogger("logger")
+
     # Make and save the file descriptor for shell script and print function
     # calls. The "w+" mode ensures that the files is created if necessary.
-    # The file remains open for writing until its "closed" method is called.
 
     if log_script:
         log_file_name = makeLogFile(log_dir_name, "ShellScriptLog", False)
@@ -162,7 +175,7 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
 
     with open(log_file_name, 'w+') as log_file:
         # Print out the arguments and variables of interest
-        print ("Version 0.9 of ExternalScript.py, 05-Apr-2021, bytes = 13759", file=log_file)
+        print ("Version 1.0 of ExternalScript.py, 07-Aug-2021, bytes = 13131", file=log_file)
         print("remote_dir set to %s" % remote_dir, file=log_file)
         print("Name of program running = %s" % (__name__), file=log_file)
         print("reboot arg = %s" % reboot, file=log_file)
@@ -170,10 +183,6 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
         print("log_dir_name = %s" % log_dir_name, file=log_file)
         print("ArchivedFiles directory = %s" % archived_night_dir, \
               file=log_file)
-
-        # What is it about subprocess.call, with shell=True, that makes
-        # StartCapture execute? Or, at least some update checking
-        # take place?
 
         # Prepare for calls to TimeLapse.sh,
         # second arg based on CreateTimeLapse,
@@ -189,13 +198,12 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
         else:
             TimeLapse_cmd_str = TimeLapse_cmd_str + " No"
 
-        print("TimeLapse_cmd_str = ", TimeLapse_cmd_str, file=log_file)
+        log.info("TimeLapse_cmd_str = " + TimeLapse_cmd_str)
         status = subprocess.call(TimeLapse_cmd_str, \
                                  stdout=log_file, \
                                  stderr=log_file, \
                                  shell=True)
-        print("TimeLapse call returned with status ", \
-              status, file=log_file)
+        log.info("TimeLapse call returned with status " + str(status) )
 
         # backup data to thumb drive, PNE 12/08/2019
         status = subprocess.call("~/source/RMS/BackupToUSB.sh " \
@@ -205,16 +213,6 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
                                  shell=True)
         print("BackupToUSB call returned with status ", \
               status, file=log_file)
-
-        # logging needed when run as part of RMS, or when the argument is set
-        # NOTE: When run as part of RMS, the program name is "ExternalScript".
-        # Otherwise the program name is "__main__"
-        if __name__ == "__main__" and log_upload:
-            initLogging(config, "NM_UPLOAD_")
-            # Get the logger handle.
-            log = logging.getLogger("logger.ExternalScript")
-        else:
-            log = logging.getLogger("logger")
 
 
         # Upload files to the NM Server
