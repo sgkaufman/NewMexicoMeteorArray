@@ -1,28 +1,102 @@
-# New Mexico Meteor Array 24-Jul, 2021
+# New Mexico Meteor Array 11-Aug, 2021
 Files for the New Mexico Meteor Array sub-network of the Global Meteor Network
 
-Filename		Bytes
-ExternalScript.py	13,141
-FlushNMqueue.py		1,453
-WriteCapture.py		3,309
-WriteCaptureEphem.py	2,230
+Files by type
+ExternalScript.py
+FlushNMqueue.py
+WriteCapture.py
+WriteCaptureEphem.py
 
-Backup.sh		1,015
-BackupToUSB.sh		1,634
-CamSet.sh		1,239
-Chk_Website		1,209
-FixIt.sh		3,518
-FlushNMqueue.sh		872
-move_to_RMS.sh		1,249
-TimeLapse.sh		10,244
-WriteCapure.sh		1,697
+Backup.sh
+BackupToUSB.sh
+CamSet.sh
+Chk_Website
+FixIt.sh
+FlushNMqueue.sh
+move_to_RMS.sh
+TimeLapse.sh
+WriteCapure.sh
 
 RecordWatchdog related:
-RecordWatchdog.sh	8,282
+RecordWatchdog.sh
 StartCaptureWatchdog.sh	2,728
 
 Other Linux related:
-RMS_Restart.sh		457
+RMS_Restart.sh
 
-Turn_Features_On_Off.txt	4,589
+Turn_Features_On_Off.txt
 _____
+
+Backup.sh	 	7/9/2021 11:37 AM  1015
+	Creates reference copy of key microSD card files
+
+BackupToUSB.sh		 7/9/2021 11:38 AM  1634
+	Backup data every morning to thumb drive, called by ExternalScript.py
+
+CamSet.sh	 	4/15/2021 11:11 AM  1239
+	Utility for switching camera between nighttime & daytime modes
+
+Chk_Website.sh	 	7/9/2021 11:39 AM  1209
+	Status monitor Pete runs on US0002
+
+ExternalScript.py	 8/7/2021  5:13 PM  13131
+	NMMA ExternalScript
+	If My_Uploads.sh is found will be used to copy station files 
+	to a station owner's web site. Calls TimeLapse.sh, and My_Uploads.sh
+
+FixIt.sh		 7/9/2021 11:40 AM  3518
+	Utility for processing missing data: runs a reprocess job followed by
+	ExternalScript.py
+
+FlushNMqueue.py		 8/8/2021 10:11 AM  1452
+	Utility for uploading to NM Server if needed
+
+FlushNMqueue.sh		 7/9/2021 11:40 AM   872
+	Utility for uploading to NM Server if needed
+	placed in crontab at 30 22 * * *
+	This may catch files that failed to upload earlier in the day 
+	if the local network or server were down
+
+move_to_RMS.sh	 	6/5/2021  6:41 AM  1249
+	A utility Steve Kaufman uses
+
+README.md	 	7/24/2021 12:29 PM   598
+	this github reference file
+
+RecordWatchdog.sh	 7/26/2021  4:47 PM  8441
+	RecordWatchdog, started by a crontab entry that
+	runs StartCaptureWatchdog.sh
+
+RMS_Restart.sh		 7/24/2021 12:28 PM   457
+	Utility Pete uses on his Mint 20.2 test station
+
+StartCaptureWatchdog.sh	 7/9/2021  4:02 PM  2728
+	Runs from crontab entry at 30 22 * * *
+	This runs WriteCapture.py and RecordWatchdog.sh
+
+TimeLapse.sh		 7/9/2021 11:42 AM  10244
+	Does error checking, creates TimeLapse.mp4 and Capture stack
+	called by ExternalScript.py
+
+Turn_Features_On_Off.txt 7/16/2021  9:26 AM  4589
+	Slightly out of date summary of places to make changes for
+	customized stations
+
+update.sh		 7/10/2021  1:20 PM  1473
+	Pete's utility that helps to automate code updates to our stations.
+
+WriteCapture.py		 7/23/2021  2:53 PM  3309
+	Writes the CaptureTimes.log file used by RecordWatchdog.sh
+	and error checking in TimeLapse.sh
+
+WriteCapture.sh		 7/24/2021 11:36 AM  1697
+	Runs from crontab entry at 30 22 * * *
+	This is used on our Buster RMS stations, since they are not
+	currently running RecordWatchdog.sh.
+
+NMMA RMS_data directories contain these extra directories:
+ArchivedFilesReprocessed
+ConfirmedFiles
+csv
+My_Uploads  (on two stations)
+_______________
