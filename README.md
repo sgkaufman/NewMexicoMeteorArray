@@ -18,8 +18,13 @@ Files for the New Mexico Meteor Array sub-network of the Global Meteor Network
 - Chk_Website.sh
 - FixIt.sh
 - FlushNMqueue.sh
+- FlushNMqueue.py
+- move_to_RMS.sh
 - RMS_Restart.sh
 - Turn_Features_On_Off.txt
+- Update.sh
+- WriteCapture.sh
+- WriteCaptureEphem.py
 _____
 
 Backup.sh	 	7/9/2021 11:37 AM  1015
