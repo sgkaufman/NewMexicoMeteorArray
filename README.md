@@ -3,46 +3,23 @@ Files for the New Mexico Meteor Array sub-network of the Global Meteor Network
 
 # Functions implemented
 ## Post-processing for the New Mexico Meteor Array
--ExternalScript.py (Uploads some files to NM Server, calls the following two)
--TimeLapse.sh (creates TimeLapse mp4 movie, CaptureStack, and statistical diagnostic information)
--BackupToUSB.sh (Backs up some nightly date to an attached USB flash drive)
+- ExternalScript.py (Uploads some files to NM Server, calls the following two)
+- TimeLapse.sh (creates TimeLapse mp4 movie, CaptureStack, and statistical diagnostic information)
+- BackupToUSB.sh (Backs up some nightly date to an attached USB flash drive)
 
 ## Recording Watchdog. This watchdog restarts RMS if capture stops during the night.
--StartCaptureWatchdog.sh
--RecordWatchdog.sh
--WriteCapture.py
+- StartCaptureWatchdog.sh
+- RecordWatchdog.sh
+- WriteCapture.py
 
 ## Utilities
--Backup.sh
--CamSet.sh
--Chk_Website
--FixIt.sh
--FlushNMqueue.sh
-
-Files by type
-ExternalScript.py
-FlushNMqueue.py
-WriteCapture.py
-WriteCaptureEphem.py
-
-Backup.sh
-BackupToUSB.sh
-CamSet.sh
-Chk_Website
-FixIt.sh
-FlushNMqueue.sh
-move_to_RMS.sh
-TimeLapse.sh
-WriteCapture.sh
-
-RecordWatchdog related:
-RecordWatchdog.sh
-StartCaptureWatchdog.sh	2,728
-
-Other Linux related:
-RMS_Restart.sh
-
-Turn_Features_On_Off.txt
+- Backup.sh
+- CamSet.sh
+- Chk_Website.sh
+- FixIt.sh
+- FlushNMqueue.sh
+- RMS_Restart.sh
+- Turn_Features_On_Off.txt
 _____
 
 Backup.sh	 	7/9/2021 11:37 AM  1015
