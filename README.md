@@ -26,7 +26,7 @@ Files for the New Mexico Meteor Array sub-network of the Global Meteor Network
 - Update.sh
 - WriteCapture.sh
 - WriteCaptureEphem.py
-- 
+
 ## File Function Descriptions
 
 Backup.sh	 	7/9/2021 11:37 AM  1015
