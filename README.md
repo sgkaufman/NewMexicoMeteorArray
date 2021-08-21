@@ -8,6 +8,7 @@ Files for the New Mexico Meteor Array sub-network of the Global Meteor Network
 - BackupToUSB.sh (Backs up some nightly date to an attached USB flash drive)
 
 ## Recording Watchdog. This watchdog restarts RMS if capture stops during the night.
+- Note: Only used on Jessie stations. Buster (Pi4) stations are stable since FFMPEG replaced GStreamer.
 - StartCaptureWatchdog.sh
 - RecordWatchdog.sh
 - WriteCapture.py
