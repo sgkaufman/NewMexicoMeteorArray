@@ -1,4 +1,4 @@
-# New Mexico Meteor Array 19-Aug, 2021
+# New Mexico Meteor Array 21-Aug, 2021
 Files for the New Mexico Meteor Array sub-network of the Global Meteor Network
 
 # Functions implemented
