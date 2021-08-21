@@ -25,7 +25,8 @@ Files for the New Mexico Meteor Array sub-network of the Global Meteor Network
 - Update.sh
 - WriteCapture.sh
 - WriteCaptureEphem.py
-_____
+- 
+## File Function Descriptions
 
 Backup.sh	 	7/9/2021 11:37 AM  1015
 	Creates reference copy of key microSD card files
@@ -94,9 +95,4 @@ WriteCapture.sh		 7/24/2021 11:36 AM  1697
 	This is used on our Buster RMS stations, since they are not
 	currently running RecordWatchdog.sh.
 
-NMMA RMS_data directories contain these extra directories:
-ArchivedFilesReprocessed
-ConfirmedFiles
-csv
-My_Uploads  (on two stations)
-_______________
+## File System Structure (incomplete)Arrange Headingd_____
