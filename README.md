@@ -34,8 +34,8 @@ CamSet.sh	 	4/15/2021 11:11 AM  1239
 Chk_Website.sh	 	7/9/2021 11:39 AM  1209
 	Status monitor Pete runs on US0002
 
-ExternalScript.py	 8/19/2021  8:37 AM  12988
-	NMMA ExternalScript
+ExternalScript.py	 8/21/2021  8:37 AM  12925
+	NMMA ExternalScript.py
 	If My_Uploads.sh is found will be used to copy station files 
 	to a station owner's web site. Calls TimeLapse.sh, and My_Uploads.sh
 
