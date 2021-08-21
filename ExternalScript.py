@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 
 """
-This is Version 1.0 of file ExternalScriptRPi.py. Dated 19-Aug-2021.
-It is a test version for checking the new NM Server hosted on an RPi4.
-Byte count = 12988
+This is Version 1.0 of file ExternalScriptRPi.py. Dated 21-Aug-2021.
+Byte count = 12925
 This script
 1: Moves, creates, and copies files on the RMS stations, and
 2: Uploads files to the New Mexico Meteor Array Server.
@@ -82,7 +81,6 @@ def getFilesAndUpload(logger, nm_config, main_data_dir, log_file_fd):
 
     png_files = findFiles(main_data_dir, all_files, "*.png")
     logger.info("Adding %d png files to queue ..." % len(png_files) )
-#                file=log_file_fd)
     upload_manager.addFiles(png_files)
 
     jpg_files = findFiles(main_data_dir, all_files, "*.jpg")
@@ -175,7 +173,7 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
 
     with open(log_file_name, 'w+') as log_file:
         # Print out the arguments and variables of interest
-        print ("Version 1.0 of ExternalScript.py, 19-Aug-2021, bytes = 12988", file=log_file)
+        print ("Version 1.0 of ExternalScript.py, 21-Aug-2021, bytes = 12925", file=log_file)
         print("remote_dir set to %s" % remote_dir, file=log_file)
         print("Name of program running = %s" % (__name__), file=log_file)
         print("reboot arg = %s" % reboot, file=log_file)
@@ -211,8 +209,7 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
                                  stdout=log_file, \
                                  stderr=log_file, \
                                  shell=True)
-        print("BackupToUSB call returned with status ", \
-              status, file=log_file)
+        log.info("BackupToUSB call returned with status " + str(status) )
 
 
         # Upload files to the NM Server
@@ -226,14 +223,15 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
                                      stdout=log_file, \
                                      stderr=log_file, \
                                      shell=True)
-            print(My_Uploads_file, " executed with status ", \
-                  status, file=log_file)
+            log.info(str(My_Uploads_file) + ' executed with status ' + \
+                     str(status) )
         else:
-            print("No ", My_Uploads_file, " found to execute", \
-                  file=log_file)
+            log.info('File ' + str(My_Uploads_file) + ' not found')
 
     # Reboot the Pi if requested. Code stolen from StartCapture.py.
-    # (script needs sudo priviledges, works only on Linux)
+    # Sudo privilege required; may require password on 
+    # non-Raspbian/Debian UNIX systems. Ubuntu users report success
+    # when "sudo" removed.
 
     log.info("ExternalScript has finished!")
 
