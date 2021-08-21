@@ -95,4 +95,12 @@ WriteCapture.sh		 7/24/2021 11:36 AM  1697
 	This is used on our Buster RMS stations, since they are not
 	currently running RecordWatchdog.sh.
 
-## File System Structure (incomplete)Arrange Headingd_____
+## File System Structure (incomplete)
+
+NMMA RMS_data directories contain these extra directories:
+```
+ArchivedFilesReprocessed
+ConfirmedFiles
+csv
+My_Uploads  (on two stations)
+```
