@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 """
-This is Version 1.0 of file ExternalScriptRPi.py. Dated 21-Aug-2021.
-Byte count = 12925
+This is Version 1.0 of file ExternalScriptRPi.py. Dated 23-Sep-2021.
+Byte count = 13471
 This script
 1: Moves, creates, and copies files on the RMS stations, and
 2: Uploads files to the New Mexico Meteor Array Server.
@@ -78,27 +78,28 @@ def getFilesAndUpload(logger, nm_config, main_data_dir, log_file_fd):
     # Get the files from the main_data_dir for NM upload
 
     all_files = os.listdir(main_data_dir)
+    files_to_upload = []
 
     png_files = findFiles(main_data_dir, all_files, "*.png")
     logger.info("Adding %d png files to queue ..." % len(png_files) )
-    upload_manager.addFiles(png_files)
+    files_to_upload.extend(png_files)
 
     jpg_files = findFiles(main_data_dir, all_files, "*.jpg")
     logger.info("Adding %d jpg files to queue ..." % len(jpg_files) )
-    upload_manager.addFiles(jpg_files)
+    files_to_upload.extend(jpg_files)
 
     ftp_files = findFiles(main_data_dir, all_files, \
                           "FTP*_[0-9][0-9][0-9][0-9][0-9][0-9].txt")
     logger.info("Adding %d ftp files to queue ..." % len(ftp_files) )
-    upload_manager.addFiles(ftp_files)
+    files_to_upload.extend(ftp_files)
 
     txt_files = findFiles(main_data_dir, all_files, "*_radiants.txt")
     logger.info("Adding %d txt files to queue ..." % len(txt_files) )
-    upload_manager.addFiles(txt_files)
+    files_to_upload.extend(txt_files)
 
     csv_files = findFiles(main_data_dir, all_files, "*.csv")
     logger.info("Adding %d csv files to queue ..." % len(csv_files) )
-    upload_manager.addFiles(csv_files)
+    files_to_upload.extend(csv_files)
 
     csv_dir = os.path.join(nm_config.data_dir, 'csv/')
     logger.info("csv_dir set to %s" % csv_dir)
@@ -107,12 +108,22 @@ def getFilesAndUpload(logger, nm_config, main_data_dir, log_file_fd):
                                "*fits_counts.txt")
     logger.info("Adding %d fits_count.txt files to queue ..." \
                 % len(fits_count_file) )
-    upload_manager.addFiles(fits_count_file)
+    files_to_upload.extend(fits_count_file)
+
+    #write all the files at oce to the upload manager
+    upload_manager.addFiles(files_to_upload)
+
+    # Get and print the contents of ~/RMS_data/NM_FILES_TO_UPLOAD.inf
+    queue_file_name = os.path.expanduser('~/RMS_data/NM_FILES_TO_UPLOAD.inf')
+    with open(queue_file_name, 'r') as queue_file:
+        logger.info('Contents of %s:' % queue_file_name)
+        upload_queue = queue_file.read()
+        logger.info('%s' % upload_queue)
 
     # Begin the upload!
-
+    logger.info('Beginning upload ...')
     upload_manager.uploadData()
-
+    logger.info('Upload complete ...')
     upload_manager.stop()
 
 
@@ -173,7 +184,7 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
 
     with open(log_file_name, 'w+') as log_file:
         # Print out the arguments and variables of interest
-        print ("Version 1.0 of ExternalScript.py, 21-Aug-2021, bytes = 12925", file=log_file)
+        print ("Version 1.0 of ExternalScript.py, 23-Sep-2021, bytes = 13471", file=log_file)
         print("remote_dir set to %s" % remote_dir, file=log_file)
         print("Name of program running = %s" % (__name__), file=log_file)
         print("reboot arg = %s" % reboot, file=log_file)
