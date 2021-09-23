@@ -1,49 +1,33 @@
-# New Mexico Meteor Array 19-Aug, 2021
+# New Mexico Meteor Array 21-Aug, 2021
 Files for the New Mexico Meteor Array sub-network of the Global Meteor Network
 
 # Functions implemented
 ## Post-processing for the New Mexico Meteor Array
--ExternalScript.py (Uploads some files to NM Server, calls the following two)
--TimeLapse.sh (creates TimeLapse mp4 movie, CaptureStack, and statistical diagnostic information)
--BackupToUSB.sh (Backs up some nightly date to an attached USB flash drive)
+- ExternalScript.py (Uploads some files to NM Server, calls the following two)
+- TimeLapse.sh (creates TimeLapse mp4 movie, CaptureStack, and statistical diagnostic information)
+- BackupToUSB.sh (Backs up some nightly date to an attached USB flash drive)
 
 ## Recording Watchdog. This watchdog restarts RMS if capture stops during the night.
--StartCaptureWatchdog.sh
--RecordWatchdog.sh
--WriteCapture.py
+- Note: Only used on Jessie stations. Buster (Pi4) stations are stable since FFMPEG replaced GStreamer.
+- StartCaptureWatchdog.sh
+- RecordWatchdog.sh
+- WriteCapture.py
 
 ## Utilities
--Backup.sh
--CamSet.sh
--Chk_Website
--FixIt.sh
--FlushNMqueue.sh
+- Backup.sh
+- CamSet.sh
+- Chk_Website.sh
+- FixIt.sh
+- FlushNMqueue.sh
+- FlushNMqueue.py
+- move_to_RMS.sh
+- RMS_Restart.sh
+- Turn_Features_On_Off.txt
+- Update.sh
+- WriteCapture.sh
+- WriteCaptureEphem.py
 
-Files by type
-ExternalScript.py
-FlushNMqueue.py
-WriteCapture.py
-WriteCaptureEphem.py
-
-Backup.sh
-BackupToUSB.sh
-CamSet.sh
-Chk_Website
-FixIt.sh
-FlushNMqueue.sh
-move_to_RMS.sh
-TimeLapse.sh
-WriteCapture.sh
-
-RecordWatchdog related:
-RecordWatchdog.sh
-StartCaptureWatchdog.sh	2,728
-
-Other Linux related:
-RMS_Restart.sh
-
-Turn_Features_On_Off.txt
-_____
+## File Function Descriptions
 
 Backup.sh	 	7/9/2021 11:37 AM  1015
 	Creates reference copy of key microSD card files
@@ -57,8 +41,8 @@ CamSet.sh	 	4/15/2021 11:11 AM  1239
 Chk_Website.sh	 	7/9/2021 11:39 AM  1209
 	Status monitor Pete runs on US0002
 
-ExternalScript.py	 8/19/2021  8:37 AM  12988
-	NMMA ExternalScript
+ExternalScript.py	 8/21/2021  8:37 AM  12925
+	NMMA ExternalScript.py
 	If My_Uploads.sh is found will be used to copy station files 
 	to a station owner's web site. Calls TimeLapse.sh, and My_Uploads.sh
 
@@ -112,9 +96,12 @@ WriteCapture.sh		 7/24/2021 11:36 AM  1697
 	This is used on our Buster RMS stations, since they are not
 	currently running RecordWatchdog.sh.
 
+## File System Structure (incomplete)
+
 NMMA RMS_data directories contain these extra directories:
+```
 ArchivedFilesReprocessed
 ConfirmedFiles
 csv
 My_Uploads  (on two stations)
-_______________
+```
