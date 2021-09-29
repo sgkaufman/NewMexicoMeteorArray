@@ -13,12 +13,13 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-# Last Revision: 26-Jul-2021; Byte count: 8441
+# Last Revision: 29-Sep-2021; Byte count: 9615
 # RMS_RecordWatchdog.sh, version 0.1, Steve Kaufman and Pete Eschman
 # This file belongs in directory $HOME/source/RMS/Scripts.
-# It is intended to be started at boot
-# (Buster: /etc/xdg/lxsession/LXDE-pi/autostart
-#  Jessie: $HOME/.config/lxsession/LXDE-pi/autostart).
+# It is intended to be started at boot on Jessie stations.
+# It is not needed on Buster since FFMPEG replaced GStreamer.
+# On Jessie, it is started by a crontab entry, which is less than perfect.
+# But we have struggled with it starting properly using autostarts.
 # Dependencies:
 # 1. ~/source/RMS/StartRecordCapture.sh
 # 2. ~/source/RMS/RMS/WriteCapture.py
@@ -44,15 +45,33 @@
 #	      (No)  Wait $wait_sec seconds, continue step 4 loop.
 
 ### NOTE ON printf: When printf is used in this script,
-### it is called as "env printf". Using the env command first guarantees
-### that the documented GNU printf ("info printf" for documentation)
-### is used. I've had odd results using the bare "printf".
-### You can see the difference by typing "printf --version"
-### and "env printf --version" at the shell prompt.
-### Not every RMS station necessarily has this issue, but the author's does.
-### I do the same with the "sleep" function, although there does not
-### seem to be any difference on my Buster and Jessie stations
-### at the time of this writing.
+### it is called as "env printf". This guarantees that
+### the documented GNU printf ("info printf" for documentation) is used.
+
+function write-watchdog-to-crontab () {
+    declare -i local now
+    declare -i new_start ns_mins ns_hrs
+    cron_file="$HOME""/RMS_data/logs/cron_update_file.txt"
+    start_script="$HOME""/source/RMS/Scripts/StartCaptureWatchdog.sh"
+    
+    now=$(date +%s)
+    new_start=$((now+600))
+    ns_time=$(date --date=@"$new_start" +%M:%H)
+    # The grepping in the next two lines is needed to strip off
+    # leading zeroes from the minute and hour. 
+    # A leading zero makes bash interpret what follows as octal.
+    # Values of 08 and 09 therefore cause errors.
+    ns_mins=$(echo $ns_time | cut -d':' -f1 | grep -o [1-9][0-9]*)
+    ns_hrs=$(echo $ns_time | cut -d':' -f2 | grep -o [1-9][0-9]*)
+
+    # Now overwrite whatever may be in $cron_file.
+    # Else there will be nasty crontab entry buildup.
+    env printf "%d %d * * * %s\n" $ns_mins $ns_hrs "$start_script" \
+	> "$cron_file"
+	
+    # Update the crontab entry
+    crontab -l -u pi | cat - "$cron_file" | crontab -u pi -
+}
 
 # Variables
 declare capture_dir="$HOME""/RMS_data/CapturedFiles"
@@ -65,7 +84,7 @@ declare -i new_log_count log_count
 declare -i loop_count restart_count
 declare -i log_level
 
-log_level=0
+log_level=1
 
 # Read the $wait_sec argument
 
@@ -105,6 +124,11 @@ capture_end_iso=$(date --date='@'"$capture_end")
 echo 'Watchdog stop time ' "$capture_end_iso"
 
 # Step 2: Check time now vs start time
+# Sometimes the watchdog will be started BY the watchdog rebooting the Pi.
+# We must be sure that RMS has had time to get started, before we look
+# for the RMS-created CapturedFiles in RecordWatchdog.sh.
+# We will wait for 10 minutes since boot time in that case.
+
 now=$(date +%s)
 now_iso=$(date --date='@'"$now")
 if [ $start_time -gt $now ]
@@ -198,7 +222,7 @@ while [ $now -lt $capture_end ]; do
 	sudo logger 'record watchdog triggered'
 	# killall python
 	# Restart RMS, taking care not to kill other python apps or the watchdog
-	ps -ef | grep RMS_ | egrep -v "atch|data|grep"|awk '{print $2}' | while read i
+	ps -ef | grep RMS_ | egrep -v "atch|data|grep" | awk '{print $2}' | while read i
 	do
 	  kill $i
 	done
@@ -219,6 +243,15 @@ while [ $now -lt $capture_end ]; do
 	    timenow=$(date +%H:%M:%S)
 	    env printf "%s loop: %d, new_log_count: %d, waiting for new log file...\n" \
 		$timenow $loop_count $new_log_count
+	    if [ $loop_count -gt 3 ]; then
+		# Before rebooting, write an entry into the crontab table
+		# for 10 minutes from now.
+		write-watchdog-to-crontab
+		
+		# And reboot
+		env printf "Rebooting now...\n"
+		sudo reboot now
+	    fi
 	    env sleep 60
 	done
 
