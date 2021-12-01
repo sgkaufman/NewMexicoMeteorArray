@@ -38,10 +38,11 @@ target="${data_dir}/csv/$1_radiants.txt"
 printf "Copying %s\n" "${target}"
 cp "${target}" "${USB_drive}/csv"
 
-# copy tar.bz2
+# copy or move tar.bz2
 target="${archive_dir}/$1_detected.tar.bz2"
 printf "Copying %s...\n" "${target}"
 cp "${target}" "${USB_drive}/bz2"
+#mv "${target}" "${USB_drive}/bz2"
 
 # move TimeLapse.mp4
 target="${data_dir}/$1.mp4"
