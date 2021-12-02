@@ -6,7 +6,7 @@
 # assumes that the destination has directories bz2, csv, CapStack, and TimeLapse
 # Argument1: ArchivedFiles directory name
 
-printf "BackupToUSB.sh 17-Aug, 2021, byte count ~1626 : backs up data to thumb drive\n"
+printf "BackupToUSB.sh 02-Dec, 2021, byte count ~2000 : backs up data to thumb drive\n"
 
 # set station specific USB drive designation
 USB_drive="/media/pi/US0002B_BK/US0002"
@@ -40,9 +40,16 @@ cp "${target}" "${USB_drive}/csv"
 
 # copy or move tar.bz2
 target="${archive_dir}/$1_detected.tar.bz2"
-printf "Copying %s...\n" "${target}"
-cp "${target}" "${USB_drive}/bz2"
-#mv "${target}" "${USB_drive}/bz2"
+if [ -s ~/RMS_data/FILES_TO_UPLOAD.inf ] ;
+then
+    # not empty
+    printf "Copying %s...\n" "${target}"
+    cp "${target}" "${USB_drive}/bz2"
+else
+   #  yes, is empty
+   printf "Moving %s...\n" "${target}"
+   mv "${target}" "${USB_drive}/bz2"
+fi
 
 # move TimeLapse.mp4
 target="${data_dir}/$1.mp4"
@@ -53,5 +60,10 @@ mv "${target}" "${USB_drive}/TimeLapse"
 target="${data_dir}/$1*_captured.jpg"
 printf "Moving %s\n" "${target}"
 mv "$HOME"/RMS_data/US*.jpg "${USB_drive}/CapStack"
+
+# delete ArchivedFiles directories more than 7 days old
+printf "Deleting ArchivedFiles directories more than 7 days old"
+cd ~/RMS_data/ArchivedFiles
+find -mtime +6 -type d | xargs rm -f -r
 
 printf "Done copying data to USB drive %s\n " "${USB_drive}"
