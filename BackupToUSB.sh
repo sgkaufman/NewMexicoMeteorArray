@@ -8,7 +8,7 @@
 # Can also clean out ArchivedFiles directories that are older than $adirs days
 #  if $adirs is greater than zero, will also delete log files older than 21 days
 
-printf "BackupToUSB.sh 03-Dec, 2021, byte count ~2388 : backs up data to thumb drive\n"
+printf "BackupToUSB.sh 04-Dec, 2021, byte count ~2386 : backs up data to thumb drive\n"
 
 # set adirs to zero to skip deleting older directories
 adirs=14
@@ -67,7 +67,7 @@ target="${data_dir}/$1*_captured.jpg"
 printf "Moving %s\n" "${target}"
 mv "$HOME"/RMS_data/US*.jpg "${USB_drive}/CapStack"
 
-if [[ $(adirs) -gt 0 ]] ;
+if [[ $adirs -gt 0 ]] ;
 then
     cd "$HOME"/RMS_data/ArchivedFiles
     printf "Deleting ArchivedFiles directories more than %s days old\n" "${adirs}"
