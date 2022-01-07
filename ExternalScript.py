@@ -128,7 +128,7 @@ def getFilesAndUpload(logger, nm_config, main_data_dir, log_file_fd):
 
 
 def uploadFiles(captured_night_dir, archived_night_dir, config, \
-                log_upload=True, log_script=False, reboot=True, \
+                log_upload=True, log_script=True, reboot=True, \
                 CreateTimeLapse=True, CreateCaptureStack=True, \
                 preset='micro'):
     """ Function to upload selected files from the ArchivedData or CapturedData
@@ -230,7 +230,9 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
         # Execute it if it exists.
 
         if os.path.exists(My_Uploads_file):
-            status = subprocess.call(My_Uploads_file, \
+            # Call with ArchivedFiles directory
+            command = [ My_Uploads_file, archived_night_dir ]
+            status = subprocess.call(command, \
                                      stdout=log_file, \
                                      stderr=log_file, \
                                      shell=True)
