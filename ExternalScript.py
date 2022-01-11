@@ -2,7 +2,7 @@
 
 """
 This is Version 1.0 of file ExternalScriptRPi.py. Dated 23-Sep-2021.
-Byte count = 13471
+Byte count = 13700
 This script
 1: Moves, creates, and copies files on the RMS stations, and
 2: Uploads files to the New Mexico Meteor Array Server.
@@ -184,7 +184,7 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
 
     with open(log_file_name, 'w+') as log_file:
         # Print out the arguments and variables of interest
-        print ("Version 1.0 of ExternalScript.py, 23-Sep-2021, bytes = 13471", file=log_file)
+        print ("Version 1.0 of ExternalScript.py, 10-Jan-2022, bytes = 13700", file=log_file)
         print("remote_dir set to %s" % remote_dir, file=log_file)
         print("Name of program running = %s" % (__name__), file=log_file)
         print("reboot arg = %s" % reboot, file=log_file)
@@ -231,7 +231,8 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
 
         if os.path.exists(My_Uploads_file):
             # Call with ArchivedFiles directory
-            command = [ My_Uploads_file, archived_night_dir ]
+            command = My_Uploads_file + " " + archived_night_dir 
+            log.info ("Calling " + command)
             status = subprocess.call(command, \
                                      stdout=log_file, \
                                      stderr=log_file, \
@@ -270,6 +271,8 @@ into boolean values True and False. For parsing arguments."""
         return False
     else:
         raise argparse.ArgumentTypeError('Boolean value expected.')
+
+#########################################################################
 
 if __name__ == "__main__":
 
