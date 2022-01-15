@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Date: 09-Jul-2021; Byte count: 2728
+# Date: 15-Jan-2022; Byte count: 3083
 # Starts the RecordWatchdog.sh monitoring program
 # (to restart RMS if capture stops).
 
@@ -42,55 +42,68 @@ else
     wait_sec=120
     system_os="unknown"
 fi
+
+if [[ "$system_os" -eq "jessie" ]]
+   then
     
 # Step 1: Find ephemeris sunset time and capture time.
 # Requires latitude, longitude, and elevation from the .config file
 # The 3rd 'grep' is used to ensure that only 1 value comes back,
 # even if there are multiple values (e.g., commented out in .config)
-latitude=$(sed -n '/^latitude/'p "$config_file" | grep -Eo '[+-]?[0-9]+\.[0-9]+{4}' | grep -Eo -m 1 '^[+-]?[0-9]+\.[0-9]+{4}')
-longitude=$(sed -n '/^longitude/'p "$config_file" | grep -Eo '[+-]?[0-9]+\.[0-9]+{4}' | grep -Eo -m 1 '^[+-]?[0-9]+\.[0-9]+{4}')
-elevation=$(sed -n '/^elevation/'p "$config_file" | grep -Eo '[+-]?[0-9]+(\.[0-9]+)?' | grep -Eo -m 1 '[+-]?[0-9]+(\.[0-9]+)?')
+       latitude=$(sed -n '/^latitude/'p "$config_file" \
+		      | grep -Eo '[+-]?[0-9]+\.[0-9]+{4}' \
+		      | grep -Eo -m 1 '^[+-]?[0-9]+\.[0-9]+{4}')
+       longitude=$(sed -n '/^longitude/'p "$config_file" \
+		       | grep -Eo '[+-]?[0-9]+\.[0-9]+{4}' \
+		       | grep -Eo -m 1 '^[+-]?[0-9]+\.[0-9]+{4}')
+       elevation=$(sed -n '/^elevation/'p "$config_file" \
+		       | grep -Eo '[+-]?[0-9]+(\.[0-9]+)?' \
+		       | grep -Eo -m 1 '[+-]?[0-9]+(\.[0-9]+)?')
 
-if [ ! $elevation ]
-then
-    echo "Error parsing elevation in .config file - exiting ..."
-    exit 1
-fi
+       if [ ! $elevation ]
+       then
+	   echo "Error parsing elevation in .config file - exiting ..."
+	   exit 1
+       fi
 
-echo "Latitude: " $latitude
-echo "Longitude: " $longitude
-echo "Elevation: " $elevation
+       echo "Latitude: " $latitude
+       echo "Longitude: " $longitude
+       echo "Elevation: " $elevation
 
-pushd "$HOME"/source/RMS
-source "$HOME"/vRMS/bin/activate
-python -m RMS.WriteCapture \
-       --latitude $latitude \
-       --longitude $longitude \
-       --elevation $elevation
-popd
+       pushd "$HOME"/source/RMS
+       source "$HOME"/vRMS/bin/activate
+       python -m RMS.WriteCapture \
+	      --latitude $latitude \
+	      --longitude $longitude \
+	      --elevation $elevation
+       popd
 
 # Find the latest CaptureTimes file just created in the log directory.
 
-capture_file=$(find $log_dir/"CaptureTimes"* -maxdepth 1 -mmin -10)
-echo $capture_file
+       capture_file=$(find $log_dir/"CaptureTimes"* -maxdepth 1 -mmin -10)
+       echo $capture_file
 
-if [[ -f $capture_file ]]; then
-    printf "Reading capture file %s\n" $capture_file
-    read time < $capture_file
-    mo=$(date --date="$time" +%m)
-    day=$(date --date="$time" +%d)
-    yr=$(date --date="$time" +%Y)
+       if [[ -f $capture_file ]]; then
+	   printf "Reading capture file %s\n" $capture_file
+	   read time < $capture_file
+	   mo=$(date --date="$time" +%m)
+	   day=$(date --date="$time" +%d)
+	   yr=$(date --date="$time" +%Y)
+       else
+	   printf "Not reading a capture file\n"
+	   mo=$(date +'%m')
+	   day=$(date +'%d')
+	   yr=$(date +'%Y')
+       fi
+
+       log_file=$log_dir/"RMS_RecordWatchdog_"$mo"_"$day"_"$yr".log"
+
+       cd "$HOME"/source/RMS/Scripts
+       echo Logging RecordWatchdog.sh to $log_file ...
+       "$HOME"/source/RMS/Scripts/RecordWatchdog.sh $wait_sec >> $log_file &
 else
-    printf "Not reading a capture file\n"
-    mo=$(date +'%m')
-    day=$(date +'%d')
-    yr=$(date +'%Y')
+    env printf "System type %s does not require the capture watchdog\n" \
+	"$system_os"
 fi
-
-log_file=$log_dir/"RMS_RecordWatchdog_"$mo"_"$day"_"$yr".log"
-
-cd "$HOME"/source/RMS/Scripts
-echo Logging RMS_StartWatchdog.sh to $log_file ...
-"$HOME"/source/RMS/Scripts/RecordWatchdog.sh $wait_sec >> $log_file &
 
 exit 0
