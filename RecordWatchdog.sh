@@ -13,13 +13,19 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-# Last Revision: 29-Sep-2021; Byte count: 9615
-# RMS_RecordWatchdog.sh, version 0.1, Steve Kaufman and Pete Eschman
+# Last Revision: 16-Jan-2022; Byte count: 9663
+# RMS_RecordWatchdog.sh, version 0.2, Steve Kaufman and Pete Eschman
+#
 # This file belongs in directory $HOME/source/RMS/Scripts.
 # It is intended to be started at boot on Jessie stations.
 # It is not needed on Buster since FFMPEG replaced GStreamer.
-# On Jessie, it is started by a crontab entry, which is less than perfect.
-# But we have struggled with it starting properly using autostarts.
+# On Jessie, it is started by an entry in the autostart file 
+# /home/pi/.config/lxsession/LXDE-pi/autostart
+# Add these lines after "sudo service openvpn restart" 
+#
+#    Start the watchdog. 
+#    /home/pi/source/RMS/Scripts/StartCaptureWatchdog.sh
+#
 # Dependencies:
 # 1. ~/source/RMS/StartRecordCapture.sh
 # 2. ~/source/RMS/RMS/WriteCapture.py
@@ -84,7 +90,7 @@ declare -i new_log_count log_count
 declare -i loop_count restart_count
 declare -i log_level
 
-log_level=1
+log_level=0
 
 # Read the $wait_sec argument
 
@@ -226,6 +232,9 @@ while [ $now -lt $capture_end ]; do
 	do
 	  kill $i
 	done
+
+	# reboot camera next
+	python -m Utils.CameraControl reboot
 	env sleep 5
 
 	cd "$HOME""/source/RMS"
@@ -244,11 +253,7 @@ while [ $now -lt $capture_end ]; do
 	    env printf "%s loop: %d, new_log_count: %d, waiting for new log file...\n" \
 		$timenow $loop_count $new_log_count
 	    if [ $loop_count -gt 3 ]; then
-		# Before rebooting, write an entry into the crontab table
-		# for 10 minutes from now.
-		write-watchdog-to-crontab
-		
-		# And reboot
+		# reboot
 		env printf "Rebooting now...\n"
 		sudo reboot now
 	    fi
