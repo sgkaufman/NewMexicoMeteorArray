@@ -13,7 +13,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-# Last Revision: 16-Jan-2022; Byte count: 9663
+# Last Revision: 21-Jan-2022; Byte count: 8682
 # RMS_RecordWatchdog.sh, version 0.2, Steve Kaufman and Pete Eschman
 #
 # This file belongs in directory $HOME/source/RMS/Scripts.
@@ -53,31 +53,6 @@
 ### NOTE ON printf: When printf is used in this script,
 ### it is called as "env printf". This guarantees that
 ### the documented GNU printf ("info printf" for documentation) is used.
-
-function write-watchdog-to-crontab () {
-    declare -i local now
-    declare -i new_start ns_mins ns_hrs
-    cron_file="$HOME""/RMS_data/logs/cron_update_file.txt"
-    start_script="$HOME""/source/RMS/Scripts/StartCaptureWatchdog.sh"
-    
-    now=$(date +%s)
-    new_start=$((now+600))
-    ns_time=$(date --date=@"$new_start" +%M:%H)
-    # The grepping in the next two lines is needed to strip off
-    # leading zeroes from the minute and hour. 
-    # A leading zero makes bash interpret what follows as octal.
-    # Values of 08 and 09 therefore cause errors.
-    ns_mins=$(echo $ns_time | cut -d':' -f1 | grep -o [1-9][0-9]*)
-    ns_hrs=$(echo $ns_time | cut -d':' -f2 | grep -o [1-9][0-9]*)
-
-    # Now overwrite whatever may be in $cron_file.
-    # Else there will be nasty crontab entry buildup.
-    env printf "%d %d * * * %s\n" $ns_mins $ns_hrs "$start_script" \
-	> "$cron_file"
-	
-    # Update the crontab entry
-    crontab -l -u pi | cat - "$cron_file" | crontab -u pi -
-}
 
 # Variables
 declare capture_dir="$HOME""/RMS_data/CapturedFiles"
