@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Date: 20-Feb-2022; Byte count: 3119
+# Date: 20-Feb-2022; Byte count: 3116
 # Starts the RecordWatchdog.sh monitoring program
 # (to restart RMS if capture stops).
 
@@ -43,7 +43,7 @@ else
     system_os="unknown"
 fi
 
-if [[ "$system_os" == "jessie" ]]
+if [[ "$system_os" = "jessie" ]]
    then
     
 # Step 1: Find ephemeris sunset time and capture time.
@@ -100,10 +100,10 @@ if [[ "$system_os" == "jessie" ]]
 
        cd "$HOME"/source/RMS/Scripts
        echo Logging RecordWatchdog.sh to $log_file ...
-#       "$HOME"/source/RMS/Scripts/RecordWatchdog.sh $wait_sec >> $log_file &
+       "$HOME"/source/RMS/Scripts/RecordWatchdog.sh $wait_sec >> $log_file &
 else
     env printf "System type %s does not require the capture watchdog\n" \
 	"$system_os"
-fi # if [[ "$system_os" == "jessie" ]]
+fi # if [[ "$system_os" = "jessie" ]]
 
 exit 0
