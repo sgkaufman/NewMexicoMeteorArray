@@ -43,7 +43,7 @@ else
     system_os="unknown"
 fi
 
-if [[ "$system_os" -eq "jessie" ]]
+if [[ "$system_os" == "jessie" ]]
    then
     
 # Step 1: Find ephemeris sunset time and capture time.
@@ -100,10 +100,10 @@ if [[ "$system_os" -eq "jessie" ]]
 
        cd "$HOME"/source/RMS/Scripts
        echo Logging RecordWatchdog.sh to $log_file ...
-       "$HOME"/source/RMS/Scripts/RecordWatchdog.sh $wait_sec >> $log_file &
+#       "$HOME"/source/RMS/Scripts/RecordWatchdog.sh $wait_sec >> $log_file &
 else
     env printf "System type %s does not require the capture watchdog\n" \
 	"$system_os"
-fi
+fi # if [[ "$system_os" == "jessie" ]]
 
 exit 0
