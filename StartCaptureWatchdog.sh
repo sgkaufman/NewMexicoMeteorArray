@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Date: 15-Jan-2022; Byte count: 3083
+# Date: 20-Feb-2022; Byte count: 3119
 # Starts the RecordWatchdog.sh monitoring program
 # (to restart RMS if capture stops).
 
