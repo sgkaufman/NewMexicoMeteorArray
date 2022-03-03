@@ -7,18 +7,19 @@
 # 4. BackupToUSB.sh is called;
 # 5. My_Uploads file is called, if it exists;
 # 6. The usual file set is uploaded to NM Server.
-# Initially written by SGK, 02-Mar-2022. Byte Count = 820.
+# Initially written by SGK, 03-Mar-2022. Byte Count = 871.
 
 cd "${HOME}"/source/RMS
 source "${HOME}"/vRMS/bin/activate
 
 data_dir="${HOME}"/RMS_data
-host=$(hostname)
-date_str=$(date +%Y%m%d)
-dir=$(find "${data_dir}"/ArchivedFiles/ -type d | grep -o "${host}"_"${date_str}"[_0-9]*)
+# host=$(hostname)
+fits_file=$(find "${data_dir}"/csv -name *fits_counts.txt)
+dir_str=$(tail -n 1 "${fits_file}" | grep -o '.*:')
+dir="${dir_str::-1}"   # remove the colon at end
 
-env printf "hostname: %s\n" "$host"
-env printf "date_str: %s\n" "$date_str"
+env printf "fits_file: %s\n" "$fits_file"
+env printf "dir_str: %s\n" "$dir_str"
 env printf "dir: %s\n" "${dir}"
 
 python -m RMS.ExternalScript --directory "${dir}" --CreateTimeLapse false \
