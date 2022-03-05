@@ -65,7 +65,7 @@ declare -i new_log_count log_count
 declare -i loop_count restart_count
 declare -i log_level
 
-log_level=1
+log_level=0
 
 # Read the $wait_sec argument
 

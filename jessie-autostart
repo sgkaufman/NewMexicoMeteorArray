@@ -1,0 +1,23 @@
+# This file should be /home/pi/.config/lxsession/LXDE-pi/autostart
+# on JESSIE-based systems. It is NOT the correct version for BUSTER systems.
+# Buster-based systems have their desktop autostart file located at
+# /etc/xdg/lxsession/LXDE-pi/autostart,
+# and do not require StartCaptureWatchdog.sh (line 19).
+# The proper version comes with Denis's RMS image.
+
+@lxpanel --profile LXDE-pi
+@pcmanfm --desktop --profile LXDE-pi
+
+# Run the first run/capture script
+sleep 10
+@lxterminal -e '/home/pi/Desktop/RMS_FirstRun.sh'
+
+# Wait until the time is fetched and then restart the VPN service
+sleep 5
+sudo service openvpn restart
+
+# Start the watchdog. 
+/home/pi/source/RMS/Scripts/StartCaptureWatchdog.sh
+
+@xscreensaver -no-splash
+@point-rpi

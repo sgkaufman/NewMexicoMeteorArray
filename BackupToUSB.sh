@@ -5,8 +5,14 @@
 # of the ArchivedFiles directory.
 # assumes that the destination has directories bz2, csv, CapStack, and TimeLapse
 # Argument1: ArchivedFiles directory name
+# Can also clean out ArchivedFiles directories that are older than $adirs days
+#  if $adirs is greater than zero, will also delete log files older than 21 days
 
-printf "BackupToUSB.sh 17-Aug, 2021, byte count ~1626 : backs up data to thumb drive\n"
+printf "BackupToUSB.sh 04-Dec, 2021, byte count ~2386 : backs up data to thumb drive\n"
+
+# set adirs to zero to skip deleting older directories
+adirs=14
+adir=$((adirs-1))
 
 # set station specific USB drive designation
 USB_drive="/media/pi/US0002B_BK/US0002"
@@ -38,10 +44,18 @@ target="${data_dir}/csv/$1_radiants.txt"
 printf "Copying %s\n" "${target}"
 cp "${target}" "${USB_drive}/csv"
 
-# copy tar.bz2
+# copy or move tar.bz2
 target="${archive_dir}/$1_detected.tar.bz2"
-printf "Copying %s...\n" "${target}"
-cp "${target}" "${USB_drive}/bz2"
+if [[ -s ~/RMS_data/FILES_TO_UPLOAD.inf ]] ;
+then
+    # not empty
+    printf "Copying %s...\n" "${target}"
+    cp "${target}" "${USB_drive}/bz2"
+else
+   #  yes, is empty
+   printf "Moving %s...\n" "${target}"
+   mv "${target}" "${USB_drive}/bz2"
+fi
 
 # move TimeLapse.mp4
 target="${data_dir}/$1.mp4"
@@ -52,5 +66,14 @@ mv "${target}" "${USB_drive}/TimeLapse"
 target="${data_dir}/$1*_captured.jpg"
 printf "Moving %s\n" "${target}"
 mv "$HOME"/RMS_data/US*.jpg "${USB_drive}/CapStack"
+
+if [[ $adirs -gt 0 ]] ;
+then
+    cd "$HOME"/RMS_data/ArchivedFiles
+    printf "Deleting ArchivedFiles directories more than %s days old\n" "${adirs}"
+    find -mtime +$adir -type d | xargs rm -f -r
+    printf "Deleting files in RMS_data/logs more than 21 days old\n"
+    find "$HOME"/RMS_data/logs/ -type f -mtime +20 -delete;
+fi
 
 printf "Done copying data to USB drive %s\n " "${USB_drive}"
