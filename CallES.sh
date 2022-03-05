@@ -50,8 +50,8 @@ if [[ "$adir" == "$dir" ]] ; then
     env printf " No need to run ES\n"
 else
     env printf " running ES ...\n"
-    python -m RMS.ExternalScript --directory "${dir}" --CreateTimeLapse false \
-	   --CreateCaptureStack false --reboot false
+    python -m RMS.ExternalScript --directory "${adir}" --CreateTimeLapse true \
+	   --CreateCaptureStack true --reboot false
 fi
 
 
