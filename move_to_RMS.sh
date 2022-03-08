@@ -17,6 +17,9 @@ fi
 printf "Copying TimeLapse.sh to %s/TimeLapse.sh\n" "$RMS_dir"
 cp ./TimeLapse.sh "$RMS_dir"/TimeLapse.sh
 
+# printf "Copying BackupToUSB.sh to %s/BackupToUSB.sh\n" "$RMS_dir"
+# cp ./BackupToUSB.sh "$RMS_dir"/BackupToUSB.sh
+
 printf "Copying ExternalScript.py to %s/RMS/ExternalScript.py\n" \
        "$RMS_dir"
 cp ./ExternalScript.py "$RMS_dir"/RMS/ExternalScript.py
@@ -36,3 +39,6 @@ cp ./RecordWatchdog.sh "$RMS_dir"/Scripts/RecordWatchdog.sh
 printf "Copying StartCaptureWatchdog.sh to %s/Scripts/StartCaptureWatchdog.sh\n" \
        "$RMS_dir"
 cp ./StartCaptureWatchdog.sh "$RMS_dir"/Scripts/StartCaptureWatchdog.sh
+
+printf "Copying CallES.sh to %s/Scripts/CallES.sh\n" "$RMS_dir"
+cp ./CallES.sh "$RMS_dir"/Scripts/CallES.sh
