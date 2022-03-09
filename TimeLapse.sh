@@ -9,7 +9,7 @@
 # Argument3 ($3): False, 0 or No will skip creating stack of CapturedFiles
 # Default script action is to create TimeLapse.mp4 and Capture stack
 
-printf 'TimeLapse.sh, revised 07-Mar, 2022, byte count 10749, '
+printf 'TimeLapse.sh, revised 08-Mar, 2022, byte count 10750, '
 printf 'was called with\nArg 1 = %s, arg 2 = %s, arg 3 = %s\n\n' "$1" "$2" "$3"
 printf 'TimeLapse.sh copies radiants.txt, and .csv files to RMS_data/csv/,\n'
 printf 'then creates a TimeLapse.mp4 file, and stack of all captured images,\n'
@@ -100,7 +100,7 @@ else
 	    printf 'Copying TimeLapse.mp4 to My_Uploads\n'
 	    cp ./*.mp4 "$HOME"/RMS_data/My_Uploads/TimeLapse.mp4
 	fi
-	mv -v -- ./*.mp4 "${data_dir}"
+	mv -v -- ./*.mp4 ${data_dir}
     else
 	printf 'Directory %s does not exist. TimeLapse will not be created.\n' \
 	    "${capture_dir}/$1"
@@ -183,7 +183,7 @@ fi
 # Collect information for output to csv file
 # First, the number of FITS files
 
-fits_count=$(find "$HOME/RMS_data/CapturedFiles/$1"/*.fits -type f -printf x | wc -c)
+fits_count=$(find ""$HOME"/RMS_data/CapturedFiles/$1"/*.fits -type f -printf x | wc -c)
 printf "\n"
 printf 'Number of fits files in Capture directory: %d\n' "$fits_count"
 
@@ -270,7 +270,7 @@ printf "%s: " "$1" >> "$OUTFILE"
 if [[ $fits_count -eq 0 ]]; then
    printf "NO FITS FILES! " >> "$OUTFILE"
 else
-   if ! compgen -G "${archive_dir}$1/*_photometry_variation.png" > /dev/null ; then
+   if ! compgen -G "${archive_dir}/$1/*_photometry_variation.png" > /dev/null ; then
        printf "No Photometry " >> "$OUTFILE"
    fi
 fi

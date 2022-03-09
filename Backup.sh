@@ -26,6 +26,11 @@ cp "$HOME"/RMS_data/csv/*_fits_counts.txt ${destination}/RMS_data/csv
    2> /dev/null
 cp "$HOME"/RMS_data/myup.txt ${destination}/RMS_data
 
+if [[ -f /etc/openvpn/ovpn.conf ]]
+   then
+       cp /etc/openvpn/ovpn.conf "${destination}"/ovpn.conf
+fi
+   
 printf "\nBackup.sh has completed\n"
 ls ${destination}
 
