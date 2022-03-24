@@ -13,7 +13,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-# Last Revision: 21-Jan-2022; Byte count: 8682
+# Last Revision: 24-Mar-2022; Byte count: 8774
 # RMS_RecordWatchdog.sh, version 0.2, Steve Kaufman and Pete Eschman
 #
 # This file belongs in directory $HOME/source/RMS/Scripts.
@@ -65,7 +65,7 @@ declare -i new_log_count log_count
 declare -i loop_count restart_count
 declare -i log_level
 
-log_level=0
+log_level=1
 
 # Read the $wait_sec argument
 
@@ -196,9 +196,11 @@ while [ $now -lt $capture_end ]; do
     then
 	# Capture has failed
 	restart_count=$(( restart_count + 1 ))
+	timeUTC=$(date --date="@$now" +%H:%M:%S)
+	fileUTC=$(date --date="@$file_time" +%H:%M:%S)
 	env printf "Capture failure # %d \n" $restart_count
-	env printf "last fits file created %d, current time %d, time delta = %d \n"\
-	    $file_time $now $delta
+	env printf "last fits file created %s, current time %s, time delta = %d \n"\
+	    $fileUTC $timeUTC $delta
 	# write message to /var/log/syslog
 	sudo logger 'record watchdog triggered'
 	# killall python
