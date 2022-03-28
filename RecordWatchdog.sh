@@ -13,12 +13,19 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-# Last Revision: 10-Sep-2021; Byte count: 8542
-# RMS_RecordWatchdog.sh, version 0.1, Steve Kaufman and Pete Eschman
+# Last Revision: 28-Mar-2022; Byte count: 8786
+# RMS_RecordWatchdog.sh, version 0.2, Steve Kaufman and Pete Eschman
+#
 # This file belongs in directory $HOME/source/RMS/Scripts.
-# It is intended to be started at boot
-# (Buster: /etc/xdg/lxsession/LXDE-pi/autostart
-#  Jessie: $HOME/.config/lxsession/LXDE-pi/autostart).
+# It is intended to be started at boot on Jessie stations.
+# It is not needed on Buster since FFMPEG replaced GStreamer.
+# On Jessie, it is started by an entry in the autostart file 
+# /home/pi/.config/lxsession/LXDE-pi/autostart
+# Add these lines after "sudo service openvpn restart" 
+#
+#    Start the watchdog. 
+#    /home/pi/source/RMS/Scripts/StartCaptureWatchdog.sh
+#
 # Dependencies:
 # 1. ~/source/RMS/StartRecordCapture.sh
 # 2. ~/source/RMS/RMS/WriteCapture.py
@@ -44,15 +51,8 @@
 #	      (No)  Wait $wait_sec seconds, continue step 4 loop.
 
 ### NOTE ON printf: When printf is used in this script,
-### it is called as "env printf". Using the env command first guarantees
-### that the documented GNU printf ("info printf" for documentation)
-### is used. I've had odd results using the bare "printf".
-### You can see the difference by typing "printf --version"
-### and "env printf --version" at the shell prompt.
-### Not every RMS station necessarily has this issue, but the author's does.
-### I do the same with the "sleep" function, although there does not
-### seem to be any difference on my Buster and Jessie stations
-### at the time of this writing.
+### it is called as "env printf". This guarantees that
+### the documented GNU printf ("info printf" for documentation) is used.
 
 # Variables
 declare capture_dir="$HOME""/RMS_data/CapturedFiles"
@@ -104,7 +104,12 @@ env printf "Watchdog stop time, seconds: %d\n" "$capture_end"
 capture_end_iso=$(date --date='@'"$capture_end")
 echo 'Watchdog stop time ' "$capture_end_iso"
 
-# Step 2: Check time now vs start time
+# Step 2: Check time now vs start time.
+# Sometimes the watchdog will be started BY the watchdog rebooting the Pi.
+# We must be sure that RMS has had time to get started, before we look
+# for the RMS-created CapturedFiles in RecordWatchdog.sh.
+# We will wait for 10 minutes since boot time in that case.
+
 now=$(date +%s)
 now_iso=$(date --date='@'"$now")
 if [ $start_time -gt $now ]
@@ -191,17 +196,22 @@ while [ $now -lt $capture_end ]; do
     then
 	# Capture has failed
 	restart_count=$(( restart_count + 1 ))
+	timeUTC=$(date --date="@$now" +%H:%M:%S)
+	fileUTC=$(date --date="@$file_time" +%H:%M:%S)
 	env printf "Capture failure # %d \n" $restart_count
-	env printf "last fits file created %d, current time %d, time delta = %d \n"\
-	    $file_time $now $delta
+	env printf "last fits file created %s, current time %s, time delta = %d \n"\
+	    $fileUTC $timeUTC $delta
 	# write message to /var/log/syslog
 	sudo logger 'record watchdog triggered'
 	# killall python
 	# Restart RMS, taking care not to kill other python apps or the watchdog
-	ps -ef | grep RMS_ | egrep -v "atch|data|grep"|awk '{print $2}' | while read i
-	do
-	  kill $i
-	done
+	ps -ef | grep RMS_ | egrep -v "atch|data|grep" | awk '{print $2}' | while read i
+	     do
+		  kill $i
+	     done
+
+	# reboot camera next
+	python -m Utils.CameraControl reboot
 	env sleep 5
 
 	cd "$HOME""/source/RMS"
@@ -219,8 +229,8 @@ while [ $now -lt $capture_end ]; do
 	    timenow=$(date +%H:%M:%S)
 	    env printf "%s loop: %d, new_log_count: %d, waiting for new log file...\n" \
 		$timenow $loop_count $new_log_count
-	    if [ $loop_count -gt 3 ];
-	    then
+	    if [ $loop_count -gt 3 ]; then
+		# reboot
 		env printf "Rebooting now...\n"
 		sudo reboot now
 	    fi
