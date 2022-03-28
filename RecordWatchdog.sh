@@ -65,7 +65,7 @@ declare -i new_log_count log_count
 declare -i loop_count restart_count
 declare -i log_level
 
-log_level=1
+log_level=0
 
 # Read the $wait_sec argument
 
@@ -104,7 +104,7 @@ env printf "Watchdog stop time, seconds: %d\n" "$capture_end"
 capture_end_iso=$(date --date='@'"$capture_end")
 echo 'Watchdog stop time ' "$capture_end_iso"
 
-# Step 2: Check time now vs start time
+# Step 2: Check time now vs start time.
 # Sometimes the watchdog will be started BY the watchdog rebooting the Pi.
 # We must be sure that RMS has had time to get started, before we look
 # for the RMS-created CapturedFiles in RecordWatchdog.sh.
@@ -199,16 +199,16 @@ while [ $now -lt $capture_end ]; do
 	timeUTC=$(date --date="@$now" +%H:%M:%S)
 	fileUTC=$(date --date="@$file_time" +%H:%M:%S)
 	env printf "Capture failure # %d \n" $restart_count
-	env printf "last fits file created %s, current time %s, time delta = %d \n"\
+	env printf "last fits file created %s, current  time %s, time delta = %d \n"\
 	    $fileUTC $timeUTC $delta
 	# write message to /var/log/syslog
 	sudo logger 'record watchdog triggered'
 	# killall python
 	# Restart RMS, taking care not to kill other python apps or the watchdog
 	ps -ef | grep RMS_ | egrep -v "atch|data|grep" | awk '{print $2}' | while read i
-	do
-	  kill $i
-	done
+	     do
+		  kill $i
+	     done
 
 	# reboot camera next
 	python -m Utils.CameraControl reboot
