@@ -13,7 +13,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-# Last Revision: 24-Mar-2022; Byte count: 8774
+# Last Revision: 28-Mar-2022; Byte count: 8787
 # RMS_RecordWatchdog.sh, version 0.2, Steve Kaufman and Pete Eschman
 #
 # This file belongs in directory $HOME/source/RMS/Scripts.
