@@ -41,28 +41,17 @@ mv "$HOME"/Desktop/Backups/"$1" "$HOME"/Desktop/Backups/old/"$1"
 }
 
 
-printf "\nupdate.sh, 10-Jul, 2021, byte count ~1473 : automate file config and copy\n"
+printf "\nupdate.sh, 13-May, 2022, byte count ~1295 : automate file config and copy\n"
 
-save_previous Backup.sh
-update_sh Backup.sh
-save_previous BackupToUSB.sh
-update_sh BackupToUSB.sh
-
-update_sh FixIt.sh
-update_sh FlushNMqueue.sh
-update_sh TimeLapse.sh
-
-update_sh_Scripts RecordWatchdog.sh
-update_sh_Scripts StartCaptureWatchdog.sh
-
-update_py FlushNMqueue.py
 #update_py ExternalScript.py
+#backup_file Turn_Features_On_Off.txt
+#update_sh TimeLapse_20220504.sh
+#rm "$HOME"/source/RMS/TimeLapse_20220504.sh
 
-backup_file Turn_Features_On_Off.txt
-backup_file update.sh
-
-#move_file TimeLapse2.sh
+update_sh TimeLapse.sh
+rm "$HOME"/Desktop/update.sh
 
 printf "Done updating files\n"
 printf "Remember to edit any badkup scripts for correct thumb drive name!\n"
 read -p "Press any key to continue... " -n1 -s
+printf "\n"

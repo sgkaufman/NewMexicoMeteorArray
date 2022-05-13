@@ -2,10 +2,10 @@
 
 # Cleanup.sh: rename to BackupToUSB.sh for stations without a backup USB drive
 
-printf "BackupToUSB = Cleanup.sh 03-Dec, 2021, byte count 972 : clean out older data\n"
+printf "BackupToUSB = Cleanup.sh 13-May, 2022, byte count 970 : clean out older data\n"
 
-adirs=14
-older=14
+adirs=7
+older=7
 adir=$((adirs-1))
 old=$((older-1))
 
