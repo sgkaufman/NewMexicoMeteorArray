@@ -9,7 +9,7 @@
 # Argument3 ($3): False, 0 or No will skip creating stack of CapturedFiles
 # Default script action is to create TimeLapse.mp4 and Capture stack
 
-printf 'TimeLapse.sh, revised 13-May, 2022, byte count 10843, '
+printf 'TimeLapse.sh, revised 14-May, 2022, byte count 10843, '
 printf 'was called with\nArg 1 = %s, arg 2 = %s, arg 3 = %s\n\n' "$1" "$2" "$3"
 printf 'TimeLapse.sh copies radiants.txt, and .csv files to RMS_data/csv/,\n'
 printf 'then creates a TimeLapse.mp4 file, and stack of all captured images,\n'
@@ -293,9 +293,9 @@ fi
 
 if ! compgen -G "${archive_dir}/$1/*_calib_report_photometry.png" > /dev/null ; then
    if [[ $detected -lt 3 ]] ; then
-	printf " No Photometry, Clouded out? " >> "$OUTFILE"
+	printf "  No Photometry, Clouded out?" >> "$OUTFILE"
    else
-	printf " No Photometry! " >> "$OUTFILE"
+	printf "  No Photometry!" >> "$OUTFILE"
    fi
 fi
 
