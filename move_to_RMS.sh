@@ -39,3 +39,6 @@ cp ./RecordWatchdog.sh "$RMS_dir"/Scripts/RecordWatchdog.sh
 printf "Copying StartCaptureWatchdog.sh to %s/Scripts/StartCaptureWatchdog.sh\n" \
        "$RMS_dir"
 cp ./StartCaptureWatchdog.sh "$RMS_dir"/Scripts/StartCaptureWatchdog.sh
+
+printf "Copying CallES.sh to %s/Scripts/CallES.sh\n" "$RMS_dir"
+cp ./CallES.sh "$RMS_dir"/Scripts/CallES.sh

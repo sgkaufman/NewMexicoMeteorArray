@@ -8,18 +8,18 @@
 # Can also clean out ArchivedFiles directories that are older than $adirs days
 #  if $adirs is greater than zero, will also delete log files older than 21 days
 
-printf "BackupToUSB.sh 04-Dec, 2021, byte count ~2386 : backs up data to thumb drive\n"
+printf "BackupToUSB.sh 08-Mar, 2022, byte count ~2447 : backs up data to thumb drive\n"
 
 # set adirs to zero to skip deleting older directories
-adirs=14
+adirs=7
 adir=$((adirs-1))
 
 # set station specific USB drive designation
 USB_drive="/media/pi/US0002B_BK/US0002"
 station="US0002"
 
-archive_dir=""$HOME"/RMS_data/ArchivedFiles"
-data_dir=""$HOME"/RMS_data"
+archive_dir="$HOME/RMS_data/ArchivedFiles"
+data_dir="$HOME/RMS_data"
 
 # Let's check that first argument. Must be in the ArchivedFiles directory.
 if [[ $1 = '' || ! -d "${archive_dir}"/$1 ]] ;
@@ -57,10 +57,13 @@ else
    mv "${target}" "${USB_drive}/bz2"
 fi
 
-# move TimeLapse.mp4
-target="${data_dir}/$1.mp4"
+# move TimeLapse.mp4, modified to work with IStream
+target="${data_dir}/*.mp4"
 printf "Moving %s\n" "${target}"
-mv "${target}" "${USB_drive}/TimeLapse"
+cd ${data_dir}
+for f in *.mp4; do
+    mv "$f" "${USB_drive}/TimeLapse"
+done
 
 # move Captured_Stack.jpg
 target="${data_dir}/$1*_captured.jpg"

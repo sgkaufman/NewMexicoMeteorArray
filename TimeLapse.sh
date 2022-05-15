@@ -9,7 +9,7 @@
 # Argument3 ($3): False, 0 or No will skip creating stack of CapturedFiles
 # Default script action is to create TimeLapse.mp4 and Capture stack
 
-printf 'TimeLapse.sh, revised 09-Jul, 2021, byte count 10244, '
+printf 'TimeLapse.sh, revised 04-May, 2022, byte count 10753, '
 printf 'was called with\nArg 1 = %s, arg 2 = %s, arg 3 = %s\n\n' "$1" "$2" "$3"
 printf 'TimeLapse.sh copies radiants.txt, and .csv files to RMS_data/csv/,\n'
 printf 'then creates a TimeLapse.mp4 file, and stack of all captured images,\n'
@@ -26,6 +26,7 @@ printf 'values for TimeLapse and CapStack in this script file.\n\n'
 TimeLapse=1
 CapStack=1
 My_Uploads=0
+IStream=0
 
 # Let's check that second argument
 if [[ "$2" = "False" || "$2" = "0" || "$2" = "No" ]] ; then
@@ -37,9 +38,9 @@ if [[ "$3" = "False" || "$3" = "0" || "$3" = "No" ]] ; then
     CapStack=0
 fi
 
-archive_dir=""$HOME"/RMS_data/ArchivedFiles"
-capture_dir=""$HOME"/RMS_data/CapturedFiles"
-data_dir=""$HOME"/RMS_data"
+archive_dir="$HOME/RMS_data/ArchivedFiles"
+capture_dir="$HOME/RMS_data/CapturedFiles"
+data_dir="$HOME/RMS_data"
 
 # Sanity checks
 if [[ ! -d $archive_dir ]] ; then
@@ -61,14 +62,14 @@ fi
 # Let's check that first argument to be sure it is an ArchivedFiles directory
 if [[ $1 = '' || ! -d "${archive_dir}"/$1 ]] ; then
     printf 'Argument %s must specify a first-level sub-directory of %s\n' \
-	"$1" ${archive_dir}
+	"$1" "${archive_dir}"
     exit 1
 fi
 
 # The substring operator in the following line grabs the station name
 # from the directory name
 station_name=${1:0:6}
-OUTFILE=""$HOME"/RMS_data/csv/"${station_name}_"fits_counts.txt"
+OUTFILE="$HOME/RMS_data/csv/"${station_name}_"fits_counts.txt"
 echo "Station_name is ${station_name}"
 
 # Get the environment for Python set up, and move to the right directory
@@ -80,14 +81,18 @@ if [[ ${My_Uploads} = 1 ]]; then
     rm "$HOME"/RMS_data/My_Uploads/*
 fi
 
+
 # Create the timelapse
 if [[ $TimeLapse = 0 ]] ; then
     printf "\nSkipping creation of Timelapse mp4 for directory %s/%s\n" \
 	"${capture_dir}" "$1"
 else
     if [[ -d "${capture_dir}/$1" ]] ; then
-	printf '%s\n' "Creating Timelapse of directory ${capture_dir}/$1"
-	python -m Utils.GenerateTimelapse "$HOME"/RMS_data/CapturedFiles/"$1"
+        # When run after IStream we want to recycle their mp4 file
+        if [[ $IStream -ne 1 ]] ; then
+            printf '%s\n' "Creating Timelapse of directory ${capture_dir}/$1"
+	    python -m Utils.GenerateTimelapse "$HOME"/RMS_data/CapturedFiles/"$1"
+	fi
 	# Move the timelapse up to the RMS_data directory
 	printf 'Moving Timelapse to RMS_data\n'
 	cd -- $capture_dir/"$1"
@@ -101,6 +106,10 @@ else
 	    "${capture_dir}/$1"
     fi
 fi
+
+
+# When run after IStream, their CapStack is a converted BMP, which is larger
+#  than jpg created from scratch, so we make ours anyway? (costs ~12 minutes)
 
 # Create a stack of the capture directory
 if [[ $CapStack = 0 ]] ; then
@@ -212,7 +221,7 @@ env printf "We have a short fall of: %d fits, %d secs, %0.1f min\n\n" \
 
 
 # Find the number of detections in the stack file
-stack=$(ls ""$HOME"/RMS_data/ArchivedFiles/$1"/*meteors.jpg)
+stack=$(ls "$HOME/RMS_data/ArchivedFiles/$1"/*meteors.jpg)
 # Anything such file found?
 if [[ -n $stack ]] ; then
     # Yes! Find the number of meteors encoded in the file name
@@ -257,6 +266,15 @@ popd > /dev/null
 # Write it out to the file in the csv directory
 
 printf "%s: " "$1" >> "$OUTFILE"
+
+if [[ $fits_count -eq 0 ]]; then
+   printf "NO FITS FILES! " >> "$OUTFILE"
+else
+   if ! compgen -G "${archive_dir}/$1/*_calib_report_photometry.png" > /dev/null ; then
+       printf "No Photometry " >> "$OUTFILE"
+   fi
+fi
+
 if [[ $num_captured_dirs -eq $num_archived_dirs ]] ; then
    if [[ $num_archived_dirs -eq 1 ]] ; then
 	printf "%d\t%d" >> "$OUTFILE" \

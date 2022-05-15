@@ -12,8 +12,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
-
-# Last Revision: 28-Mar-2022; Byte count: 8787
+# Last Revision: 28-Mar-2022; Byte count: 8786
 # RMS_RecordWatchdog.sh, version 0.2, Steve Kaufman and Pete Eschman
 #
 # This file belongs in directory $HOME/source/RMS/Scripts.
@@ -199,7 +198,7 @@ while [ $now -lt $capture_end ]; do
 	timeUTC=$(date --date="@$now" +%H:%M:%S)
 	fileUTC=$(date --date="@$file_time" +%H:%M:%S)
 	env printf "Capture failure # %d \n" $restart_count
-	env printf "last fits file created %s, current  time %s, time delta = %d \n"\
+	env printf "last fits file created %s, current time %s, time delta = %d\n"\ 
 	    $fileUTC $timeUTC $delta
 	# write message to /var/log/syslog
 	sudo logger 'record watchdog triggered'

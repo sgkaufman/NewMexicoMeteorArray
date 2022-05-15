@@ -1,13 +1,21 @@
 #!/bin/bash
 #
-# Chk_Website.sh 09-Jul, 2021, 1209 bytes
+# Chk_Website.sh 08-Apr, 2022, 1548 bytes
 
 # added (Buster): sudo nano /etc/xdg/lxsession/LXDE-pi/autostart
 # sleep 2
 # @lxterminal -e ""$HOME"/source/RMS/Chk_Website.sh"
 #
+# var=$(printf "FORMAT" var1)
+
+cd $HOME/RMS_data
+
+timenow=$(date +%m/%d_%T)
 
 echo "Press [CTRL+C] to stop monitoring complex.org/~gnto status..."
+env printf "%s Station has rebooted\n" "$timenow"
+env printf "%s Station has rebooted\n" "$timenow"  >> Web_Status.txt
+env sleep 60
 
 while :
 do
@@ -40,8 +48,12 @@ do
 		env printf "%s  Local Internet connection is down!\n" "$timenow" >> Web_Status.txt
 	    fi
 	else
-	    env printf "%s  web: %s  server: %s\n" "$timenow" $web $server
-	    env printf "%s  web: %s  server: %s\n" "$timenow" $web $server >> Web_Status.txt
+	    if [ $web = "dn" ]  || [ $server = "dn" ] ; then
+		env printf "%s  web: %s  server: %s\n" "$timenow" $web $server
+		env printf "%s  web: %s  server: %s\n" "$timenow" $web $server >> Web_Status.txt
+	    else
+		env printf "%s  web: %s  server: %s\n" "$timenow" $web $server
+	    fi
 	fi
 
 	env sleep 900

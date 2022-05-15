@@ -1,9 +1,9 @@
-How to turn ExternalScript.py and TimeLapse.sh features on and off
-16-Jul, 2021, byte count 4589
+How to turn ExternalScript.py, TimeLapse.sh, and .config features on and off
+05-Apr, 2022, byte count 4848
 
-IMPORTANT!: When making any changes to TimeLapse.sh, there can be NO SPACES
-between any symbols on the line! Use the examples as they are written, so
-var=value as in TimeLapse=1
+IMPORTANT!: When making any changes to TimeLapse.sh, or any other Bash script, 
+there can be NO SPACES between any symbols on the line! Use the examples as 
+they are written, so var=value as in TimeLapse=1
 
 time lapse
 	Turn off by changing the value in TimeLapse.sh at line 26:
@@ -26,25 +26,26 @@ my uploads
 	Turn off by changing the value in TimeLapse.sh at line 28:
 	My_Uploads=0
 
-uploads to NM server
+
+uploads to NM server, controlled by ES (ExternalScript.py)
 	For both manual and RMS methods
-	For ES (11916 bytes) put # in front on line 225:
+	For ES (13700 bytes) put # in front on line 227:
 	# Upload files to the NM Server
 	# getFilesAndUpload(log, nm_config, main_data_dir, log_file)
-	this may increase byte count by 1
+	this may increase ExternalScript.py size in bytes by 1
 
-reboot at end of ES
+reboot at end of ES (ExternalScript.py)
 	For ES v1.0: Enable the reboot behavior when ES is called manually,
-	line 123: change reboot=True to False:
-	log_upload=True, log_script=False, reboot=False, \
-	 This will increase byte count by 1
+	this may increase ExternalScript.py size in bytes by 1
+	line 131: change reboot=True to False
+	log_upload=True, log_script=True, reboot=False, \
 
-shell script in ES
+shell script in ES (ExternalScript.py)
 	For ES v1.0: Enable the shell script logging when ES is called manually,
-	line 123: change log_script=False to True
+	line 131: change log_script=False to True
 	To enable the shell script logging when ES is called by RMS, 
-	line 317 ???, change log_script=False to True
-	??? I think this information may be out of date
+	line 285, change default=False to True
+
 
 enable My_Uploads
 	To enable uploads to user specified site, place a copy of the 
@@ -52,14 +53,20 @@ enable My_Uploads
 	located in source/RMS
 	also see note above about My_Uploads=1 in TL
 
+
 turn off uploads to GMN
-	in .config, change true to false (~line number 113, after [Upload]):
+	in .config, change true to false (~line number 128, after [Upload]):
 	; Flag for enabling/disabling upload to server
 	upload_enabled: true 
 
+change size of uploads to GMN
+	in .config, change 1 to 2, 3, or 4 (~line number 154, after [Upload]):
+	; Flag for upload options
+	upload_mode: 1 
+
 _______________
 
-Future changes:ES v1.0:
+Future changes to ES v1.0 ?
 
 Consider altering sending to NM_Server to sending to XX_Server
 - change IP number

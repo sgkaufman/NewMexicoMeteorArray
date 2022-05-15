@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 """
-This is Version 1.0 of file ExternalScriptRPi.py. Dated 23-Sep-2021.
-Byte count = 13700
+This is Version 1.0 of file ExternalScript.py. Dated 11-Apr-2022.
+Byte count = 13698
 This script
 1: Moves, creates, and copies files on the RMS stations, and
 2: Uploads files to the New Mexico Meteor Array Server.
@@ -128,7 +128,7 @@ def getFilesAndUpload(logger, nm_config, main_data_dir, log_file_fd):
 
 
 def uploadFiles(captured_night_dir, archived_night_dir, config, \
-                log_upload=True, log_script=True, reboot=True, \
+                log_upload=True, log_script=False, reboot=True, \
                 CreateTimeLapse=True, CreateCaptureStack=True, \
                 preset='micro'):
     """ Function to upload selected files from the ArchivedData or CapturedData
