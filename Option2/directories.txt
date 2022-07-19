@@ -1,0 +1,27 @@
+Directory structure:
+pi
+  source
+    RMS
+    Stations
+      US0001
+       .config
+       US0001.sh (used to StartCapture --config /home/pi/Stations/US0001/.config)
+      US0002
+       .config
+       US0002.sh (used to StartCapture --config /home/pi/Stations/US0002/.config)
+      RMS_ShowLiveStream01.sh
+      RMS_ShowLiveStream02.sh
+  RMS_data
+    logs
+      CaptureTimes.log (seems to work ok located here for all camera instances)
+    US0001
+      ArchivedFiles
+      CapturedFiles
+      logs
+      csv
+    US0002
+      ArchivedFiles
+      CapturedFiles
+      logs
+      csv
+_____

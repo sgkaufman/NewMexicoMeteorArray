@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Name=RMS_AUTO_US0001
+Comment=Start RMS US0001
+Exec=bash -c '/home/pi/source/Stations/US0001/US0001.sh'
+Icon=utilities-terminal
+Terminal=true
+Type=Application
+Categories=Application;
+
