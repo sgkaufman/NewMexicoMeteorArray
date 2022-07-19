@@ -8,14 +8,14 @@
 # Can also clean out ArchivedFiles directories that are older than $adirs days
 #  if $adirs is greater than zero, will also delete log files older than 21 days
 
-printf "BackupToUSB.sh 15-Jul, 2022, byte count ~2624 : backs up data to thumb drive\n"
+printf "BackupToUSB.sh 19-Jul, 2022, byte count ~2608 : backs up data to thumb drive\n"
 
 # set adirs to zero to skip deleting older directories
-adirs=14
+adirs=10
 adir=$((adirs-1))
 
 # set station specific USB drive designation
-USB_drive="/media/pi/CRUZER_32_2/US00012"
+USB_drive="/media/pi/64GB_2_1/MCam/0F/data"
 
 archive_dir="$(dirname "$1")"
 data_dir="$(dirname "$archive_dir")"
@@ -68,20 +68,21 @@ for f in *.mp4; do
 done
 
 # move Captured_Stack.jpg
-target="${data_dir}/$night_dir*_captured.jpg"
+target="${data_dir}/*_captured.jpg"
 printf "Moving %s\n" "${target}"
 cd ${data_dir}
-for f in *.jpg; do
-    mv "$f" "${USB_drive}/CapStack"
+for f in *_captured.jpg; do
+    mv "$f" "${USB_drive}/TimeLapse"
 done
 
 if [[ $adirs -gt 0 ]] ;
 then
-    cd "$HOME"/RMS_data/ArchivedFiles
+    cd ${data_dir}/ArchivedFiles
     printf "Deleting ArchivedFiles directories more than %s days old\n" "${adirs}"
     find -mtime +$adir -type d | xargs rm -f -r
-    printf "Deleting files in RMS_data/logs more than 21 days old\n"
-    find "$HOME"/RMS_data/logs/ -type f -mtime +20 -delete;
+    printf "Deleting log files more than 21 days old\n"
+    cd ../logs
+    find *.log -type f -mtime +20 -delete;
 fi
 
-printf "Done copying data to USB drive %s\n " "${USB_drive}"
+printf "Done copying data to USB drive %s\n\n " "${USB_drive}"

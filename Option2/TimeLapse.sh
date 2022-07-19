@@ -8,7 +8,7 @@
 # Argument3 ($3): False, 0 or No will skip creating stack of CapturedFiles
 # Default script action is to create TimeLapse.mp4 and Capture stack
 
-printf 'TimeLapse.sh, revised 15-Jul, 2022, byte count 11000, '
+printf 'TimeLapse.sh, revised 17-Jul, 2022, byte count 11002, '
 printf 'was called with\nArg 1 = %s, arg 2 = %s, arg 3 = %s\n\n' "$1" "$2" "$3"
 printf 'TimeLapse.sh copies radiants.txt, and .csv files to RMS_data/csv/, then creates a\n'
 printf 'TimeLapse.mp4 file, and stack of all captured images, which are moved to RMS_data.\n'
@@ -319,4 +319,4 @@ fi
 
 printf "\n" >> "$OUTFILE"
 
-printf "fits file count and number of detections saved to: %s\n" "$OUTFILE"
+printf "fits file count and number of detections saved to: %s\n\n" "$OUTFILE"
