@@ -1,27 +1,49 @@
 Directory structure:
 pi
+  .ssh	(you can use a single key or separate keys per camera)
+    authorized_keys
+    id_rsa
+    id_rsa.pub
+    known_hosts
+    if you want separate keys, be sure to edit .config for separate key name:
+    us0001.pub
+    us0001
+    us0002.pub
+    us0002
+
   source
     RMS
     Stations
       US0001
        .config
+       platepar_cmn2010.cal
+       mask.bmp (if needed)
        US0001.sh (used to StartCapture --config /home/pi/Stations/US0001/.config)
       US0002
        .config
+       platepar_cmn2010.cal
+       mask.bmp (if needed)
        US0002.sh (used to StartCapture --config /home/pi/Stations/US0002/.config)
       RMS_ShowLiveStream01.sh
       RMS_ShowLiveStream02.sh
+
   RMS_data
     logs
-      CaptureTimes.log (seems to work ok located here for all camera instances)
+      CaptureTimes.log
     US0001
       ArchivedFiles
       CapturedFiles
-      logs
       csv
+      logs
+      FILES_TO_UPLOAD.INF
+      live.jpg
+      NM_FILES_TO_UPLOAD.INF
     US0002
       ArchivedFiles
       CapturedFiles
-      logs
       csv
+      logs
+      FILES_TO_UPLOAD.INF
+      live.jpg
+      NM_FILES_TO_UPLOAD.INF
 _____

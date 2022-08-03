@@ -8,14 +8,14 @@
 # Can also clean out ArchivedFiles directories that are older than $adirs days
 #  if $adirs is greater than zero, will also delete log files older than 21 days
 
-printf "BackupToUSB.sh 19-Jul, 2022, byte count ~2608 : backs up data to thumb drive\n"
+printf "BackupToUSB.sh 23-Jul, 2022, byte count ~2598 : backs up data to thumb drive\n"
 
 # set adirs to zero to skip deleting older directories
 adirs=10
 adir=$((adirs-1))
 
 # set station specific USB drive designation
-USB_drive="/media/pi/64GB_2_1/MCam/0F/data"
+USB_drive="/media/pi/US00012_BK"
 
 archive_dir="$(dirname "$1")"
 data_dir="$(dirname "$archive_dir")"
@@ -72,7 +72,7 @@ target="${data_dir}/*_captured.jpg"
 printf "Moving %s\n" "${target}"
 cd ${data_dir}
 for f in *_captured.jpg; do
-    mv "$f" "${USB_drive}/TimeLapse"
+    mv "$f" "${USB_drive}/CapStack"
 done
 
 if [[ $adirs -gt 0 ]] ;

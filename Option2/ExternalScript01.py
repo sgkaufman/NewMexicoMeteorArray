@@ -113,8 +113,8 @@ def getFilesAndUpload(logger, nm_config, archived_night_dir, log_file_fd):
     #write all the files at oce to the upload manager
     upload_manager.addFiles(files_to_upload)
 
-    # Get and print the contents of ~/RMS_data/NM_FILES_TO_UPLOAD.inf
-    queue_file_name = os.path.expanduser('~/RMS_data/NM_FILES_TO_UPLOAD.inf')
+    # Get and print the contents of ~/RMS_data/US0001/NM_FILES_TO_UPLOAD.inf
+    queue_file_name = os.path.expanduser('~/RMS_data/US0001/NM_FILES_TO_UPLOAD.inf')
     with open(queue_file_name, 'r') as queue_file:
         logger.info('Contents of %s:' % queue_file_name)
         upload_queue = queue_file.read()
@@ -128,7 +128,7 @@ def getFilesAndUpload(logger, nm_config, archived_night_dir, log_file_fd):
 
 
 def uploadFiles(captured_night_dir, archived_night_dir, config, \
-                log_upload=True, log_script=True, reboot=False, \
+                log_upload=True, log_script=False, reboot=False, \
                 CreateTimeLapse=True, CreateCaptureStack=True, \
                 preset='micro'):
     """ Function to upload selected files from the ArchivedData or CapturedData
@@ -229,7 +229,7 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
 
 
         # Upload files to the NM Server
-        #getFilesAndUpload(log, nm_config, archived_night_dir, log_file)
+        getFilesAndUpload(log, nm_config, archived_night_dir, log_file)
 
         # Test for existence of "My_Uploads.sh".
         # Execute it if it exists.
@@ -287,7 +287,7 @@ if __name__ == "__main__":
                            help="Subdirectory of CapturedFiles or ArchiveFiles to upload. For example, US0006_20190421_020833_566122")
     nmp.add_argument('--log_script', type=str2bool, \
                      choices=[True, False, 'Yes', 'No', '0', '1'], \
-                     default=True, \
+                     default=False, \
                      help="When True, create a log file for the calls to TimeLapse.sh and BackuupToUSB.sh, and any others. When False, no log file is created.")
     nmp.add_argument('--reboot', type=str2bool, \
                      choices=[True, False, 'Yes', 'No', '0', '1'], \
