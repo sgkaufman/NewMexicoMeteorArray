@@ -8,7 +8,7 @@
 # Can also clean out ArchivedFiles directories that are older than $adirs days
 #  if $adirs is greater than zero, will also delete log files older than 21 days
 
-printf "BackupToUSB.sh 23-Jul, 2022, byte count ~2598 : backs up data to thumb drive\n"
+printf "BackupToUSB.sh 08-Aug, 2022, byte count ~2599 : backs up data to thumb drive\n"
 
 # set adirs to zero to skip deleting older directories
 adirs=10
@@ -48,7 +48,7 @@ cp "${target}" "${USB_drive}/csv"
 
 # copy or move tar.bz2
 target="${archive_dir}/"$night_dir"_detected.tar.bz2"
-if [[ -s ~/RMS_data/FILES_TO_UPLOAD.inf ]] ;
+if [[ -s "${data_dir}"/FILES_TO_UPLOAD.inf ]] ;
 then
     # not empty
     printf "Copying %s...\n" "${target}"
