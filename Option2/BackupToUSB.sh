@@ -6,13 +6,18 @@
 # Assumes that the destination has directories bz2, csv, CapStack, and TimeLapse
 # Argument1: ArchivedFiles directory name
 # Can also clean out ArchivedFiles directories that are older than $adirs days
+#  and can clean out CapturedFiles directories that are older than $cdirs days
 #  if $adirs is greater than zero, will also delete log files older than 21 days
 
-printf "BackupToUSB.sh 08-Aug, 2022, byte count ~2599 : backs up data to thumb drive\n"
+printf "BackupToUSB.sh 21-Sep, 2022, byte count ~2986 : backs up data to thumb drive\n"
 
-# set adirs to zero to skip deleting older directories
+# set adirs to zero to skip deleting older ArchivedFiles directories
 adirs=10
 adir=$((adirs-1))
+
+# set cdirs to zero to skip deleting older CapturedFiles directories
+cdirs=10
+cdir=$((cdirs-1))
 
 # set station specific USB drive designation
 USB_drive="/media/pi/US00012_BK"
@@ -80,9 +85,16 @@ then
     cd ${data_dir}/ArchivedFiles
     printf "Deleting ArchivedFiles directories more than %s days old\n" "${adirs}"
     find -mtime +$adir -type d | xargs rm -f -r
-    printf "Deleting log files more than 21 days old\n"
     cd ../logs
-    find *.log -type f -mtime +20 -delete;
+    printf "Deleting log files more than 31 days old\n"
+    find *.log -type f -mtime +30 -delete;
+fi
+
+if [[ $cdirs -gt 0 ]] ;
+then
+    cd ${data_dir}/CapturedFiles
+    printf "Deleting CapturedFiles directories more than %s days old\n" "${cdirs}"
+    find -mtime +$cdir -type d | xargs rm -f -r
 fi
 
 printf "Done copying data to USB drive %s\n\n " "${USB_drive}"
