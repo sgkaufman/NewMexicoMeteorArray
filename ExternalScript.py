@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 """
-This is Version 1.0 of file ExternalScript.py. Dated 11-Apr-2022.
-Byte count = 13698
+This is Version 1.0 of file ExternalScript.py. Dated 14-Oct-2022.
+Byte count = 14057
 This script
 1: Moves, creates, and copies files on the RMS stations, and
 2: Uploads files to the New Mexico Meteor Array Server.
@@ -157,7 +157,7 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
     # Create the config object for New Mexico Meteor Array purposes
     nm_config = copy.copy(config)
     nm_config.stationID = 'pi'
-    nm_config.hostname = '10.8.0.61' # 69.195.111.36 for Bluehost
+    nm_config.hostname = '10.8.0.46' # 69.195.111.36 for Bluehost
     nm_config.remote_dir = remote_dir
     nm_config.upload_queue_file = 'NM_FILES_TO_UPLOAD.inf'
     # nm_config.data_dir = os.path.join(os.path.expanduser('~'), 'NM_data')
@@ -279,7 +279,10 @@ if __name__ == "__main__":
     nmp = argparse.ArgumentParser(description="""Upload files to New_Mexico_Server, and optionally move other files to storage devices, create a TimeLapse.mp4 file, and reboot the system after all processing.""")
 
     nmp.add_argument('--directory', type=str, \
-                           help="Subdirectory of CapturedFiles or ArchiveFiles to upload. For example, US0006_20190421_020833_566122")
+                     help="Subdirectory of CapturedFiles or ArchiveFiles to upload. For example, US0006_20190421_020833_566122")
+    nmp.add_argument('--config', type=str, \
+                     default='/home/pi/source/RMS', \
+                     help="The full path to the directory containing the .config file for the camera. Defaults to the location on a Raspberry Pi RMS system.")
     nmp.add_argument('--log_script', type=str2bool, \
                      choices=[True, False, 'Yes', 'No', '0', '1'], \
                      default=False, \
@@ -306,12 +309,13 @@ if __name__ == "__main__":
         sys.exit()
 
     print ('directory arg: ', args.directory)
+    print ('.config arg: ',   args.config)
     print ('Reboot arg: ', args.reboot)
     print ('CreateTimeLapse arg: ', args.CreateTimeLapse)
     print ('CreateCaptureStack arg: ', args.CreateCaptureStack)
     print ('preset arg: ', args.preset)
 
-    config = RMS.ConfigReader.loadConfigFromDirectory(None, "~/source/RMS/.config")
+    config = RMS.ConfigReader.loadConfigFromDirectory('.', args.config)
 
     print("config.data_dir = ", config.data_dir)
 
