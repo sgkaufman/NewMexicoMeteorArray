@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 """
-This is Version 1.0 of file ExternalScript.py. Dated 14-Oct-2022.
-Byte count = 14057
+This is Version 1.1 of file ExternalScript.py. Dated 15-Oct-2022.
+Byte count = 13972
 This script
 1: Moves, creates, and copies files on the RMS stations, and
 2: Uploads files to the New Mexico Meteor Array Server.
@@ -157,7 +157,7 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
     # Create the config object for New Mexico Meteor Array purposes
     nm_config = copy.copy(config)
     nm_config.stationID = 'pi'
-    nm_config.hostname = '10.8.0.46' # 69.195.111.36 for Bluehost
+    nm_config.hostname = 'new_mexico_server.gmnnet' 
     nm_config.remote_dir = remote_dir
     nm_config.upload_queue_file = 'NM_FILES_TO_UPLOAD.inf'
     # nm_config.data_dir = os.path.join(os.path.expanduser('~'), 'NM_data')
