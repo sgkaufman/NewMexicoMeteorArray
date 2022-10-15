@@ -2,7 +2,7 @@
 
 """
 This is Version 1.1 of file ExternalScript.py. Dated 15-Oct-2022.
-Byte count = 13972
+Byte count = 13834
 This script
 1: Moves, creates, and copies files on the RMS stations, and
 2: Uploads files to the New Mexico Meteor Array Server.
@@ -65,7 +65,7 @@ def findFiles(dataDir, allFiles, pattern):
         found_files.append(full_file)
     return found_files
 
-def getFilesAndUpload(logger, nm_config, main_data_dir, log_file_fd):
+def getFilesAndUpload(logger, nm_config, archived_night_dir, log_file_fd):
     """The argument 'log_file_fd' is assumed to be passed in
     open state, and need not be closed during the call."""
 
@@ -75,29 +75,29 @@ def getFilesAndUpload(logger, nm_config, main_data_dir, log_file_fd):
     upload_manager = UploadManager(nm_config)
     upload_manager.start()
 
-    # Get the files from the main_data_dir for NM upload
+    # Get the files from the archived_night_dir for NM upload
 
-    all_files = os.listdir(main_data_dir)
+    all_files = os.listdir(archived_night_dir)
     files_to_upload = []
 
-    png_files = findFiles(main_data_dir, all_files, "*.png")
+    png_files = findFiles(archived_night_dir, all_files, "*.png")
     logger.info("Adding %d png files to queue ..." % len(png_files) )
     files_to_upload.extend(png_files)
 
-    jpg_files = findFiles(main_data_dir, all_files, "*.jpg")
+    jpg_files = findFiles(archived_night_dir, all_files, "*.jpg")
     logger.info("Adding %d jpg files to queue ..." % len(jpg_files) )
     files_to_upload.extend(jpg_files)
 
-    ftp_files = findFiles(main_data_dir, all_files, \
+    ftp_files = findFiles(archived_night_dir, all_files, \
                           "FTP*_[0-9][0-9][0-9][0-9][0-9][0-9].txt")
     logger.info("Adding %d ftp files to queue ..." % len(ftp_files) )
     files_to_upload.extend(ftp_files)
 
-    txt_files = findFiles(main_data_dir, all_files, "*_radiants.txt")
+    txt_files = findFiles(archived_night_dir, all_files, "*_radiants.txt")
     logger.info("Adding %d txt files to queue ..." % len(txt_files) )
     files_to_upload.extend(txt_files)
 
-    csv_files = findFiles(main_data_dir, all_files, "*.csv")
+    csv_files = findFiles(archived_night_dir, all_files, "*.csv")
     logger.info("Adding %d csv files to queue ..." % len(csv_files) )
     files_to_upload.extend(csv_files)
 
@@ -143,13 +143,12 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
     """
 
     # Variable definitions
-    main_data_dir = archived_night_dir
     remote_dir = '/home/pi/RMS_Station_data'
     My_Uploads_file = os.path.expanduser("~/source/RMS/My_Uploads.sh")
 
     RMS_data_dir_name = os.path.expanduser("~/RMS_data/")
     print ("RMS_data_dir_name = {0}".format(RMS_data_dir_name))
-    data_dir_name = os.path.basename(main_data_dir)
+    data_dir_name = os.path.basename(archived_night_dir)
     print ("data_dir_name = {0}".format(data_dir_name))
     log_dir_name = os.path.join(RMS_data_dir_name, 'logs/')
     print ("log_dir_name = {0}".format(log_dir_name))
@@ -160,8 +159,6 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
     nm_config.hostname = 'new_mexico_server.gmnnet' 
     nm_config.remote_dir = remote_dir
     nm_config.upload_queue_file = 'NM_FILES_TO_UPLOAD.inf'
-    # nm_config.data_dir = os.path.join(os.path.expanduser('~'), 'NM_data')
-    # nm_config.log_dir = os.path.join(os.path.expanduser('~'), 'NM_data/logs')
 
     # logging needed when run as part of RMS, or when the argument is set
     # NOTE: When run as part of RMS, the program name is "ExternalScript".
@@ -196,7 +193,7 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
         # Prepare for calls to TimeLapse.sh,
         # second arg based on CreateTimeLapse,
         # third arg based on CreateCaptureStack.
-        TimeLapse_cmd_str = "~/source/RMS/TimeLapse.sh " + data_dir_name
+        TimeLapse_cmd_str = "~/source/RMS/TimeLapse.sh " + archived_night_dir
         if  CreateTimeLapse:
             TimeLapse_cmd_str = TimeLapse_cmd_str + " Yes"
         else:
@@ -216,7 +213,7 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
 
         # backup data to thumb drive, PNE 12/08/2019
         status = subprocess.call("~/source/RMS/BackupToUSB.sh " \
-                                 + data_dir_name, \
+                                 + archived_night_dir, \
                                  stdout=log_file, \
                                  stderr=log_file, \
                                  shell=True)
@@ -224,7 +221,7 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
 
 
         # Upload files to the NM Server
-        getFilesAndUpload(log, nm_config, main_data_dir, log_file)
+        getFilesAndUpload(log, nm_config, archived_night_dir, log_file)
 
         # Test for existence of "My_Uploads.sh".
         # Execute it if it exists.
