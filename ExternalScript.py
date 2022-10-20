@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 """
-This is Version 1.1 of file ExternalScript.py. Dated 15-Oct-2022.
-Byte count = 13834
+This is Version 1.1 of file ExternalScript.py. Dated 19-Oct-2022.
+Byte count = 14073
 This script
 1: Moves, creates, and copies files on the RMS stations, and
 2: Uploads files to the New Mexico Meteor Array Server.
@@ -193,7 +193,7 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
         # Prepare for calls to TimeLapse.sh,
         # second arg based on CreateTimeLapse,
         # third arg based on CreateCaptureStack.
-        TimeLapse_cmd_str = "~/source/RMS/TimeLapse.sh " + archived_night_dir
+        TimeLapse_cmd_str = "~/source/RMS/TimeLapse.sh " + data_dir_name
         if  CreateTimeLapse:
             TimeLapse_cmd_str = TimeLapse_cmd_str + " Yes"
         else:
@@ -283,7 +283,7 @@ if __name__ == "__main__":
     nmp.add_argument('--log_script', type=str2bool, \
                      choices=[True, False, 'Yes', 'No', '0', '1'], \
                      default=False, \
-                     help="When True, create a log file for the calls to TimeLapse.sh and BackuupToUSB.sh, and any others. When False, no log file is created.")
+                     help="When True, create a log file for the calls to TimeLapse.sh and BackupToUSB.sh, and any others. When False, no log file is created.")
     nmp.add_argument('--reboot', type=str2bool, \
                      choices=[True, False, 'Yes', 'No', '0', '1'], \
                      default=True, \
@@ -301,11 +301,11 @@ if __name__ == "__main__":
                      help="which fileset to upload (not currently implemented)")
     args = nmp.parse_args()
 
-    if args.directory is None:
-        print ("Directory argument not present! Exiting ...")
-        sys.exit()
+    if (args.directory is None):
+        print ("Directory argument not present ... exiting")
+        sys.exit(1)
 
-    print ('directory arg: ', args.directory)
+    print ('Directory arg: ', args.directory)
     print ('.config arg: ',   args.config)
     print ('Reboot arg: ', args.reboot)
     print ('CreateTimeLapse arg: ', args.CreateTimeLapse)
@@ -315,9 +315,15 @@ if __name__ == "__main__":
     config = RMS.ConfigReader.loadConfigFromDirectory('.', args.config)
 
     print("config.data_dir = ", config.data_dir)
+    print('directory arg = ', args.directory)
 
-    captured_data_dir = os.path.join(config.data_dir, 'CapturedFiles', args.directory)
-    archive_data_dir = os.path.join(config.data_dir, 'ArchivedFiles', args.directory)
+    captured_data_dir = os.path.join(config.data_dir, config.captured_dir, \
+                                     args.directory)
+    archive_data_dir = os.path.join(config.data_dir, config.archived_dir, \
+                                     args.directory)
+
+    print("captured_data_dir = ", captured_data_dir)
+    print("archive_data_dir = ", archive_data_dir)
 
     uploadFiles(captured_data_dir, archive_data_dir, config, \
                 log_upload=True,
