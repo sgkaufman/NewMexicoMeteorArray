@@ -128,7 +128,7 @@ def getFilesAndUpload(logger, nm_config, archived_night_dir, log_file_fd):
 
 
 def uploadFiles(captured_night_dir, archived_night_dir, config, \
-                log_upload=True, log_script=False, reboot=False, \
+                log_upload=True, log_script=False, reboot=True, \
                 CreateTimeLapse=True, CreateCaptureStack=True, \
                 preset='micro'):
     """ Function to upload selected files from the ArchivedData or CapturedData
