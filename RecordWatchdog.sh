@@ -12,7 +12,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
-# Last Revision: 28-Mar-2022; Byte count: 8786
+# Last Revision: 06-Jan-2023; Byte count: 8785
 # RMS_RecordWatchdog.sh, version 0.2, Steve Kaufman and Pete Eschman
 #
 # This file belongs in directory $HOME/source/RMS/Scripts.
@@ -23,11 +23,11 @@
 # Add these lines after "sudo service openvpn restart" 
 #
 #    Start the watchdog. 
-#    /home/pi/source/RMS/Scripts/StartCaptureWatchdog.sh
+#    /home/pi/source/NMMA/StartCaptureWatchdog.sh
 #
 # Dependencies:
-# 1. ~/source/RMS/StartRecordCapture.sh
-# 2. ~/source/RMS/RMS/WriteCapture.py
+# 1. ~/source/NMMA/StartRecordCapture.sh
+# 2. ~/source/NMMA/WriteCapture.py
 
 # This file tracks the creation of FITS files in the directory
 # $HOME/RMS_data/CapturedFiles. If too long elapses between
@@ -64,7 +64,7 @@ declare -i new_log_count log_count
 declare -i loop_count restart_count
 declare -i log_level
 
-log_level=0
+log_level=1
 
 # Read the $wait_sec argument
 
@@ -210,11 +210,13 @@ while [ $now -lt $capture_end ]; do
 	     done
 
 	# reboot camera next
+
+        cd "$HOME""/source/RMS"
+	source "$HOME""/vRMS/bin/activate"
+
 	python -m Utils.CameraControl reboot
 	env sleep 5
 
-	cd "$HOME""/source/RMS"
-	source "$HOME""/vRMS/bin/activate"
 	lxterminal -e Scripts/RMS_StartCapture.sh -r
 
 	# Wait for a new log file to be created

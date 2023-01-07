@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 """
-This is Version 1.0 of file ExternalScript.py. Dated 11-Apr-2022.
-Byte count = 13698
+This is Version 1.0 of file ExternalScript.py. Dated 07-Jan-2023.
+Byte count = 13672
 This script
 1: Moves, creates, and copies files on the RMS stations, and
 2: Uploads files to the New Mexico Meteor Array Server.
@@ -145,7 +145,7 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
     # Variable definitions
     main_data_dir = archived_night_dir
     remote_dir = '/home/pi/RMS_Station_data'
-    My_Uploads_file = os.path.expanduser("~/source/RMS/My_Uploads.sh")
+    My_Uploads_file = os.path.expanduser("~/source/NMMA/My_Uploads.sh")
 
     RMS_data_dir_name = os.path.expanduser("~/RMS_data/")
     print ("RMS_data_dir_name = {0}".format(RMS_data_dir_name))
@@ -157,7 +157,7 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
     # Create the config object for New Mexico Meteor Array purposes
     nm_config = copy.copy(config)
     nm_config.stationID = 'pi'
-    nm_config.hostname = '10.8.0.61' # 69.195.111.36 for Bluehost
+    nm_config.hostname = '10.8.0.46'
     nm_config.remote_dir = remote_dir
     nm_config.upload_queue_file = 'NM_FILES_TO_UPLOAD.inf'
     # nm_config.data_dir = os.path.join(os.path.expanduser('~'), 'NM_data')
@@ -196,7 +196,7 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
         # Prepare for calls to TimeLapse.sh,
         # second arg based on CreateTimeLapse,
         # third arg based on CreateCaptureStack.
-        TimeLapse_cmd_str = "~/source/RMS/TimeLapse.sh " + data_dir_name
+        TimeLapse_cmd_str = "~/source/NMMA/TimeLapse.sh " + data_dir_name
         if  CreateTimeLapse:
             TimeLapse_cmd_str = TimeLapse_cmd_str + " Yes"
         else:
@@ -215,7 +215,7 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
         log.info("TimeLapse call returned with status " + str(status) )
 
         # backup data to thumb drive, PNE 12/08/2019
-        status = subprocess.call("~/source/RMS/BackupToUSB.sh " \
+        status = subprocess.call("~/source/NMMA/BackupToUSB.sh " \
                                  + data_dir_name, \
                                  stdout=log_file, \
                                  stderr=log_file, \

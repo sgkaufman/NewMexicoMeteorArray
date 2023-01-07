@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Date: 20-Feb-2022; Byte count: 3116
+# Date: 06-Jan-2023; Byte count: 3157
 # Starts the RecordWatchdog.sh monitoring program
 # (to restart RMS if capture stops).
 
@@ -72,7 +72,9 @@ if [[ "$system_os" = "jessie" ]]
 
        pushd "$HOME"/source/RMS
        source "$HOME"/vRMS/bin/activate
-       python -m RMS.WriteCapture \
+       popd
+       pushd "$HOME"/source/NMMA
+       python -m WriteCapture \
 	      --latitude $latitude \
 	      --longitude $longitude \
 	      --elevation $elevation
