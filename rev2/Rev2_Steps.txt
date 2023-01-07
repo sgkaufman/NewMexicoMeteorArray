@@ -1,0 +1,41 @@
+Rev2_Steps.txt, 22-Dec, 2022
+
+Copy this file set to ~/source/NMMA
+edit .config to point to 
+ /home/pi/source/NMMA/ExternalScript.py 
+
+edit ~/source/NMMA/Backup.sh and BackupToUSB.sh to point to correct thumb drive
+
+crontab -e
+edit lines to call files in the new location
+ /home/pi/source/NMMA/WriteCapture.sh
+ /home/pi/source/NMMA/FlushNMqueue.sh
+
+Flush our files from ~/source/RMS 
+Backup.sh
+BackupToUSB.sh
+CamSet.sh
+FixIt.sh
+FlushNMqueue.sh
+TimeLapse.sh
+WriteCapture.sh
+
+and ~/source/RMS/RMS
+ExternalScript.py
+FlushNMqueue.py
+WriteCapture.py
+_____
+
+12/21/2022  03:04 PM               939 Backup.sh
+12/22/2022  09:01 AM             2,985 BackupToUSB.sh
+04/15/2021  10:11 AM             1,239 CamSet.sh
+12/22/2022  08:40 AM            13,877 ExternalScript.py
+12/21/2022  02:18 PM             3,233 FixIt.sh
+08/08/2021  09:11 AM             1,452 FlushNMqueue.py
+12/21/2022  02:12 PM               869 FlushNMqueue.sh
+12/22/2022  09:05 AM             1,237 Rev2_Steps.txt
+07/17/2022  12:23 PM            11,002 TimeLapse.sh
+07/23/2021  07:53 AM             3,309 WriteCapture.py
+12/05/2022  12:29 PM             1,717 WriteCapture.sh
+              11 File(s)         41,199 bytes
+_______________

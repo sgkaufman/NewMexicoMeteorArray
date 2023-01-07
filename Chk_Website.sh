@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Chk_Website.sh 08-Apr, 2022, 1548 bytes
+# Chk_Website.sh 31-Jul 2022, 1551 bytes
 
 # added (Buster): sudo nano /etc/xdg/lxsession/LXDE-pi/autostart
 # sleep 2
@@ -21,11 +21,11 @@ while :
 do
 	timenow=$(date +%m/%d_%T)
 
-	status=$( curl -I "complex.org/~gnto" 2>&1 | awk '/HTTP\// {print $2}' )
+	status=$( curl -IL "complex.org/~gnto" 2>&1 | awk '/HTTP\// {print $2}' )
 	if [ -z "$status" ] ; then
 	    	web="dn"
 	else
-	    if [ "$status" -eq 301 ] ; then
+	    if [[ $status == *"301"* ]] ; then
 		web="^"
 	    else
 		web="dn"
