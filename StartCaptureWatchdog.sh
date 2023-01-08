@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Date: 06-Jan-2023; Byte count: 3157
+# Date: 08-Jan-2023; Byte count: 3143
 # Starts the RecordWatchdog.sh monitoring program
 # (to restart RMS if capture stops).
 
@@ -100,9 +100,9 @@ if [[ "$system_os" = "jessie" ]]
 
        log_file=$log_dir/"RMS_RecordWatchdog_"$mo"_"$day"_"$yr".log"
 
-       cd "$HOME"/source/RMS/Scripts
+       cd "$HOME"/source/NMMA
        echo Logging RecordWatchdog.sh to $log_file ...
-       "$HOME"/source/RMS/Scripts/RecordWatchdog.sh $wait_sec >> $log_file &
+       "$HOME"/source/NMMA/RecordWatchdog.sh $wait_sec >> $log_file &
 else
     env printf "System type %s does not require the capture watchdog\n" \
 	"$system_os"
