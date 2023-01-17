@@ -3,9 +3,9 @@
 # Test file size of NM_FILES_TO_UPLOAD.inf and run FlushNMqueue.py if needed.
 # intended to be run as a cron job
 # # m h  dom mon dow   command
-#  40 14-18 * * * "$HOME"/source/RMS/FlushNMqueue.sh
+# 0 20 * * * /home/pi/source/NMMA/FlushNMqueue.sh
 
-printf "\nFlushNMqueue.sh 21-Dec, 2022, byte count 869 : Flush NM upload queue if needed\n"
+printf "\nFlushNMqueue.sh 17-Jan, 2023, byte count 866 : Flush NM upload queue if needed\n"
 
 # Is NM_FILES_TO_UPLOAD.inf is old enough to be sure processing is done?
 

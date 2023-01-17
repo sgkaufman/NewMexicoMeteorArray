@@ -1,16 +1,19 @@
 #!/bin/bash
 
-# WriteCapture.sh, 24-July, 2021, Byte count: 1697
+# WriteCapture.sh, 17-Jan, 2023, Byte count: 1830
 # This is a trimmed down version of StartCaptureWatchdog.sh (09-July-2021)
-# On Buster RMS stations, this file can reside in $HOME/source/RMS and be
+# On Buster RMS stations, this file can reside in $HOME/source/NMMA and be
 # called by autoexec so that the CaptureTimes.log file is written at boot
 # sudo nano /etc/xdg/lxsession/LXDE-pi/autostart
 # 
 #  #Start Milan's watchdog
 #  sleep 5
-#  /home/pi/source/RMS/Scripts/RMS_watchdog.sh &
+#  /home/pi/source/Scripts/RMS_watchdog.sh &
 #  sleep 4
-#  /home/pi/source/RMS/WriteCapture.sh
+#  /home/pi/source/NMMA/WriteCapture.sh
+#
+# alternatively, you can call WriteCapture.sh from a cron job:
+# 10 22 * * * /home/pi/source/NMMA/WriteCapture.sh
 
 # Variable definitions:
 declare log_dir="$HOME""/RMS_data/logs"

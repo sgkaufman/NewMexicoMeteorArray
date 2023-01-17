@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
 """
-Version of 23-Jul-2021; Bytes: 3309
-Version 0.1, SGK, 6/28/2020. This file belongs in directory
-$HOME/source/RMS/RMS/.
+Version 0.1, SGK, 17-Jan-2023; Bytes: 3284
+This file belongs in directory
+$HOME/source/NMMA/.
 This file calls the RMS function captureDuration (from RMS.CaptureDuration)
 and writes the capture start time and capture duration to a log file
 called "CaptureTime.log". It is used by the shell script RecordWatchdog.sh

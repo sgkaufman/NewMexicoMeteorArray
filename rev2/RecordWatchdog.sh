@@ -13,10 +13,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
-# Last Revision: 06-Jan-2023; Byte count: 8788
+# Last Revision: 17-Jan-2023; Byte count: 8780
 # RMS_RecordWatchdog.sh, version 0.2, Steve Kaufman and Pete Eschman
 #
-# This file belongs in directory $HOME/source/NMMA/Scripts.
+# This file belongs in directory $HOME/source/NMMA.
 # It is intended to be started at boot on Jessie stations.
 # It is not needed on Buster since FFMPEG replaced GStreamer.
 # On Jessie, it is started by an entry in the autostart file 
