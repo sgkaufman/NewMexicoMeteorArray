@@ -1,107 +1,110 @@
-# New Mexico Meteor Array 21-Aug, 2021
-Files for the New Mexico Meteor Array sub-network of the Global Meteor Network
+# New Mexico Meteor Array (NMMA) 21-Jan, 2023
+Files for NMMA, a sub-network of the Global Meteor Network
 
-# Functions implemented
+# NMMA Functions implemented
 ## Post-processing for the New Mexico Meteor Array
 - ExternalScript.py (Uploads some files to NM Server, calls the following two)
 - TimeLapse.sh (creates TimeLapse mp4 movie, CaptureStack, and statistical diagnostic information)
 - BackupToUSB.sh (Backs up some nightly date to an attached USB flash drive)
 
 ## Recording Watchdog. This watchdog restarts RMS if capture stops during the night.
-- Note: Only used on Jessie stations. Buster (Pi4) stations are stable since FFMPEG replaced GStreamer.
+- Only used on Jessie RMS stations. 
 - StartCaptureWatchdog.sh
 - RecordWatchdog.sh
-- WriteCapture.py
 
-## Utilities
-- Backup.sh
-- CamSet.sh
-- Chk_Website.sh
-- FixIt.sh
-- FlushNMqueue.sh
-- FlushNMqueue.py
-- move_to_RMS.sh
-- RMS_Restart.sh
-- Turn_Features_On_Off.txt
-- Update.sh
-- WriteCapture.sh
-- WriteCaptureEphem.py
+## NMMA Utilities
+All files should be located in ~/source/NMMA
+12/21/2022  03:04 PM               939 Backup.sh
+12/22/2022  09:01 AM             2,985 BackupToUSB.sh
+04/15/2021  10:11 AM             1,239 CamSet.sh
+07/31/2022  08:51 AM             1,551 Chk_Website.sh
+01/17/2023  10:40 AM            13,877 ExternalScript.py
+12/21/2022  02:18 PM             3,233 FixIt.sh
+01/17/2023  09:37 AM             1,414 FlushNMqueue.py
+01/17/2023  11:01 AM               866 FlushNMqueue.sh
+01/21/2023  09:52 PM             3,804 README.md
+01/17/2023  10:33 AM             8,780 RecordWatchdog.sh
+01/08/2023  02:22 PM             3,143 StartCaptureWatchdog.sh
+07/17/2022  12:23 PM            11,002 TimeLapse.sh
+01/20/2023  06:52 PM             2,707 Turn_Features_On_Off.txt
+01/17/2023  11:11 AM             3,284 WriteCapture.py
+01/17/2023  11:05 AM             1,830 WriteCapture.sh
 
-## File Function Descriptions
+01/19/2023  08:15 PM    <DIR>          GUI_Linux
+01/20/2023  11:29 AM    <DIR>          iStreamNM
+01/19/2023  08:04 PM    <DIR>          Older
+01/20/2023  10:12 AM    <DIR>          RPi3
 
-Backup.sh	 	7/9/2021 11:37 AM  1015
-	Creates reference copy of key microSD card files
+Backup.sh
+	Creates reference copy of important microSD card files
 
-BackupToUSB.sh		 8/17/2021  2:13 PM  1626
+BackupToUSB.sh
 	Backup data every morning to thumb drive, called by ExternalScript.py
 
-CamSet.sh	 	4/15/2021 11:11 AM  1239
+CamSet.sh
 	Utility for switching camera between nighttime & daytime modes
 
-Chk_Website.sh	 	7/9/2021 11:39 AM  1209
-	Status monitor Pete runs on US0002
+Chk_Website.sh
+	Optional website status monitor
 
-ExternalScript.py	 8/21/2021  8:37 AM  12925
+ExternalScript.py
 	NMMA ExternalScript.py
 	If My_Uploads.sh is found will be used to copy station files 
 	to a station owner's web site. Calls TimeLapse.sh, and My_Uploads.sh
 
-FixIt.sh		 7/9/2021 11:40 AM  3518
+FixIt.sh
 	Utility for processing missing data: runs a reprocess job followed by
 	ExternalScript.py
 
-FlushNMqueue.py		 8/8/2021 10:11 AM  1452
+FlushNMqueue.py
 	Utility for uploading to NM Server if needed
 
-FlushNMqueue.sh		 7/9/2021 11:40 AM   872
+FlushNMqueue.sh
 	Utility for uploading to NM Server if needed
 	placed in crontab at 30 22 * * *
 	This may catch files that failed to upload earlier in the day 
 	if the local network or server were down
 
-move_to_RMS.sh	 	6/5/2021  6:41 AM  1249
-	A utility Steve Kaufman uses
-
-README.md	 	7/24/2021 12:29 PM   598
+README.md
 	this github reference file
 
-RecordWatchdog.sh	 7/26/2021  4:47 PM  8441
-	RecordWatchdog, started by a crontab entry that
-	runs StartCaptureWatchdog.sh
+RecordWatchdog.sh (located in git RPi3 subdirectory)
+	Used only on Jessie RMS
 
-RMS_Restart.sh		 7/24/2021 12:28 PM   457
-	Utility Pete uses on his Mint 20.2 test station
-
-StartCaptureWatchdog.sh	 7/9/2021  4:02 PM  2728
-	Runs from crontab entry at 30 22 * * *
+StartCaptureWatchdog.sh (located in git RPi3 subdirectory)
+	Used only on Jessie RMS
 	This runs WriteCapture.py and RecordWatchdog.sh
 
-TimeLapse.sh		 7/9/2021 11:42 AM  10244
+TimeLapse.sh
 	Does error checking, creates TimeLapse.mp4 and Capture stack
 	called by ExternalScript.py
 
-Turn_Features_On_Off.txt 7/16/2021  9:26 AM  4589
+Turn_Features_On_Off.txt
 	Slightly out of date summary of places to make changes for
 	customized stations
 
-update.sh		 7/10/2021  1:20 PM  1473
-	Pete's utility that helps to automate code updates to our stations.
+WriteCapture.py
+	Writes ~/RMS_data/logs/CaptureTimes.log
+	used by RecordWatchdog.sh and error checking in TimeLapse.sh
 
-WriteCapture.py		 7/23/2021  2:53 PM  3309
-	Writes the CaptureTimes.log file used by RecordWatchdog.sh
-	and error checking in TimeLapse.sh
-
-WriteCapture.sh		 7/24/2021 11:36 AM  1697
+WriteCapture.sh
+	Not used on Jessie RMS
+	Calls WriteCapture.py
 	Runs from crontab entry at 30 22 * * *
-	This is used on our Buster RMS stations, since they are not
-	currently running RecordWatchdog.sh.
 
-## File System Structure (incomplete)
 
+Files in git iStreamNM subdirectory can be used to run iStream alongside 
+the NMMA ExternalScript. See iStream.txt for details:
+12/29/2022  02:36 PM             2,449 iStreamNM.py
+12/29/2022  02:33 PM            12,091 iStreamNM.sh
+01/21/2023  09:49 PM             1,597 iStreamNM.txt
+
+
+
+## File System Structure
 NMMA RMS_data directories contain these extra directories:
-```
-ArchivedFilesReprocessed
-ConfirmedFiles
-csv
-My_Uploads  (on two stations)
-```
+ ArchivedFilesReprocessed
+ ConfirmedFiles
+ csv
+ My_Uploads  (on several stations that do custom uploads to user's website)
+__________
