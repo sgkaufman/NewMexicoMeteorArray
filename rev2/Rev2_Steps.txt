@@ -1,8 +1,11 @@
-Rev2_Steps.txt, 22-Dec, 2022
+Rev2_Steps.txt, 27-Dec, 2022
 
-Copy this file set to ~/source/NMMA
+Copy this file set to ~/Desktop/NMMA, then move to ~/source/NMMA
+set .sh files Executable by Owner
+
 edit .config to point to 
- /home/pi/source/NMMA/ExternalScript.py 
+ /home/pi/source/NMMA/ExternalScript.py
+restart capture or reboot to pick up .config edits
 
 edit ~/source/NMMA/Backup.sh and BackupToUSB.sh to point to correct thumb drive
 
@@ -12,9 +15,9 @@ edit lines to call files in the new location
  /home/pi/source/NMMA/FlushNMqueue.sh
 
 Flush our files from ~/source/RMS 
-Backup.sh
-BackupToUSB.sh
-CamSet.sh
+Backup.sh		get thumbdrive volume label
+BackupToUSB.sh		get thumbdrive volume label and path
+CamSet.sh		move to NMMA
 FixIt.sh
 FlushNMqueue.sh
 TimeLapse.sh
@@ -22,8 +25,8 @@ WriteCapture.sh
 
 and ~/source/RMS/RMS
 ExternalScript.py
-FlushNMqueue.py
-WriteCapture.py
+FlushNMqueue.py		move to NMMA
+WriteCapture.py		move to NMMA
 _____
 
 12/21/2022  03:04 PM               939 Backup.sh
@@ -38,4 +41,16 @@ _____
 07/23/2021  07:53 AM             3,309 WriteCapture.py
 12/05/2022  12:29 PM             1,717 WriteCapture.sh
               11 File(s)         41,199 bytes
+_______________
+
+Jessie RMS on RPi 3
+
+nano /etc/xdg/lxsession/LXDE-pi/autostart
+
+# Run watchdogs
+/home/pi/source/RMS/Scripts/RMS_watchdog.sh &
+/home/pi/source/RMS/Scripts/StartCaptureWatchdog.sh
+change to:
+/home/pi/source/NMMA/StartCaptureWatchdog.sh
+
 _______________
