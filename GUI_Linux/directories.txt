@@ -1,5 +1,5 @@
-Directory structure used by RMS GUI Linux box, where most everything is stored 
-at user pi level, not at root:
+Directory structure used by RMS GUI Linux systems, 
+where everything is stored at user pi level
 
 pi
   .config
@@ -13,7 +13,7 @@ pi
     known_hosts
     if you want separate keys, be sure to edit .config for separate key names
      this will probably be required if migrating old station from RPi to Linux box,
-     since GMN seems to look through all key pairs in .ssh for a given station's 
+     since GMN looks through all key pairs in .ssh for a given station's 
      previously registered public key at GMN. Alternatively, notify GMN that you
      want to group all stations under a single key. Here's an example of separate 
      key pairs, where the primary pair is also found under the generic id_rsa and 
@@ -24,13 +24,20 @@ pi
     us0002
 
   source
+    NMMA
+      contains NMMA utilities
+
     Stations
+      Scripts
+       contains GRMSUpdater.sh, 
+
       US0001
        .config
        platepar_cmn2010.cal
        mask.bmp (if needed)
        Start_Capture_US0001.sh (runs StartCapture --config /home/pi/Stations/US0001/.config)
        Live_Stream_US0001.sh 
+
       US0002
        .config
        platepar_cmn2010.cal
@@ -38,12 +45,13 @@ pi
        US0002.sh (used to StartCapture --config /home/pi/Stations/US0002/.config)
       RMS_ShowLiveStream01.sh
       RMS_ShowLiveStream02.sh
+
     RMS
-      RMS
-    ...
+
   RMS_data
     logs
       CaptureTimes.log
+
     US0001
       ArchivedFiles
       CapturedFiles
@@ -52,6 +60,7 @@ pi
       FILES_TO_UPLOAD.INF
       live.jpg
       NM_FILES_TO_UPLOAD.INF
+
     US0002
       ArchivedFiles
       CapturedFiles
@@ -60,8 +69,7 @@ pi
       FILES_TO_UPLOAD.INF
       live.jpg
       NM_FILES_TO_UPLOAD.INF
-    ...
-  ...
+
 _____
 
 Suggested wiring topology using PoE switch:
@@ -82,5 +90,4 @@ the PoE switch. The wired connection on the Linux box provides connectivity to
 external network and to the cameras by way of the PoE switch. The Linux box can 
 also be connected by WiRi to the local network, but it may be best to turn WiFi
 off since we want camera traffic to run thruogh  cable connections.
-
 _____

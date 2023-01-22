@@ -26,8 +26,8 @@
 # To run on ArchivedFilesReprocessed data, no reboot, no mp4, no CapStack:
 #			./FixIt.sh <directory name> 0 0 0 1
 
-cd "$HOME"/source/RMS
-printf "\nFixIt.sh, 02-May, 2022, 3252 bytes: Combine calls to reprocess data\n\t and run external script\n"
+cd "$HOME"/source/NMMA
+printf "\nFixIt.sh, 21-Dec, 2022, 3233 bytes: Combine calls to reprocess data\n\t and run external script\n"
 
 if [ $# -eq 0 ] ; then 
    printf "No first argument given, exiting now\n"
@@ -43,26 +43,26 @@ case $# in
     "5")
          printf "Reprocessing data in ArchivedFilesReprocessed %s, with reboot=%s, create mp4=%s, and create CapStack=%s\n" "$1" "$2" "$3" "$4"
          python -m RMS.Reprocess "$HOME"/RMS_data/ArchivedFilesReprocessed/"$1"
-         python -m RMS.ExternalScript --directory "$1" --log_script 0 --reboot "$2" --CreateTimeLapse "$3" --CreateCaptureStack "$4"
+         python -m ExternalScript --directory "$1" --log_script 0 --reboot "$2" --CreateTimeLapse "$3" --CreateCaptureStack "$4"
          ;;
     "4")
          printf "Reprocessing data in CapturedFiles %s, with reboot=%s, create mp4=%s, and create CapStack=%s\n" "$1" "$2" "$3" "$4"
          python -m RMS.Reprocess "$HOME"/RMS_data/CapturedFiles/"$1"
-         python -m RMS.ExternalScript --directory "$1" --log_script 0 --reboot "$2" --CreateTimeLapse "$3"--CreateCaptureStack "$4"
+         python -m ExternalScript --directory "$1" --log_script 0 --reboot "$2" --CreateTimeLapse "$3"--CreateCaptureStack "$4"
          ;;
     "3")
          printf "Reprocessing data in CapturedFiles %s, with reboot=%s, and create mp4=%s\n" "$1" "$2" "$3"
          python -m RMS.Reprocess "$HOME"/RMS_data/CapturedFiles/"$1"
-         python -m RMS.ExternalScript --directory "$1" --log_script 0 --reboot "$2" --CreateTimeLapse "$3"
+         python -m ExternalScript --directory "$1" --log_script 0 --reboot "$2" --CreateTimeLapse "$3"
          ;;
     "2")
          printf "Reprocessing data in CapturedFiles %s, with reboot=%s\n" "$1" "$2"
          python -m RMS.Reprocess "$HOME"/RMS_data/CapturedFiles/"$1"
-         python -m RMS.ExternalScript --directory "$1" --log_script 0 --reboot "$2"
+         python -m ExternalScript --directory "$1" --log_script 0 --reboot "$2"
          ;;
     *)
          printf "Reprocessing data in CapturedFiles %s, with default reboot\n" "$1"
          python -m RMS.Reprocess "$HOME"/RMS_data/CapturedFiles/"$1"
-         python -m RMS.ExternalScript --directory "$1" --log_script 0
+         python -m ExternalScript --directory "$1" --log_script 0
          ;;
 esac
