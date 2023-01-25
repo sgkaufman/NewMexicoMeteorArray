@@ -1,2 +1,2 @@
-/usr/bin/lxterminal --title=Chk_Fits -e /home/pi/source/RMS/Chk_Fits.sh
+/usr/bin/lxterminal --title=Chk_Fits -e "$HOME"/source/RMS/Chk_Fits.sh
 

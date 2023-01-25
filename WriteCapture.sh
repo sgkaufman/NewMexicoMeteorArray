@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# WriteCapture.sh, 17-Jan, 2023, Byte count: 1830
+# WriteCapture.sh, 25-Jan, 2023, Byte count: 1828
 # This is a trimmed down version of StartCaptureWatchdog.sh (09-July-2021)
 # On Buster RMS stations, this file can reside in $HOME/source/NMMA and be
 # called by autoexec so that the CaptureTimes.log file is written at boot
@@ -42,7 +42,7 @@ echo "Elevation: " $elevation
 
 pushd "$HOME"/source/RMS
 source "$HOME"/vRMS/bin/activate
-cd /home/pi/source/NMMA
+cd "$HOME"/source/NMMA
 python -m WriteCapture \
        --latitude $latitude \
        --longitude $longitude \

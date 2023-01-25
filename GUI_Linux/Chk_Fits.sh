@@ -10,7 +10,7 @@ do
 	#echo "Processing station $This_Station, with camera IP: $IP"
 done
 
-start=$(head -1 /home/pi/RMS_data/logs/CaptureTimes.log)
+start=$(head -1 "$HOME"/RMS_data/logs/CaptureTimes.log)
 printf "Next start time: %s \n" "$start"
 read -p "Pausing for 20 seconds, hit Enter key to quit" -t 20
 
