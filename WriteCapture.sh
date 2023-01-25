@@ -42,7 +42,7 @@ echo "Elevation: " $elevation
 
 pushd "$HOME"/source/RMS
 source "$HOME"/vRMS/bin/activate
-cd /home/pi/source/NMMA
+cd "$HOME"/pi/source/NMMA
 python -m WriteCapture \
        --latitude $latitude \
        --longitude $longitude \

@@ -22,13 +22,13 @@ All files should be located in ~/source/NMMA
 12/21/2022  02:18 PM             3,233 FixIt.sh
 01/17/2023  09:37 AM             1,414 FlushNMqueue.py
 01/17/2023  11:01 AM               866 FlushNMqueue.sh
-01/21/2023  09:52 PM             3,804 README.md
+01/24/2023  03:35 PM             3,804 README.md
 01/17/2023  10:33 AM             8,780 RecordWatchdog.sh
 01/08/2023  02:22 PM             3,143 StartCaptureWatchdog.sh
 07/17/2022  12:23 PM            11,002 TimeLapse.sh
 01/20/2023  06:52 PM             2,707 Turn_Features_On_Off.txt
 01/17/2023  11:11 AM             3,284 WriteCapture.py
-01/17/2023  11:05 AM             1,830 WriteCapture.sh
+01/24/2023  05:34 PM             1,832 WriteCapture.sh
 
 01/19/2023  08:15 PM    <DIR>          GUI_Linux
 01/20/2023  11:29 AM    <DIR>          iStreamNM
