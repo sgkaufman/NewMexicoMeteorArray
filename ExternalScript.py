@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 """
-This is Version 1.2 of file ExternalScript.py. Dated 17-Jan-2023.
-Byte count = 13877
+This is Version 1.2 of file ExternalScript.py. Dated 25-Jan-2023.
+Byte count = 13890
 This script
 1: Moves, creates, and copies files on the RMS stations, and
 2: Uploads files to the New Mexico Meteor Array Server.
@@ -279,7 +279,7 @@ if __name__ == "__main__":
     nmp.add_argument('--directory', type=str, \
                      help="Subdirectory of CapturedFiles or ArchiveFiles to upload. For example, US0006_20190421_020833_566122")
     nmp.add_argument('--config', type=str, \
-                     default='/home/pi/source/RMS', \
+                     default=os.environ['HOME'] + '/source/RMS', \
                      help="The full path to the directory containing the .config file for the camera. Defaults to the location on a Raspberry Pi RMS system.")
     nmp.add_argument('--log_script', type=str2bool, \
                      choices=[True, False, 'Yes', 'No', '0', '1'], \
