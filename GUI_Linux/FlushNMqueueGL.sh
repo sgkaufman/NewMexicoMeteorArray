@@ -5,7 +5,7 @@
 # # m h  dom mon dow   command
 # 0 20 * * * $HOME/source/NMMA/FlushNMqueue.sh
 
-printf "FlushNMqueueGL.sh 17-Feb, 2023, for GUI RMS Linux, 1267 bytes\n"
+printf "FlushNMqueueGL.sh 17-Feb, 2023, for GUI RMS Linux, 1300 bytes\n"
 printf "Flush NM upload queue if files still need to be uploaded\n\n"
 
 MyStations=(../Stations/*)
@@ -31,7 +31,7 @@ do
     if [ -s "$HOME"/RMS_data/$This_Station/NM_FILES_TO_UPLOAD.inf ] ; then
        cd "$HOME"/source/NMMA
        printf "Flushing queue of files to upload to NM Server\n"
-       python -m FlushNMqueueGL $This_Station
+       python -m FlushNMqueueGL --config "$HOME"/source/Stations/$This_Station
     else
       printf "No files are queued for upload to NM Server\n"
     fi
