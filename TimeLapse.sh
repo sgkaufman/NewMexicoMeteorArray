@@ -21,7 +21,7 @@ printf 'actions of this script by editing the values for TimeLapse and CapStack.
 # Use the following three vars to control script default actions:
 #  0 for no, 1 for yes
 TimeLapse=1
-CapStack=1
+CapStack=0
 My_Uploads=0
 iStream=0
 

@@ -129,7 +129,7 @@ def getFilesAndUpload(logger, nm_config, archived_night_dir, log_file_fd):
 
 def uploadFiles(captured_night_dir, archived_night_dir, config, \
                 log_upload=True, log_script=False, reboot=True, \
-                CreateTimeLapse=True, CreateCaptureStack=True, \
+                CreateTimeLapse=True, CreateCaptureStack=False, \
                 preset='micro'):
     """ Function to upload selected files from the ArchivedData or CapturedData
         directory to the New_Mexico_Server.
@@ -222,7 +222,7 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
 
 
         # Upload files to the NM Server
-        getFilesAndUpload(log, nm_config, archived_night_dir, log_file)
+        #getFilesAndUpload(log, nm_config, archived_night_dir, log_file)
 
         # Test for existence of "My_Uploads.sh".
         # Execute it if it exists.
@@ -295,7 +295,7 @@ if __name__ == "__main__":
                      help="When True, Yes, or 1, create the TimeLapse.mp4 file. False, No, or 0 prevents creation. Default is True")
     nmp.add_argument('--CreateCaptureStack', type=str2bool, \
                      choices=[True, False, 'Yes', 'No', '0', '1'], \
-                     default=True, \
+                     default=False, \
                      help="When True, Yes, or 1, create the stack of all Captures in a JPEG file. False, No, or 0 prevents creation. Default is True")
     nmp.add_argument('--preset', type=str, default='micro', \
                      choices=['full', 'minimal', 'micro', 'imgs'], \
