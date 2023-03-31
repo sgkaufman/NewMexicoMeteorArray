@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 """
-This is Version 1.2 of file ExternalScript.py. Dated 25-Jan-2023.
-Byte count = 13890
+This is Version 1.2 of file ExternalScript.py. Dated 31-Mar, 2023.
+Byte count = 13893
 This script
 1: Moves, creates, and copies files on the RMS stations, and
 2: Uploads files to the New Mexico Meteor Array Server.
@@ -182,7 +182,7 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
 
     with open(log_file_name, 'w+') as log_file:
         # Print out the arguments and variables of interest
-        print ("Version 1.2 of ExternalScript.py, 17-Jan-2023. bytes = 13877", file=log_file)
+        print ("Version 1.2 of ExternalScript.py, 31-Mar 2023, bytes = 13893", file=log_file)
         print("remote_dir set to %s" % remote_dir, file=log_file)
         print("Name of program running = %s" % (__name__), file=log_file)
         print("reboot arg = %s" % reboot, file=log_file)
@@ -222,7 +222,7 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
 
 
         # Upload files to the NM Server
-        #getFilesAndUpload(log, nm_config, archived_night_dir, log_file)
+        getFilesAndUpload(log, nm_config, archived_night_dir, log_file)
 
         # Test for existence of "My_Uploads.sh".
         # Execute it if it exists.
