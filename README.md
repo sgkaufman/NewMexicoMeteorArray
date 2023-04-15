@@ -1,4 +1,4 @@
-# New Mexico Meteor Array (NMMA) 21-Jan, 2023
+# New Mexico Meteor Array (NMMA) 15-Apr, 2023
 Files for NMMA, a sub-network of the Global Meteor Network
 
 # NMMA Functions implemented
@@ -14,18 +14,18 @@ Files for NMMA, a sub-network of the Global Meteor Network
 
 ## NMMA Utilities
 All files should be located in ~/source/NMMA
-12/21/2022  03:04 PM               939 Backup.sh
-12/22/2022  09:01 AM             2,985 BackupToUSB.sh
+04/14/2023  12:55 PM               887 Backup.sh
+04/14/2023  12:55 AM             2,715 BackupToUSB.sh
 04/15/2021  10:11 AM             1,239 CamSet.sh
 07/31/2022  08:51 AM             1,551 Chk_Website.sh
-01/17/2023  10:40 AM            13,877 ExternalScript.py
+03/31/2023  02:26 PM            13,893 ExternalScript.py
 12/21/2022  02:18 PM             3,233 FixIt.sh
-01/17/2023  09:37 AM             1,414 FlushNMqueue.py
+01/26/2023  02:10 PM             1,474 FlushNMqueue.py
 01/17/2023  11:01 AM               866 FlushNMqueue.sh
-01/25/2023  11:35 AM             3,804 README.md
+04/15/2023  10:32 AM             3,804 README.md
 01/17/2023  10:25 AM             8,780 RecordWatchdog.sh
 01/08/2023  02:22 PM             3,143 StartCaptureWatchdog.sh
-07/17/2022  12:23 PM            11,002 TimeLapse.sh
+03/12/2023  10:12 AM            11,002 TimeLapse.sh
 01/20/2023  06:52 PM             2,707 Turn_Features_On_Off.txt
 01/17/2023  11:11 AM             3,284 WriteCapture.py
 01/25/2023  11:23 AM             1,829 WriteCapture.sh
