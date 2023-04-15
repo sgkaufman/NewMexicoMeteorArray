@@ -2,10 +2,9 @@
 # Backup.sh
 # script backs up key files so microSD can be swapped
 
-printf "Backup.sh 21-Dec, 2022, byte count ~939 : backs up files prior to microSD swap\n"
+printf "Backup.sh 14-Apr 2023, byte count ~887 : backs up files prior to microSD swap\n"
 
-# set station specific USB drive designation
-destination="/media/pi/US0001_BACK/Swap_microSD"
+destination="/media/usbdrive/Swap_microSD"
 
 mkdir ${destination}
 mkdir ${destination}/source

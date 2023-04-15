@@ -1,9 +1,6 @@
 #!/bin/bash
 
 # BackupToUSB.sh
-#  17-Mar, 2023 version has capured stack code commented out since the captured
-#   stack is now in tar.bz2
-#
 # Takes one arg, which is the full path and filename for the ArchivedFiles data
 # directory for the night you want to backup.
 # Assumes that the destination has directories bz2, csv, CapStack, and TimeLapse
@@ -12,18 +9,17 @@
 #  and can clean out CapturedFiles directories that are older than $cdirs days
 #  if $adirs is greater than zero, will also delete log files older than 21 days
 
-printf "BackupToUSB.sh 17-Mar, 2023, byte count ~2872 : backs up data to USB drive\n"
+printf "BackupToUSB.sh 14-Apr, 2023, byte count ~2715 : backs up data to USB drive\n"
+
+USB_drive="/media/usbdrive/"
 
 # set adirs to zero to skip deleting older ArchivedFiles directories
 adirs=7
 adir=$((adirs-1))
 
 # set cdirs to zero to skip deleting older CapturedFiles directories
-cdirs=5
+cdirs=7
 cdir=$((cdirs-1))
-
-# set station specific USB drive designation
-USB_drive="/media/pi/US00012_BK"
 
 archive_dir="$(dirname "$1")"
 data_dir="$(dirname "$archive_dir")"
@@ -81,7 +77,7 @@ then
     find -mtime +$adir -type d | xargs rm -f -r
     cd ../logs
     printf "Deleting log files more than 31 days old\n"
-    find *.* -type f -mtime +30 -delete;
+    find *.log -type f -mtime +30 -delete;
 fi
 
 if [[ $cdirs -gt 0 ]] ;
