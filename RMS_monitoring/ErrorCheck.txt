@@ -20,7 +20,7 @@ external_script_run: true
 ; Run the external script after auto reprocess. "auto_reprocess" needs to be "true" for this to work.
 auto_reprocess_external_script_run: true
 ; Full path to the external script
-external_script_path: /home/pi/source/RMS_monitoring/ErrorCheck.py
+external_script_path: /home/pi/source/RMS_extra_tools/ErrorCheck.py
 ; Name of the function in the external script which will be called
 external_function_name: rmsExternal
 
