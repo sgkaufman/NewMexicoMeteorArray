@@ -1,0 +1,38 @@
+ErrorCheck.txt
+
+Several files are needed to conduct and support error checking of RMS/GMN data
+ErrorCheck.py and .sh
+
+Next step is to call ErrorCheck.py as an external script, or, if you are already using an external script, you need to add the call to ErrorCheck.sh at the end of it, just before the code to reboot the station.
+
+If you are adding an external script for the first time, edit your .config file so it reads
+
+; External script
+; An external script will be run after RMS finishes the processing for the night, it will be passed
+ 
+; three arguments:
+;   captured_night_dir, archived_night_dir, config - captured_night dir is the full path to the 
+;   captured folder of the night, the second one is the archived, and config is an object holding 
+;   the values in this config file.
+; ---------------
+; Enable running an external script at the end of every night of processing
+external_script_run: true
+; Run the external script after auto reprocess. "auto_reprocess" needs to be "true" for this to work.
+auto_reprocess_external_script_run: true
+; Full path to the external script
+external_script_path: /home/pi/source/RMS_monitoring/ErrorCheck.py
+; Name of the function in the external script which will be called
+external_function_name: rmsExternal
+
+
+; Daily reboot
+; ---------------
+; Reboot the computer daily after the processing and upload is done
+reboot_after_processing: false
+; Name of the lock file which the external script should create to prevent rebooting until the 
+;   script is done. The external script should remove this file if the reboot is to run after the 
+;   script finishes. This file should be created in the config.data_dir directory (i.e. ~/RMS_data)
+.
+reboot_lock_file: .reboot_lock
+
+_____
