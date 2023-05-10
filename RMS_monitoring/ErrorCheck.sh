@@ -2,9 +2,9 @@
 
 # ErrorCheck.sh
 # Argument1 ($1): Full path to ArchivedFiles directory
-# Argument1 ($2): Capture length (duration) in seconds
+# Argument1 ($2): Capture duration in seconds
 
-printf 'ErrorCheck.sh, revised 08-May, 2023, byte count 6238, '
+printf 'ErrorCheck.sh, revised 10-May, 2023, byte count 6423, '
 printf 'was called with\nArg 1 (directory) = %s and capture duration = %s \n\n' "$1" "$2"
 printf 'ErrorCheck writes error check results to ~/RMS_data/<StationID>_fits_counts.txt
 
@@ -77,7 +77,7 @@ echo fits_counts.txt file is $OUTFILE
 source "$HOME"/vRMS/bin/activate
 cd "$HOME"/source/RMS/
 
-# Collect information for output to csv file
+# Collect information for the output file
 # First, the number of FITS files
 
 fits_count=$(find "$capture_dir/$night_dir"/*.fits -type f -printf x | wc -c)
@@ -144,8 +144,7 @@ num_archived_dirs=$(find . -maxdepth 1 -type d -name "*$id_string*" | wc -l)
 printf 'Directory count under ArchivedFiles: %d\n' "$num_archived_dirs"
 popd > /dev/null
 
-# Write it out to the file in the csv directory
-
+# Write directory name to the ouput file
 printf "%s: " "$night_dir" >> "$OUTFILE"
 
 if [[ $fits_count -eq 0 ]]; then
