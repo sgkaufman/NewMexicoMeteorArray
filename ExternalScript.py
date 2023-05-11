@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 """
-This is Version 1.2 of file ExternalScript.py. Dated 31-Mar, 2023.
-Byte count = 13893
+This is Version 1.2 of file ExternalScript.py. Dated 11-May, 2023.
+Byte count = 13895
 This script
 1: Moves, creates, and copies files on the RMS stations, and
 2: Uploads files to the New Mexico Meteor Array Server.
@@ -129,7 +129,7 @@ def getFilesAndUpload(logger, nm_config, archived_night_dir, log_file_fd):
 
 def uploadFiles(captured_night_dir, archived_night_dir, config, \
                 log_upload=True, log_script=False, reboot=True, \
-                CreateTimeLapse=True, CreateCaptureStack=False, \
+                CreateTimeLapse=False, CreateCaptureStack=False, \
                 preset='micro'):
     """ Function to upload selected files from the ArchivedData or CapturedData
         directory to the New_Mexico_Server.
@@ -182,7 +182,7 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
 
     with open(log_file_name, 'w+') as log_file:
         # Print out the arguments and variables of interest
-        print ("Version 1.2 of ExternalScript.py, 31-Mar 2023, bytes = 13893", file=log_file)
+        print ("Version 1.2 of ExternalScript.py, 11-May 2023, bytes = 13895", file=log_file)
         print("remote_dir set to %s" % remote_dir, file=log_file)
         print("Name of program running = %s" % (__name__), file=log_file)
         print("reboot arg = %s" % reboot, file=log_file)
@@ -291,7 +291,7 @@ if __name__ == "__main__":
                      help="When True, Yes, or 1, reboot at end of ExternalScript. False, No, or 0 prevents reboot. Default is True.")
     nmp.add_argument('--CreateTimeLapse', type=str2bool, \
                      choices=[True, False, 'Yes', 'No', '0', '1'], \
-                     default=True, \
+                     default=False, \
                      help="When True, Yes, or 1, create the TimeLapse.mp4 file. False, No, or 0 prevents creation. Default is True")
     nmp.add_argument('--CreateCaptureStack', type=str2bool, \
                      choices=[True, False, 'Yes', 'No', '0', '1'], \
