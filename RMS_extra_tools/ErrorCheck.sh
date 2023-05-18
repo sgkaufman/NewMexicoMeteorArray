@@ -2,17 +2,13 @@
 
 # ErrorCheck.sh
 # Argument1 ($1): Full path to ArchivedFiles directory
-# Argument1 ($2): Capture duration in seconds
-
-printf 'ErrorCheck.sh, revised 10-May, 2023, byte count 6423, '
-printf 'was called with\nArg 1 (directory) = %s and capture duration = %s \n\n' "$1" "$2"
-printf 'ErrorCheck writes error check results to ~/RMS_data/<StationID>_fits_counts.txt
 
 archive_dir="$(dirname "$1")"
 data_dir="$(dirname "$archive_dir")"
 capture_dir="$data_dir"/CapturedFiles
 night_dir="$(basename "$1")"
 station=${night_dir:0:6}
+OUTFILE=$data_dir"/"${station}_"fits_counts.txt"
 
 total_fits=0
 result=0
@@ -20,11 +16,16 @@ short_fall=0
 secs_missed=0
 min_missed=0
 
+printf '\nErrorCheck.sh, revised 17-May, 2023, byte count 6124, '
+printf 'was called with\nArg (directory) = %s \n' "$1"
+printf 'ErrorCheck writes results to %s \n\n' $OUTFILE
+
 echo data_dir:    $data_dir
 echo archive_dir: $archive_dir
 echo capture_dir: $capture_dir
 echo night_dir:   $night_dir
 echo station:     $station
+
 
 # Sanity checks
 if [[ ! -d $archive_dir ]] ; then
@@ -43,56 +44,42 @@ if [[ ! -d $data_dir ]] ; then
 fi
 # End Sanity Checks
 
-# Let's check that first argument to be sure it is an ArchivedFiles directory
+# Check that first argument to be sure it is an ArchivedFiles directory
 if [[ $night_dir = '' || ! -d "${archive_dir}"/$night_dir ]] ; then
     printf 'Argument %s must specify a first-level sub-directory of %s\n' \
 	"$night_dir" "${archive_dir}"
     exit 1
 fi
 
-# Let's check that second argument for capture length in seconds
-if [ $2 -eq 0 ]
-  then
-    echo "No arguments supplied"
-    capture_len=0
-else
-    capture_len=$2
-fi
-echo capture length:    $capture_len
 
-# Find the latest CaptureTimes file in the log directory
-#capture_file=$(ls -t "$HOME"/RMS_data/logs/"CaptureTimes"* | sed -n 1p)
+# Get capture length in seconds using newest log file
+# Find the latest log file in the log directory
+capture_file=$(ls -Art $HOME/RMS_data/logs/log_*.log | tail -n 1)
+echo Checking log file: $capture_file for capture duration
 
-# Read the start time and capture duration from the file
-#{
-#    read -r start_date
-#    capture_len=$(grep -Eo '^[0-9]+' -)
-#} < "$capture_file"
+duration_line=$(grep -m1 Waiting $capture_file)
+echo log line: $duration_line
 
+hrs=$(echo "$duration_line" | awk '{print $10}')
+seconds=`echo "$hrs*3600" | bc`
+capture_len=${seconds:0:5}
+echo hours: $hrs, seconds: $seconds, rounded off seconds: $capture_len
 
-OUTFILE=$data_dir"/"${station}_"fits_counts.txt"
-echo fits_counts.txt file is $OUTFILE
-
-# Get the environment for Python set up, and move to the right directory
-source "$HOME"/vRMS/bin/activate
-cd "$HOME"/source/RMS/
 
 # Collect information for the output file
 # First, the number of FITS files
 
 fits_count=$(find "$capture_dir/$night_dir"/*.fits -type f -printf x | wc -c)
-printf "\n"
-printf 'Number of fits files in Capture directory: %d\n' "$fits_count"
+printf '\nNumber of fits files in Capture directory: %d\n' "$fits_count"
 
-# Next, use the total capture time and estimate the number of fits files
-
+# Use the total capture time and estimate the number of fits files
 total_fits=$(( capture_len * 100 / 1024 ))
 result="$( awk -v x="$capture_len" 'BEGIN { print ( x / 10.24 ) }' )"
 env printf "A capture lasting %d seconds, should create an estimated %d (%0.01f) fits files \n" \
 	"$capture_len"  "$total_fits" "$result"
 
-# estimated total_fits is typically 4 more than observed, so we subtract 4 from total
-total_fits=$(( total_fits - 4))
+# Estimated total_fits is typically 4 more than observed, so we subtract 4 from total
+#total_fits=$(( total_fits - 4))
 short_fall=$(( fits_count - total_fits ))
 secs_missed=$(( short_fall * 1024 / 100 ))
 min_missed="$( awk -v x=$secs_missed 'BEGIN { print ( x / 60 ) }' )"
@@ -116,6 +103,7 @@ if [[ ${My_Uploads} = 1 ]]; then
     printf 'Copying Detected Stack.jpg to My_Uploads\n'
     cp ./*meteors.jpg "$HOME"/RMS_data/My_Uploads/Stack.jpg
 fi
+
 
 # Count the number of directories under CapturedFiles and ArchivedFiles
 # The variable "id_string" extracts the station name and the date (in the 
@@ -180,12 +168,12 @@ if ! compgen -G "${archive_dir}/$night_dir/*_calib_report_photometry.png" > /dev
 fi
 
 
-# Now check for the TOTAL number of directories in the CapturedFiles 
+# Check for the TOTAL number of directories in the CapturedFiles 
 # directory, not just the number matching the date
 pushd "$capture_dir" > /dev/null
 captured=(./*"$station"*)
 total_captured=${#captured[@]}
-printf "total_captured (number of directories under CapturedFiles): %d\n" \
+printf "Total_captured (number of directories under CapturedFiles): %d\n" \
 	"$total_captured"
 popd > /dev/null
 
@@ -198,4 +186,4 @@ fi
 
 printf "\n" >> "$OUTFILE"
 
-printf "fits file count and number of detections saved to: %s\n\n" "$OUTFILE"
+printf "Fits file count and number of detections saved to: %s\n\n" "$OUTFILE"

@@ -1,50 +1,31 @@
 #!/usr/bin/python
 import os, glob
 import sys
+import time
 import traceback
 import subprocess
-import datetime
-import logging
 import argparse
-from RMS.Logger import initLogging
 from RMS.ConfigReader import loadConfigFromDirectory
 
 def rmsExternal(captured_night_dir, archived_night_dir, config):
-    initLogging(config, 'ExScript_')
-    log = logging.getLogger("logger")
-    log.info('External script started')
 
     # Call ErrorCheck.sh
     script_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ErrorCheck.sh")
-    log.info('Calling {}'.format(script_path))
 
     command = [
             script_path,
             captured_night_dir,
             ]
 
-    proc = subprocess.Popen(command,stdout=subprocess.PIPE)
-
-    # Read script output and append to log file
-    while True:
-        line = proc.stdout.readline()
-        if not line:
-            break
-        log.info(line.rstrip().decode("utf-8"))
-
-    exit_code = proc.wait()
-    log.info('Exit status: {}'.format(exit_code))
-
-    log.info('External script finished')
-   
+    proc = subprocess.Popen(command)   
 
     # Reboot the computer (script needs sudo priviledges, works only on Linux)
+    time.sleep(20) # Sleep for 20 seconds to allow script to complete before reboot
     try:
-        log.info("Rebooting system...")
+        print ('Rebooting ...')
         os.system('sudo shutdown -r now')
     except Exception as e:
-        log.debug('Rebooting failed with message:\n' + repr(e))
-        log.debug(repr(traceback.format_exception(*sys.exc_info())))
+        print ('Exception! Not Rebooting ...')
 
 #########################################################################
 
