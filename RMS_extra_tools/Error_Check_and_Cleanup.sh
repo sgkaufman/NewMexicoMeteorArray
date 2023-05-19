@@ -4,14 +4,14 @@
 # This script requires a command line argument ("$1") containing 
 # the full path to the CapturedFiles directory for a given night
 
-archive_dir="$(dirname "$1")"
-data_dir="$(dirname "$archive_dir")"
-capture_dir="$data_dir"/CapturedFiles
+capture_dir="$(dirname "$1")"
+data_dir="$(dirname "$capture_dir")"
+archive_dir="$data_dir"/ArchivedFiles
 night_dir="$(basename "$1")"
 station=${night_dir:0:6}
 OUTFILE=$data_dir"/"${station}_"fits_counts.txt"
 
-printf '\nError_Check_and_Cleanup.sh, revised 18-May, 2023, 8054 bytes,'
+printf '\nError_Check_and_Cleanup.sh, revised 18-May, 2023, 8026 bytes,'
 printf ' was called with\nArg (directory) = %s \n' "$1"
 printf 'This script writes results to %s \n' $OUTFILE
 printf ' and can delete older files to make room for more capture directories\n\n'
@@ -20,7 +20,7 @@ Cleanup=1	# set to 0 to skip data cleanup at end of script
 
 if [ ! -f "$OUTFILE" ]; then
     # file does not exist yet, so write top line of file:
-    printf "Directory Name         # fits_files  # detections  Other Issues" > "$OUTFILE"
+    printf "Directory Name:         #fits_files #detections  Other Issues\n" > "$OUTFILE"
 fi
 
 total_fits=0
@@ -66,7 +66,7 @@ capture_file=$(ls -Art $HOME/RMS_data/logs/log_*.log | tail -n 1)
 echo Checking log file: $capture_file for capture duration
 
 duration_line=$(grep -m1 Waiting $capture_file)
-echo log line: $duration_line
+echo log file line: $duration_line
 
 hrs=$(echo "$duration_line" | awk '{print $10}')
 seconds=`echo "$hrs*3600" | bc`
@@ -196,38 +196,40 @@ printf "Fits file count and number of detections saved to: %s\n\n" "$OUTFILE"
 # up space on the storage drive for more CapturedFiles directories
 # var Cleanup is set above on line 18
 
-# set variables adirs, cdirs, and older to 0 to skip cleanups
+# set variables adirs, cdirs, and bz2 to 0 to skip cleanups
 adirs=10	# delete older ArchivedFiles directories
 cdirs=10	# delete older CapturedFiles directories
-older=10	# delete older tar.bz2 archives
+bz2=10		# delete older tar.bz2 archives
 logs=21		# delete log files older than this number of days
 
-if [[ $(Cleanup) -gt 0 ]]; then
-   cd "$HOME"/RMS_data/ArchivedFiles
+if [ $Cleanup -gt 0 ]; then
+   printf "Deleting old directories and files\n"
 
-   if [[ $(adirs) -gt 0 ]]; then
+   cd $archive_dir
+   if [ $adirs -gt 0 ]; then
       printf "Deleting ArchivedFiles directories more than %s days old\n" "${adirs}"
       adirs=$((adirs-1))
       find -mtime +$adirs -type d | xargs rm -f -r
    fi
 
-   if [[ ${older} -gt 0 ]]; then
-      printf "Deleting tar.bz2 files more than %s days old\n" "${older}"
-      older=$((older-1))
-      find "$HOME"/RMS_data/ArchivedFiles/*.bz2 -type f -mtime +$older -delete;
+   if [ $bz2 -gt 0 ]; then
+      printf "Deleting tar.bz2 files more than %s days old\n" "${bz2}"
+      bz2=$((bz2-1))
+      find "$HOME"/RMS_data/ArchivedFiles/*.bz2 -type f -mtime +$bz2 -delete;
    fi
 
-   if [[ ${cdirs} -gt 0 ]]; then
-      cd "$HOME"/RMS_data/CapturedFiles
+   if [ $cdirs -gt 0 ]; then
+      cd $capture_dir
       printf "Deleting CapturedFiles directories more than %s days old\n" "${cdirs}"
       cdirs=$((cdirs-1))
       find -mtime +$cdirs -type d | xargs rm -f -r
    fi
 
-   if [[ ${logs} -gt 0 ]]; then
-      printf "Deleting files in RMS_data/logs more than %s days old\n" "$(logs)"
+  if [ $logs -gt 0 ]; then
+      cd $data_dir/logs
+      printf "Deleting log files more than %s days old\n" "${logs}"
       logs=$((logs-1))
-      find "$HOME"/RMS_data/logs/ -type f -mtime +$logs -delete;
+      find -type f -mtime +$logs -delete;
    fi
 
    printf "Done deleting old data\n "

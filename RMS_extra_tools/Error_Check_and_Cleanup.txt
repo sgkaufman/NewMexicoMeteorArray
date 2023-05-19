@@ -1,9 +1,9 @@
-ErrorCheck.txt
+Error_Check_and_Cleanup.txt
 
 Several files are needed to conduct and support error checking of RMS/GMN data
-ErrorCheck.py and .sh
+Error_Check_and_Cleanup.py and .sh
 
-Next step is to call ErrorCheck.py as an external script, or, if you are already using an external script, you need to add the call to ErrorCheck.sh at the end of it, just before the code to reboot the station.
+To use these files, you need to call Error_Check_and_Cleanup.py as an external script, or, if you are already using an external script, you need to add the call to Error_Check_and_Cleanup.sh at the end of your existing script, just before the code to reboot the station.
 
 If you are adding an external script for the first time, edit your .config file so it reads
 
@@ -20,7 +20,7 @@ external_script_run: true
 ; Run the external script after auto reprocess. "auto_reprocess" needs to be "true" for this to work.
 auto_reprocess_external_script_run: true
 ; Full path to the external script
-external_script_path: /home/pi/source/RMS_extra_tools/ErrorCheck.py
+external_script_path: /home/pi/source/RMS_extra_tools/Error_Check_and_Cleanup.py
 ; Name of the function in the external script which will be called
 external_function_name: rmsExternal
 
@@ -37,10 +37,10 @@ reboot_lock_file: .reboot_lock
 
 _____
 
-Error checking is logged in the file ~/RMS_data/<StationID>_fits.counts.txt
+Error checking is logged to the file ~/RMS_data/<StationID>_fits.counts.txt
 The first line of the file should read:
 
-Directory              # Fits Files  # Detections  Issues
+Directory Name         # fits_files  # detections  Other Issues
 
 Here are some typical data lines
 US000E_20230302_012710_534432: 4116	1 Only one Capture Directory! 31 GB free / 59 GB total
@@ -60,12 +60,11 @@ US000E_20230323_014447_897819: 3845	1  No Photometry, Clouded out?
 US000E_20230324_014535_873013: 3832	27
 US000E_20230325_014627_146438: 3819	30
 
-First the CapturedFiles data directory is listed, next the number of fits files found in that directory, next the number of detections reported in the detected stack, and finally, any other isses that are found. Other issues include:
+First the CapturedFiles data directory is listed, next the number of fits files found in that directory, next the number of detections reported in the filename of the detected stack, and finally, any other isses that are found. Other issues include:
  - shortfall in number of fits files captured or message if there are no fits files
  - if the number of archived directories does not match the number of captured directories
  - if the photometry file is missing, which may indicate a bad platepar
  - if there is only one capture directory, which can indicate the storage drive is too full. In this case the total size of the data drive and amount of free space is reported 
- - ???
 
 The total capture duration is used to calculate a maximum number of fits files that should be collected through the course of the night. This is done by dividing the capture duration in seconds by the time it takes to capture 255 video frames in a single fits file at a frame rate of 25 frames per second, which is 10.2 seconds. 
  duration_seconds / (255 / 25 = 10.2)
@@ -74,8 +73,8 @@ Because of a small amount of overhead as the system starts and stops capture, th
 
 If the total fits files recorded is less than the corrected total a message is written to ~/RMS_data/<StationID>_fits.counts.txt showing the shortfall in file count and number of minutes of data that were missed.
 
-Other errors are noted next ...
+Other errors may be noted following the number of detected meteors.
 
-Should we add in the data cleanup done by BackupToUSB? 
-
-_____
+At the end of the  Error_Check_and_Cleanup.sh you can have the script clean out older files so there is more room to keep CapturedFiles directories. Sometimes it is important to have an older CapturedFiles directory available to extract data for a bolide that was too bright to be detected as a meteor.
+This cleanup can be enabled or disabled by setting the variable CleanUp (around line 18 in the script) to either 1 or 0.
+_________________________
