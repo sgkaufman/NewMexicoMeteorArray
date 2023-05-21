@@ -11,7 +11,7 @@ night_dir="$(basename "$1")"
 station=${night_dir:0:6}
 OUTFILE=$data_dir"/"${station}_"fits_counts.txt"
 
-printf '\nError_Check_and_Cleanup.sh, revised 18-May, 2023, 8026 bytes,'
+printf '\nError_Check_and_Cleanup.sh, revised 21-May, 2023, 7989 bytes,'
 printf ' was called with\nArg (directory) = %s \n' "$1"
 printf 'This script writes results to %s \n' $OUTFILE
 printf ' and can delete older files to make room for more capture directories\n\n'
@@ -194,7 +194,7 @@ printf "Fits file count and number of detections saved to: %s\n\n" "$OUTFILE"
 # ____________________________________________________________________
 # This section of the script can be used to clean up old files to free
 # up space on the storage drive for more CapturedFiles directories
-# var Cleanup is set above on line 18
+# var Cleanup is set above on line 19
 
 # set variables adirs, cdirs, and bz2 to 0 to skip cleanups
 adirs=10	# delete older ArchivedFiles directories
@@ -215,7 +215,7 @@ if [ $Cleanup -gt 0 ]; then
    if [ $bz2 -gt 0 ]; then
       printf "Deleting tar.bz2 files more than %s days old\n" "${bz2}"
       bz2=$((bz2-1))
-      find "$HOME"/RMS_data/ArchivedFiles/*.bz2 -type f -mtime +$bz2 -delete;
+      find -type f -mtime +$bz2 -delete;
    fi
 
    if [ $cdirs -gt 0 ]; then
