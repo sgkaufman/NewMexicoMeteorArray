@@ -9,15 +9,15 @@ from RMS.ConfigReader import loadConfigFromDirectory
 
 def rmsExternal(captured_night_dir, archived_night_dir, config):
 
-    # Call ErrorCheck.sh
-    script_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ErrorCheck.sh")
+    # Call Check_and_Clean.sh
+    script_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Check_and_Clean.sh")
 
     command = [
             script_path,
             captured_night_dir,
             ]
 
-    proc = subprocess.Popen(command)   
+    proc = subprocess.Popen(command)
 
     # Reboot the computer (script needs sudo priviledges, works only on Linux)
     time.sleep(20) # Sleep for 20 seconds to allow script to complete before reboot
