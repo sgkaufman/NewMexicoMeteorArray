@@ -5,21 +5,19 @@
 # directory for the night you want to backup.
 # Assumes that the destination has directories bz2, csv, CapStack, and TimeLapse
 # Argument1: ArchivedFiles directory name
-# Can also clean out ArchivedFiles directories that are older than $adirs days
-#  and can clean out CapturedFiles directories that are older than $cdirs days
-#  if $adirs is greater than zero, will also delete log files older than 21 days
+# If Cleanup=1, will also delete
+#	ArchivedFiles directories older than $adirs days
+#	CapturedFiles directories older than $cdirs days
+#	tar.bz2 files older than  $bz2 days
+#	log files older than $logs days
 
-printf "BackupToUSB.sh 14-Apr, 2023, byte count ~2715 : backs up data to USB drive\n"
+printf "BackupToUSB.sh 24-Mar, 2023, byte count ~3415 : backs up data to USB drive,\n"
+printf " and can also delete old data\n"
 
+# set station specific USB drive designation
 USB_drive="/media/usbdrive/"
 
-# set adirs to zero to skip deleting older ArchivedFiles directories
-adirs=7
-adir=$((adirs-1))
-
-# set cdirs to zero to skip deleting older CapturedFiles directories
-cdirs=7
-cdir=$((cdirs-1))
+Cleanup=1
 
 archive_dir="$(dirname "$1")"
 data_dir="$(dirname "$archive_dir")"
@@ -62,29 +60,49 @@ else
    mv "${target}" "${USB_drive}/bz2"
 fi
 
-# move TimeLapse.mp4, modified to work with IStream
-target="${data_dir}/*.mp4"
-printf "Moving %s\n" "${target}"
-cd ${data_dir}
-for f in *.mp4; do
-    mv "$f" "${USB_drive}/TimeLapse"
-done
+# ____________________________________________________________________
+# This section of the script can be used to clean up old files to free
+# up space on the storage drive for more CapturedFiles directories
+# var Cleanup is set above on line 19
 
-if [[ $adirs -gt 0 ]] ;
-then
-    cd ${data_dir}/ArchivedFiles
-    printf "Deleting ArchivedFiles directories more than %s days old\n" "${adirs}"
-    find -mtime +$adir -type d | xargs rm -f -r
-    cd ../logs
-    printf "Deleting log files more than 31 days old\n"
-    find *.log -type f -mtime +30 -delete;
+# set variables adirs, cdirs, and bz2 to 0 to skip cleanups
+adirs=7   # delete older ArchivedFiles directories
+cdirs=10  # delete older CapturedFiles directories
+bz2=7     # delete older tar.bz2 archives
+logs=21   # delete log files older than this number of days
+
+if [ $Cleanup -gt 0 ]; then
+   printf "Deleting old directories and files\n"
+
+   cd $archive_dir
+   if [ $adirs -gt 0 ]; then
+      printf "Deleting ArchivedFiles directories more than %s days old\n" "${adirs}"
+      adirs=$((adirs-1))
+      find -mtime +$adirs -type d | xargs rm -f -r
+   fi
+
+   if [ $bz2 -gt 0 ]; then
+      printf "Deleting tar.bz2 files more than %s days old\n" "${bz2}"
+      bz2=$((bz2-1))
+      find -type f -mtime +$bz2 -delete;
+   fi
+
+   if [ $cdirs -gt 0 ]; then
+      cd ../CapturedFiles
+      printf "Deleting CapturedFiles directories more than %s days old\n" "${cdirs}"
+      cdirs=$((cdirs-1))
+      find -mtime +$cdirs -type d | xargs rm -f -r
+   fi
+
+  if [ $logs -gt 0 ]; then
+      cd $data_dir/logs
+      printf "Deleting log files more than %s days old\n" "${logs}"
+      logs=$((logs-1))
+      find -type f -mtime +$logs -delete;
+   fi
+
+   printf "Done deleting old data\n "
 fi
+# ____________________________________________________________________
 
-if [[ $cdirs -gt 0 ]] ;
-then
-    cd ${data_dir}/CapturedFiles
-    printf "Deleting CapturedFiles directories more than %s days old\n" "${cdirs}"
-    find -mtime +$cdir -type d | xargs rm -f -r
-fi
-
-printf "Done copying data to USB drive %s\n\n " "${USB_drive}"
+printf "Done copying data to USB drive %s and deleting old data\n\n " "${USB_drive}"
