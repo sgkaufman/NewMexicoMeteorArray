@@ -11,7 +11,7 @@ printf 'My_Uploads by setting My_Uploads=1 in this script file. You can change t
 printf 'actions of this script by editing the value for My_Uploads.\n\n'
 
 # Use this var to control script default action, 0 for no, 1 for yes
-My_Uploads=1
+My_Uploads=0
 
 archive_dir="$(dirname "$1")"
 data_dir="$(dirname "$archive_dir")"
