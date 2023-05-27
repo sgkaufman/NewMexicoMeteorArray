@@ -1,16 +1,14 @@
 #!/usr/bin/env python
 
 """
-This is Version 1.2 of file ExternalScript.py. Dated 11-May, 2023.
-Byte count = 13895
+This is Version 2.0 of file ExternalScript.py. Dated 22-May-2023.
+Byte count = 12303
 This script
 1: Moves, creates, and copies files on the RMS stations, and
 2: Uploads files to the New Mexico Meteor Array Server.
-3. Calls TimeLapse.sh, and optionally logs results of that call.
-   The argument CreateTimeLapse must be True for that call to be made,
-   and the argument log_script must be True for the logging to be done.
-   The argument CreateTimeLapse defaults to True,
-   and the argument log_script defaults to False.
+3. Calls ErrorCheck.sh, and optionally logs results of that call.
+   The argument log_script must be True for the logging to be done.
+   The argument log_script defaults to False.
 """
 from __future__ import print_function
 
@@ -129,7 +127,6 @@ def getFilesAndUpload(logger, nm_config, archived_night_dir, log_file_fd):
 
 def uploadFiles(captured_night_dir, archived_night_dir, config, \
                 log_upload=True, log_script=False, reboot=True, \
-                CreateTimeLapse=False, CreateCaptureStack=False, \
                 preset='micro'):
     """ Function to upload selected files from the ArchivedData or CapturedData
         directory to the New_Mexico_Server.
@@ -182,35 +179,23 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
 
     with open(log_file_name, 'w+') as log_file:
         # Print out the arguments and variables of interest
-        print ("Version 1.2 of ExternalScript.py, 11-May 2023, bytes = 13895", file=log_file)
+        print ("Version 2.0 of ExternalScript.py, 22-May-2023. bytes = 12303", file=log_file)
         print("remote_dir set to %s" % remote_dir, file=log_file)
         print("Name of program running = %s" % (__name__), file=log_file)
         print("reboot arg = %s" % reboot, file=log_file)
-        print("CreateTimeLapse arg = %s" % CreateTimeLapse, file=log_file)
         print("log_dir_name = %s" % log_dir_name, file=log_file)
         print("ArchivedFiles directory = %s" % archived_night_dir, \
               file=log_file)
 
-        # Prepare for calls to TimeLapse.sh,
-        # second arg based on CreateTimeLapse,
-        # third arg based on CreateCaptureStack.
-        TimeLapse_cmd_str = "~/source/NMMA/TimeLapse.sh " + archived_night_dir
-        if  CreateTimeLapse:
-            TimeLapse_cmd_str = TimeLapse_cmd_str + " Yes"
-        else:
-            TimeLapse_cmd_str = TimeLapse_cmd_str + " No"
+        # Prepare for calls to ErrorCheck.sh,
+        ErrorCheck_cmd_str = "~/source/NMMA/ErrorCheck.sh " + archived_night_dir
 
-        if CreateCaptureStack:
-            TimeLapse_cmd_str = TimeLapse_cmd_str + " Yes"
-        else:
-            TimeLapse_cmd_str = TimeLapse_cmd_str + " No"
-
-        log.info("TimeLapse_cmd_str = " + TimeLapse_cmd_str)
-        status = subprocess.call(TimeLapse_cmd_str, \
+        log.info("ErrorCheck_cmd_str = " + ErrorCheck_cmd_str)
+        status = subprocess.call(ErrorCheck_cmd_str, \
                                  stdout=log_file, \
                                  stderr=log_file, \
                                  shell=True)
-        log.info("TimeLapse call returned with status " + str(status) )
+        log.info("ErrorCheck call returned with status " + str(status) )
 
         # backup data to thumb drive, PNE 12/08/2019
         status = subprocess.call("~/source/NMMA/BackupToUSB.sh " \
@@ -274,29 +259,21 @@ into boolean values True and False. For parsing arguments."""
 
 if __name__ == "__main__":
 
-    nmp = argparse.ArgumentParser(description="""Upload files to New_Mexico_Server, and optionally move other files to storage devices, create a TimeLapse.mp4 file, and reboot the system after all processing.""")
+    nmp = argparse.ArgumentParser(description="""Run error checks, upload files to New_Mexico_Server, and optionally move other files to storage devices, and reboot the system after all processing.""")
 
     nmp.add_argument('--directory', type=str, \
                      help="Subdirectory of CapturedFiles or ArchiveFiles to upload. For example, US0006_20190421_020833_566122")
     nmp.add_argument('--config', type=str, \
-                     default=os.environ['HOME'] + '/source/RMS', \
+                     default='/home/pi/source/RMS', \
                      help="The full path to the directory containing the .config file for the camera. Defaults to the location on a Raspberry Pi RMS system.")
     nmp.add_argument('--log_script', type=str2bool, \
                      choices=[True, False, 'Yes', 'No', '0', '1'], \
                      default=False, \
-                     help="When True, create a log file for the calls to TimeLapse.sh and BackuupToUSB.sh, and any others. When False, no log file is created.")
+                     help="When True, create a log file for the calls to ErrorCheck.sh and BackuupToUSB.sh, and any others. When False, no log file is created.")
     nmp.add_argument('--reboot', type=str2bool, \
                      choices=[True, False, 'Yes', 'No', '0', '1'], \
                      default=True, \
                      help="When True, Yes, or 1, reboot at end of ExternalScript. False, No, or 0 prevents reboot. Default is True.")
-    nmp.add_argument('--CreateTimeLapse', type=str2bool, \
-                     choices=[True, False, 'Yes', 'No', '0', '1'], \
-                     default=False, \
-                     help="When True, Yes, or 1, create the TimeLapse.mp4 file. False, No, or 0 prevents creation. Default is True")
-    nmp.add_argument('--CreateCaptureStack', type=str2bool, \
-                     choices=[True, False, 'Yes', 'No', '0', '1'], \
-                     default=False, \
-                     help="When True, Yes, or 1, create the stack of all Captures in a JPEG file. False, No, or 0 prevents creation. Default is True")
     nmp.add_argument('--preset', type=str, default='micro', \
                      choices=['full', 'minimal', 'micro', 'imgs'], \
                      help="which fileset to upload (not currently implemented)")
@@ -309,8 +286,6 @@ if __name__ == "__main__":
     print ('directory arg: ', args.directory)
     print ('.config arg: ',   args.config)
     print ('Reboot arg: ', args.reboot)
-    print ('CreateTimeLapse arg: ', args.CreateTimeLapse)
-    print ('CreateCaptureStack arg: ', args.CreateCaptureStack)
     print ('preset arg: ', args.preset)
 
     config = RMS.ConfigReader.loadConfigFromDirectory('.', args.config)
@@ -324,6 +299,4 @@ if __name__ == "__main__":
                 log_upload=True,
                 log_script=args.log_script, \
                 reboot=args.reboot, \
-                CreateTimeLapse=args.CreateTimeLapse, \
-                CreateCaptureStack=args.CreateCaptureStack, \
                 preset='micro')

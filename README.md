@@ -1,4 +1,4 @@
-# New Mexico Meteor Array (NMMA) 15-Apr, 2023
+# New Mexico Meteor Array (NMMA) 26-May, 2023
 Files for NMMA, a sub-network of the Global Meteor Network
 
 # NMMA Functions implemented
@@ -15,14 +15,15 @@ Files for NMMA, a sub-network of the Global Meteor Network
 ## NMMA Utilities
 All files should be located in ~/source/NMMA
 04/14/2023  12:55 PM               887 Backup.sh
-04/14/2023  12:55 AM             2,715 BackupToUSB.sh
+05/24/2023  01:59 PM             3,415 BackupToUSB.sh
 04/15/2021  10:11 AM             1,239 CamSet.sh
 07/31/2022  08:51 AM             1,551 Chk_Website.sh
-03/31/2023  02:26 PM            13,893 ExternalScript.py
+05/26/2023  10:13 AM             7,924 ErrorCheck.sh
+05/22/2023  12:59 PM            12,303 ExternalScript.py
 12/21/2022  02:18 PM             3,233 FixIt.sh
 01/26/2023  02:10 PM             1,474 FlushNMqueue.py
 01/17/2023  11:01 AM               866 FlushNMqueue.sh
-04/15/2023  10:32 AM             3,804 README.md
+05/26/2023  08:28 AM             3,581 README.md
 01/17/2023  10:25 AM             8,780 RecordWatchdog.sh
 01/08/2023  02:22 PM             3,143 StartCaptureWatchdog.sh
 03/12/2023  10:12 AM            11,002 TimeLapse.sh
@@ -39,7 +40,8 @@ Backup.sh
 	Creates reference copy of important microSD card files
 
 BackupToUSB.sh
-	Backup data every morning to thumb drive, called by ExternalScript.py
+	Backup data every morning to thumb drive, delete old files
+	called by ExternalScript.py
 
 CamSet.sh
 	Utility for switching camera between nighttime & daytime modes
@@ -49,6 +51,7 @@ Chk_Website.sh
 
 ExternalScript.py
 	NMMA ExternalScript.py
+	Calls ErrorCheck.sh and BackupToUSB.sh
 	If My_Uploads.sh is found will be used to copy station files 
 	to a station owner's web site. Calls TimeLapse.sh, and My_Uploads.sh
 
@@ -75,8 +78,8 @@ StartCaptureWatchdog.sh (located in git RPi3 subdirectory)
 	Used only on Jessie RMS
 	This runs WriteCapture.py and RecordWatchdog.sh
 
-TimeLapse.sh
-	Does error checking, creates TimeLapse.mp4 and Capture stack
+ErrorChecksh
+	Does error checking
 	called by ExternalScript.py
 
 Turn_Features_On_Off.txt
@@ -91,14 +94,6 @@ WriteCapture.sh
 	Not used on Jessie RMS
 	Calls WriteCapture.py
 	Runs from crontab entry at 30 22 * * *
-
-
-Files in git iStreamNM subdirectory can be used to run iStream alongside 
-the NMMA ExternalScript. See iStream.txt for details:
-12/29/2022  02:36 PM             2,449 iStreamNM.py
-12/29/2022  02:33 PM            12,091 iStreamNM.sh
-01/21/2023  09:49 PM             1,597 iStreamNM.txt
-
 
 
 ## File System Structure
