@@ -1,26 +1,21 @@
-How to turn ExternalScript.py, TimeLapse.sh, and .config features on and off
-20-Jan, 2023
+27-May, 2023: How to turn ExternalScript.py, ErrorCheck.sh, BackupToUSB.sh 
+and .config features on and off 
 
-IMPORTANT!: When making any changes to TimeLapse.sh, or any other Bash script, 
-there can be NO SPACES between any symbols on the line! Use the examples as 
-they are written, so var=value as in TimeLapse=1
+IMPORTANT!: When making any changes to any Bash script, there can be NO SPACES 
+between any symbols on the line! Use the examples as they are written, so 
+var=value as in Cleanup=1
 
+TimeLapse mp4 files are now made by RMS normal processing. You can disable 
+them by using this setting near the end of your .config file
 
-Settings found in TimeLapse.sh v1.2, 17-Jan-2023, 13877 bytes
-time lapse
-	Turn off by changing the value in TimeLapse.sh at line 23:
-	TimeLapse=0
-	Turn on by changing the value:
-	TimeLapse=1
+[Timelapse]
 
-captured stack
-	Turn off by setting the value in TimeLapse.sh at line 24:
-	Cap_Stack=0
-	Turn on by setting the value:
-	CapStack=1
+; Automatically generate a timelapse using all FF files at the end of the night
+timelapse_generate_captured: false
+
 
 my uploads
-	Turn on by changing the value in TimeLapse.sh line at 25
+	Turn on by changing the value in ErrorCheck.sh line at 14
 	My_Uploads=1
 	This will cause RMS_data/My_Uploads to be populated,
 	and My_Uploads.sh will be executed.
@@ -28,31 +23,24 @@ my uploads
 	Turn off by changing the value:
 	My_Uploads=0
 
-iStream
-	Use this when NMMA ExternalScript is used alongside iStream
-	Turn off by setting the value in TimeLapse.sh at line 26:
-	iStream=0
-	Turn on by setting the value:
-	iStream=1
-
-Settings found in ExternalScript.py v1.2, 17-Jan-2023, 13877 bytes
+Settings found in ExternalScript.py v2, 22-May-2023, 12303 bytes
 uploads to NM server, controlled by ES (ExternalScript.py)
 	For both manual and RMS methods
-	put # in front on line 225:
+	put # in front on line 210:
 	# Upload files to the NM Server
 	# getFilesAndUpload(log, nm_config, main_data_dir, log_file)
 	this may increase ExternalScript.py size in bytes by 1
 
 reboot at end of ES (ExternalScript.py)
 	To enable the reboot behavior when ES is called manually,
-	line 131: change reboot=True to False
+	line 129: change reboot=True to False
 	log_upload=True, log_script=True, reboot=False, \
 
 shell script in ES (ExternalScript.py)
 	To enable the shell script logging when ES is called manually,
-	line 131: change log_script=False to True
+	line 129: change log_script=False to True
 	To enable the shell script logging when ES is called by RMS, 
-	line 285, change default=False to True
+	line 271, change default=False to True
 
 Other settings:
 enable My_Uploads
@@ -72,12 +60,12 @@ enable My_Uploads
 	exit
 
 turn off uploads to GMN
-	in .config, change true to false (~line number 128, after [Upload]):
+	in .config, change true to false (~line number 141, after [Upload]):
 	; Flag for enabling/disabling upload to server
 	upload_enabled: true 
 
 change size of uploads to GMN
-	in .config, change 1 to 2, 3, or 4 (~line number 154, after [Upload]):
+	in .config, change 1 to 2, 3, or 4 (~line number 167, after [Upload]):
 	; Flag for upload options
 	upload_mode: 1 
 _______________
