@@ -11,7 +11,7 @@ night_dir="$(basename "$1")"
 station=${night_dir:0:6}
 OUTFILE=$data_dir"/"${station}_"fits_counts.txt"
 
-printf '\nCheck_and_Clean.sh, revised 23-May, 2023, 7968 bytes,'
+printf '\nCheck_and_Clean.sh, revised 09-Jun, 2023, 8214 bytes,'
 printf ' was called with\nArg (directory) = %s \n' "$1"
 printf 'This script writes results to %s \n' $OUTFILE
 printf ' and can delete older files to make room for more capture directories\n\n'
@@ -29,11 +29,11 @@ short_fall=0
 secs_missed=0
 min_missed=0
 
-echo data_dir:    $data_dir
-echo archive_dir: $archive_dir
-echo capture_dir: $capture_dir
-echo night_dir:   $night_dir
-echo station:     $station
+#echo data_dir:    $data_dir
+#echo archive_dir: $archive_dir
+#echo capture_dir: $capture_dir
+#echo night_dir:   $night_dir
+#echo station:     $station
 
 # ____________________
 # Sanity checks
@@ -63,15 +63,15 @@ fi
 # ____________________
 # Calculate capture length in seconds using newest log file
 capture_file=$(ls -Art $data_dir/logs/log_*.log | tail -n 1)
-echo Checking log file: $capture_file for capture duration
+#echo Checking log file: $capture_file for capture duration
 
 duration_line=$(grep -m1 Waiting $capture_file)
-echo log file line: $duration_line
+#echo log file line: $duration_line
 
 hrs=$(echo "$duration_line" | awk '{print $10}')
 seconds=`echo "$hrs*3600" | bc`
 capture_len=${seconds:0:5}
-echo hours: $hrs, seconds: $seconds, rounded off seconds: $capture_len
+#echo hours: $hrs, seconds: $seconds, rounded off seconds: $capture_len
 
 # ____________________
 # Collect information for the output file
@@ -115,7 +115,7 @@ fi
 # The variable "id_string" holds the station name and date in a pattern.
 
 id_string=${night_dir:0:15}
-printf "id_string: %s\n" "$id_string"
+#printf "id_string: %s\n" "$id_string"
 
 # CapturedFiles
 pushd "$capture_dir" > /dev/null
