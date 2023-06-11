@@ -30,12 +30,12 @@ short_fall=0
 secs_missed=0
 min_missed=0
 
-echo data_dir:    $data_dir
-echo archive_dir: $archive_dir
-echo capture_dir: $capture_dir
-echo night_dir:   $night_dir
-echo station:     $station
-printf "argument passed: %s\n" $1
+#echo data_dir:    $data_dir
+#echo archive_dir: $archive_dir
+#echo capture_dir: $capture_dir
+#echo night_dir:   $night_dir
+#echo station:     $station
+#printf "argument passed: %s\n" $1
 
 # ____________________
 # Sanity checks
