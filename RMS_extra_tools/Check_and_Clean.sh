@@ -34,6 +34,10 @@ min_missed=0
 #echo capture_dir: $capture_dir
 #echo night_dir:   $night_dir
 #echo station:     $station
+<<<<<<< HEAD
+=======
+#printf "argument passed: %s\n" $1
+>>>>>>> 25d3d85bc7fabd69eec6d89d0f94b278f7988e6c
 
 # ____________________
 # Sanity checks
