@@ -11,7 +11,7 @@ night_dir="$(basename "$1")"
 station=${night_dir:0:6}
 OUTFILE=$data_dir"/"${station}_"fits_counts.txt"
 
-printf '\nCheck_and_Clean.sh, revised 09-Jun, 2023, 8214 bytes,'
+printf '\nCheck_and_Clean.sh, revised 11-Jun, 2023, 8829 bytes,'
 printf ' was called with\nArg (directory) = %s \n' "$1"
 printf 'This script writes results to %s \n' $OUTFILE
 printf ' and can delete older files to make room for more capture directories\n\n'
@@ -34,10 +34,6 @@ min_missed=0
 #echo capture_dir: $capture_dir
 #echo night_dir:   $night_dir
 #echo station:     $station
-<<<<<<< HEAD
-=======
-#printf "argument passed: %s\n" $1
->>>>>>> 25d3d85bc7fabd69eec6d89d0f94b278f7988e6c
 
 # ____________________
 # Sanity checks
@@ -206,34 +202,61 @@ cdirs=10	# delete older CapturedFiles directories
 bz2=10		# delete older tar.bz2 archives
 logs=21		# delete log files older than this number of days
 
+# Define function clean_dir, with arguments:
+# 1. directory to clean
+# 2. number to keep
+# Clean_dir uses strictly lexicographic ordering, useful
+# for CapturedFiles and ArchivedFiles.
+# Not yet used for .bz2 files,
+# which would require an extra arg to search files instead of directories.
+# Not used for logs, where different log file names are common.
+
+function clean_dir()
+{
+    #printf "clean_dir called with arg1 %s and arg2 %d\n" $1 $2
+
+    # enclosing parentheses make the result an array
+    dir_array=($(find "$1" -maxdepth 1 -type d -name "${station}*" | sort -r))
+
+    dir_len=${#dir_array[@]}
+    #printf "Number directories under %s: %d\n" $1 ${dir_len}
+
+    for ((i=0; i<dir_len; i++)); do
+	#printf "%d: %s\n" $i ${dir_array[i]}
+	if [[ $i -gt $2-1 ]]; then
+	    #printf "Removing directory %s\n" ${dir_array[i]}
+	    rm -f -r ${dir_array[i]}
+	else
+	    #printf "Retaining directory %s\n" ${dir_array[i]}
+	fi
+    done
+}
+
 if [ $Cleanup -gt 0 ]; then
    printf "Deleting old directories and files\n"
 
-   cd $archive_dir
    if [ $adirs -gt 0 ]; then
-      printf "Deleting ArchivedFiles directories more than %s days old\n" "${adirs}"
-      adirs=$((adirs-1))
-      find -mtime +$adirs -type d | xargs rm -f -r
+       printf "Deleting ArchivedFiles directories more than %s days old\n" "${adirs}"
+       clean_dir "${archive_dir}" $adirs
+    fi
+
+   if [ $cdirs -gt 0 ]; then
+       printf "Deleting CapturedFiles directories more than %s days old\n" "${cdirs}"
+       clean_dir "${capture_dir}" $cdirs 
    fi
 
+   cd $archive_dir
    if [ $bz2 -gt 0 ]; then
       printf "Deleting tar.bz2 files more than %s days old\n" "${bz2}"
       bz2=$((bz2-1))
       find -type f -mtime +$bz2 -delete;
    fi
 
-   if [ $cdirs -gt 0 ]; then
-      cd $capture_dir
-      printf "Deleting CapturedFiles directories more than %s days old\n" "${cdirs}"
-      cdirs=$((cdirs-1))
-      find -mtime +$cdirs -type d | xargs rm -f -r
-   fi
-
-  if [ $logs -gt 0 ]; then
-      cd $data_dir/logs
-      printf "Deleting log files more than %s days old\n" "${logs}"
-      logs=$((logs-1))
-      find -type f -mtime +$logs -delete;
+   if [ $logs -gt 0 ]; then
+       cd $data_dir/logs
+       printf "Deleting log files more than %s days old\n" "${logs}"
+       logs=$((logs-1))
+       find -type f -mtime +$logs -delete;
    fi
 
    printf "Done deleting old data\n "
