@@ -1,14 +1,16 @@
 #!/usr/bin/env python
 
 """
-This is Version 2.0 of file ExternalScript.py. Dated 22-May-2023.
-Byte count = 12303
-This script
-1: Moves, creates, and copies files on the RMS stations, and
-2: Uploads files to the New Mexico Meteor Array Server.
-3. Calls ErrorCheck.sh, and optionally logs results of that call.
-   The argument log_script must be True for the logging to be done.
-   The argument log_script defaults to False.
+This is Version 3.0 of file ExternalScript.py. Dated 07-Feb-2024.
+Byte count = 12716
+This script Moves, creates, and copies files on the RMS stations
+1: calls ErrorCheck.sh, and optionally logs results of that call
+2: calls Clean.sh, and optionally logs results of that call
+3: calls BackupToUSB.sh, and optionally logs results of that call
+4: uploads files to the New Mexico Meteor Array Server
+   the argument log_script must be True for the logging to be done.
+   the argument log_script defaults to False
+5: reboots
 """
 from __future__ import print_function
 
@@ -179,25 +181,30 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
 
     with open(log_file_name, 'w+') as log_file:
         # Print out the arguments and variables of interest
-        print ("Version 2.0 of ExternalScript.py, 22-May-2023. bytes = 12303", file=log_file)
+        print ("Version 3.0 of ExternalScript.py, 07-Feb-2024. bytes = 12716", file=log_file)
         print("remote_dir set to %s" % remote_dir, file=log_file)
         print("Name of program running = %s" % (__name__), file=log_file)
         print("reboot arg = %s" % reboot, file=log_file)
         print("log_dir_name = %s" % log_dir_name, file=log_file)
-        print("ArchivedFiles directory = %s" % archived_night_dir, \
-              file=log_file)
+        print("ArchivedFiles directory = %s" % archived_night_dir, file=log_file)
 
-        # Prepare for calls to ErrorCheck.sh,
-        ErrorCheck_cmd_str = "~/source/NMMA/ErrorCheck.sh " + archived_night_dir
-
-        log.info("ErrorCheck_cmd_str = " + ErrorCheck_cmd_str)
-        status = subprocess.call(ErrorCheck_cmd_str, \
+        # Call ErrorCheck.sh to check for errors during capture.
+        status = subprocess.call("~/source/NMMA/ErrorCheck.sh " \
+                                 + archived_night_dir, \
                                  stdout=log_file, \
                                  stderr=log_file, \
                                  shell=True)
         log.info("ErrorCheck call returned with status " + str(status) )
 
-        # backup data to thumb drive, PNE 12/08/2019
+        # Call Clean.sh to delete old data.
+        status = subprocess.call("~/source/NMMA/Clean.sh " \
+                                 + archived_night_dir, \
+                                 stdout=log_file, \
+                                 stderr=log_file, \
+                                 shell=True)
+        log.info("Clean call returned with status " + str(status) )
+
+        # backup data to thumb drive.
         status = subprocess.call("~/source/NMMA/BackupToUSB.sh " \
                                  + archived_night_dir, \
                                  stdout=log_file, \
@@ -205,13 +212,10 @@ def uploadFiles(captured_night_dir, archived_night_dir, config, \
                                  shell=True)
         log.info("BackupToUSB call returned with status " + str(status) )
 
-
-        # Upload files to the NM Server
+        # Upload files to the NM Server.
         getFilesAndUpload(log, nm_config, archived_night_dir, log_file)
 
-        # Test for existence of "My_Uploads.sh".
-        # Execute it if it exists.
-
+        # Test for existence of "My_Uploads.sh" and execute it if it exists.
         if os.path.exists(My_Uploads_file):
             # Call with ArchivedFiles directory
             command = My_Uploads_file + " " + archived_night_dir 

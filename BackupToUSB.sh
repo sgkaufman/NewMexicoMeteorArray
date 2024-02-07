@@ -5,19 +5,11 @@
 # directory for the night you want to backup.
 # Assumes that the destination has directories bz2, csv, CapStack, and TimeLapse
 # Argument1: ArchivedFiles directory name
-# If Cleanup=1, will also delete
-#	ArchivedFiles directories older than $adirs days
-#	CapturedFiles directories older than $cdirs days
-#	tar.bz2 files older than  $bz2 days
-#	log files older than $logs days
 
-printf "BackupToUSB.sh 24-Mar, 2023, byte count ~3415 : backs up data to USB drive,\n"
-printf " and can also delete old data\n"
-
+printf "BackupToUSB.sh 06-Feb, 2024, byte count ~1711 : backs up data to USB drive,\n"
+s
 # set station specific USB drive designation
-USB_drive="/media/usbdrive/"
-
-Cleanup=1
+USB_drive="/media/pi/US00012_BK"
 
 archive_dir="$(dirname "$1")"
 data_dir="$(dirname "$archive_dir")"
@@ -61,48 +53,6 @@ else
 fi
 
 # ____________________________________________________________________
-# This section of the script can be used to clean up old files to free
-# up space on the storage drive for more CapturedFiles directories
-# var Cleanup is set above on line 19
 
-# set variables adirs, cdirs, and bz2 to 0 to skip cleanups
-adirs=7   # delete older ArchivedFiles directories
-cdirs=10  # delete older CapturedFiles directories
-bz2=7     # delete older tar.bz2 archives
-logs=21   # delete log files older than this number of days
+printf "Done copying data to USB drive %s\n\n " "${USB_drive}"
 
-if [ $Cleanup -gt 0 ]; then
-   printf "Deleting old directories and files\n"
-
-   cd $archive_dir
-   if [ $adirs -gt 0 ]; then
-      printf "Deleting ArchivedFiles directories more than %s days old\n" "${adirs}"
-      adirs=$((adirs-1))
-      find -mtime +$adirs -type d | xargs rm -f -r
-   fi
-
-   if [ $bz2 -gt 0 ]; then
-      printf "Deleting tar.bz2 files more than %s days old\n" "${bz2}"
-      bz2=$((bz2-1))
-      find -type f -mtime +$bz2 -delete;
-   fi
-
-   if [ $cdirs -gt 0 ]; then
-      cd ../CapturedFiles
-      printf "Deleting CapturedFiles directories more than %s days old\n" "${cdirs}"
-      cdirs=$((cdirs-1))
-      find -mtime +$cdirs -type d | xargs rm -f -r
-   fi
-
-  if [ $logs -gt 0 ]; then
-      cd $data_dir/logs
-      printf "Deleting log files more than %s days old\n" "${logs}"
-      logs=$((logs-1))
-      find -type f -mtime +$logs -delete;
-   fi
-
-   printf "Done deleting old data\n "
-fi
-# ____________________________________________________________________
-
-printf "Done copying data to USB drive %s and deleting old data\n\n " "${USB_drive}"
