@@ -5,32 +5,32 @@
 # For exaple:
 # /home/pi/RMS_data/US0001/ArchivedFiles/US0001_20240127_005520_080575
 #
-# Note: adirs must be greater than cdirs to avoid reprocessing errors
+# Note: adirs must be greater than cdirs+2 to avoid reprocessing errors
 # Deletes:
 #  ArchivedFiles directories numbering greather than $adirs
 #  CapturedFiles directories numbering greather than $cdirs
 #  log files older than $logs days
 #  tar.bz2 files older than $bz2 days, but only if FILES_TO_UPLOAD.inf is empty
 
-printf "Clean.sh 16-Feb, 2024, 3620 bytes, deletes old data directories, tar.bz2 and log files\n"
+printf "Clean.sh 13-Mar, 2024, 3650 bytes, deletes old data directories, tar.bz2 and log files\n"
 
 debug=0   # control whether to echo key variables
-adirs=8   # delete older ArchivedFiles directories
+adirs=10  # delete older ArchivedFiles directories
 cdirs=7   # delete older CapturedFiles directories
-bz2=7     # delete older tar.bz2 archives
+bz2=10    # delete older tar.bz2 archives
 logs=21   # delete log files older than this number of days
 
 declare -a dir_array
+
+if [[ $adirs -lt $((cdirs+3)) ]]; then
+adirs=$((cdirs+3))
+printf "Retaining three more ($adirs) Archived directories than Captured directories ($cdirs)\n"
+fi
 
 archive_dir="$(dirname "$1")"
 data_dir="$(dirname "$archive_dir")"
 night_dir="$(basename "$1")"
 station=${night_dir:0:6}
-
-if [[ $adirs -le $cdirs ]]; then
-printf "Retaining one more Archived Directory than Captured directories\n"
-adirs=$((cdirs+1))
-fi
 
 if [[ $debug -gt 0 ]]; then
     echo arg1        = $1
