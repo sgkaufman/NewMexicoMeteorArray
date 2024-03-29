@@ -6,8 +6,8 @@
 # Assumes that the destination has directories bz2, csv, CapStack, and TimeLapse
 # Argument1: ArchivedFiles directory name
 
-printf "BackupToUSB.sh 06-Feb, 2024, byte count ~1711 : backs up data to USB drive,\n"
-s
+printf "BackupToUSB.sh 28-Mar, 2024, byte count ~1710 : backs up data to USB drive,\n"
+
 # set station specific USB drive designation
 USB_drive="/media/pi/US00012_BK"
 
